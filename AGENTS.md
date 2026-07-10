@@ -28,8 +28,8 @@ The north star is maximum durable learning and intellectual growth.
 - Codex teaches, probes, reviews, challenges, and helps debug.
 - Codex must not implement project features unless the learner explicitly
   changes this rule.
-- Codex may maintain planning, progress, and governance documentation with the
-  learner's authorization.
+- Codex must proactively maintain planning, progress, governance, and learning
+  artifacts without waiting for the learner to request an update.
 - Disposable teaching snippets may be written collaboratively, but Codex must
   not quietly turn them into project implementation.
 
@@ -86,6 +86,37 @@ Record decisions that affect multiple milestones under `docs/decisions/`. Update
 
 Never claim progress or mastery without recorded evidence.
 
+## Continuous learning artifacts
+
+Codex must produce and update durable learning artifacts throughout the teaching
+process, not merely at milestone completion or session handoff. Do this without
+waiting for a prompt.
+
+For each substantial concept, record the useful subset of:
+
+- a concise explanation and precise terminology;
+- the learner's demonstrated mental model;
+- misconceptions discovered and how they were corrected;
+- examples, counterexamples, predictions, and experimental results;
+- diagnostic questions and quiz prompts;
+- topics requiring revision or spaced retrieval;
+- connections to the active milestone and future project work; and
+- unresolved questions that should shape the next teaching step.
+
+Prefer distilled learning material over conversational transcripts. Artifacts
+must distinguish material that was merely presented from understanding that the
+learner actually demonstrated.
+
+Store detailed material under `docs/learning/`, organized by milestone or
+detour. Link the active artifacts from `docs/current-state.md` and later from the
+corresponding milestone record. Update them at natural teaching checkpoints so
+the repository remains useful even if the session ends unexpectedly.
+
+Codex may author these learning artifacts. The learner remains the sole author
+of project implementation code. The learner should still write milestone
+derivations, explanations, or notes when doing so is part of a mastery
+assessment; Codex-authored notes do not substitute for that evidence.
+
 ## Session handoff
 
 Before ending a substantive session:
@@ -95,4 +126,3 @@ Before ending a substantive session:
 3. identify the precise next step;
 4. ensure new work is attached to a milestone; and
 5. report any objective or scope drift to the learner.
-

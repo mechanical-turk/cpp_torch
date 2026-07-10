@@ -9,11 +9,13 @@ belongs in the active milestone file.
 - Active phase: Phase 0 — Engineering baseline
 - Active milestone: Milestone 0.1 — Minimal C++23 Library Boundary
 - Milestone file: not yet created
-- Status: milestone definition pending
+- Status: prerequisite diagnostic in progress
 
 ## Current gate
 
-Prerequisite diagnostic has not started.
+Prerequisite diagnostic is in progress. Compilation, separate translation units,
+object files, symbol resolution, the ODR, and `inline` have been probed. The next
+diagnostic subject is linkage.
 
 Before implementation, run an adaptive diagnostic covering:
 
@@ -31,10 +33,17 @@ Before implementation, run an adaptive diagnostic covering:
 - Established the dependency-ordered learning plan.
 - Established persistent Codex instructions and progress-logging conventions.
 - Chosen Milestone 0.1 as the next milestone.
+- Began the Milestone 0.1 compilation/linking diagnostic.
+- Completed a focused teaching detour on modern `inline` semantics.
 
 ## Evidence and demonstrated understanding
 
-No Milestone 0.1 evidence has been collected yet.
+- Correctly explained textual header inclusion and separate compilation.
+- Correctly predicted missing-symbol, missing-`main`, and successful link cases.
+- Demonstrated why implementation files include their own public headers.
+- Correctly reasoned about duplicate non-inline header definitions.
+- After instruction, distinguished the `inline` keyword from optimization and
+  identified build-time, visibility, and code-size tradeoffs.
 
 ## Open questions and review findings
 
@@ -42,16 +51,23 @@ No Milestone 0.1 evidence has been collected yet.
   objectives and detours.
 - The milestone contract and acceptance criteria must be written after the
   diagnostic, not assumed in advance.
+- Linkage knowledge has not yet been diagnosed.
+- Revisit the distinction between static and shared-library update behavior.
 
 ## Active detours or branches
 
-None.
+- Completed short diagnostic detour: modern `inline` and ODR semantics.
 
 ## Exact next action
 
-Begin the Milestone 0.1 Socratic diagnostic with one question at a time.
+Ask what internal and external linkage mean, comparing an ordinary namespace-
+scope function, a `static` function, and a function in an anonymous namespace.
+
+## Active learning artifacts
+
+- [`docs/learning/phase-0/compilation-linking-and-inline.md`](learning/phase-0/compilation-linking-and-inline.md)
 
 ## Last updated
 
-2026-07-10 — Governance and initial recovery state established.
+2026-07-10 — Compilation/linking diagnostic and `inline` detour recorded.
 
