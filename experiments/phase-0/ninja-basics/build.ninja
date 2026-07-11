@@ -1,0 +1,15 @@
+rule compile
+  command = clang++ -std=c++23 -MMD -MF $out.d -c $in -o $out
+  depfile = $out.d
+  deps = gcc
+
+rule link
+  command = clang++ $in -o $out
+
+rule archive
+  command = ar rcs $out $in
+
+build math.o: compile math.cpp
+build main.o: compile main.cpp
+build libmath.a: archive math.o
+build app: link main.o libmath.a
