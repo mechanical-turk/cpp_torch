@@ -8,13 +8,14 @@ belongs in the active milestone file.
 - Plan: [`docs/learning-plan.md`](learning-plan.md)
 - Active phase: Phase 0 — Engineering baseline
 - Active milestone: Milestone 0.4 — Compiler Warnings and Static Diagnostics
-- Milestone file: not yet created; prerequisite diagnostic pending
-- Status: ready to begin
+- Milestone file: [`docs/milestones/00-04-warnings-and-static-diagnostics.md`](milestones/00-04-warnings-and-static-diagnostics.md)
+- Status: hands-on warning diagnostic ready to begin
 
 ## Current gate
 
-Milestones 0.1 through 0.3 are complete. The next dependency is establishing a
-target-scoped compiler warning policy and static diagnostic workflow.
+Milestones 0.1 through 0.3 are complete. Apple Clang is available, while
+command-line `clang-tidy` and `clang-format` are absent. Milestone 0.4 begins with
+compiler warnings before adding external tooling.
 
 Before implementation, run an adaptive diagnostic covering:
 
@@ -96,7 +97,8 @@ Before implementation, run an adaptive diagnostic covering:
   implementation rather than more abstract diagnostics.
 - Compilation-database discovery should be retrieved again in later tooling
   work.
-- Warning-policy and static-analysis experience has not yet been diagnosed.
+- Warning-group behavior and static-analysis experience have not yet been
+  exercised.
 
 ## Active detours or branches
 
@@ -104,8 +106,8 @@ Before implementation, run an adaptive diagnostic covering:
 
 ## Exact next action
 
-Commit the Milestone 0.3 CMake and experiment sources, then begin a concise,
-hands-on warnings/static-diagnostics milestone.
+Learner compiles one suspicious disposable program under progressively stronger
+warning groups and explains the emitted diagnostics.
 
 ## Active learning artifacts
 
