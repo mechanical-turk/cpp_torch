@@ -13,6 +13,12 @@ option(
   OFF
 )
 
+option(
+  CPP_TORCH_BUILD_BENCHMARKS
+  "Build cpp_torch benchmarks"
+  OFF
+)
+
 include(CTest)
 
 add_library(cpp_torch_warnings INTERFACE)
@@ -95,4 +101,35 @@ if(BUILD_TESTING)
 
   include(GoogleTest)
   gtest_discover_tests(cpp_torch_tests)
+endif()
+
+if(CPP_TORCH_BUILD_BENCHMARKS)
+  include(FetchContent)
+
+  set(BENCHMARK_ENABLE_TESTING OFF CACHE BOOL "" FORCE)
+  set(BENCHMARK_ENABLE_GTEST_TESTS OFF CACHE BOOL "" FORCE)
+  set(BENCHMARK_ENABLE_INSTALL OFF CACHE BOOL "" FORCE)
+
+  FetchContent_Declare(
+    google_benchmark
+    URL
+      https://github.com/google/benchmark/archive/192ef10025eb2c4cdd392bc502f0c852196baa48.zip
+    DOWNLOAD_EXTRACT_TIMESTAMP TRUE
+  )
+
+  FetchContent_MakeAvailable(google_benchmark)
+
+  add_executable(
+    cpp_torch_benchmarks
+    benchmarks/vector_sum_benchmark.cpp
+  )
+
+  target_compile_features(cpp_torch_benchmarks PRIVATE cxx_std_23)
+
+  target_link_libraries(
+    cpp_torch_benchmarks
+    PRIVATE
+      cpp_torch_warnings
+      benchmark::benchmark_main
+  )
 endif()
