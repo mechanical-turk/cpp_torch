@@ -1,5 +1,6 @@
 cmake_minimum_required(VERSION 3.26)
 project(cpp_torch LANGUAGES CXX)
+include(CTest)
 
 add_library(cpp_torch src/math.cpp)
 target_compile_features(cpp_torch PUBLIC cxx_std_23)
@@ -11,3 +12,28 @@ target_include_directories(
 
 add_executable(basic_usage examples/basic_usage.cpp)
 target_link_libraries(basic_usage PRIVATE cpp_torch)
+
+if(BUILD_TESTING)
+  include(FetchContent)
+
+  FetchContent_Declare(
+    googletest
+    URL
+      https://github.com/google/googletest/archive/52eb8108c5bdec04579160ae17225d66034bd723.zip
+    DOWNLOAD_EXTRACT_TIMESTAMP TRUE
+  )
+
+  FetchContent_MakeAvailable(googletest)
+
+  add_executable(cpp_torch_tests tests/math_test.cpp)
+
+  target_link_libraries(
+    cpp_torch_tests
+    PRIVATE
+      cpp_torch
+      GTest::gtest_main
+  )
+
+  include(GoogleTest)
+  gtest_discover_tests(cpp_torch_tests)
+endif()
