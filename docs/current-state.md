@@ -7,14 +7,14 @@ belongs in the active milestone file.
 
 - Plan: [`docs/learning-plan.md`](learning-plan.md)
 - Active phase: Phase 0 — Engineering baseline
-- Active milestone: Milestone 0.2 — Testing Workflow and Test Design Foundations
-- Milestone file: [`docs/milestones/00-02-testing-workflow.md`](milestones/00-02-testing-workflow.md)
-- Status: implementation ready to begin
+- Active milestone: Milestone 0.3 — Sanitizers and LLDB
+- Milestone file: not yet created; prerequisite diagnostic pending
+- Status: ready to begin
 
 ## Current gate
 
-Milestone 0.1 is complete. Milestone 0.2 diagnostic is complete and the active
-gate is hands-on GoogleTest/CTest integration.
+Milestones 0.1 and 0.2 are complete. The next dependency is making memory and
+undefined-behavior defects observable with sanitizers and LLDB.
 
 Before implementation, run an adaptive diagnostic covering:
 
@@ -80,6 +80,10 @@ Before implementation, run an adaptive diagnostic covering:
   framework and compiled-test workflow experience is new.
 - Selected pinned GoogleTest v1.17.0 with CMake FetchContent and CTest discovery
   for the first production testing workflow.
+- Integrated a compiled GoogleTest target, individual CTest discovery, structured
+  failure diagnostics, and a verified `BUILD_TESTING=OFF` configuration.
+- Added a narrow `.clang-format` rule after format-on-save collapsed short test
+  bodies; command-line formatter installation remains deferred.
 
 ## Open questions and review findings
 
@@ -90,7 +94,7 @@ Before implementation, run an adaptive diagnostic covering:
   implementation rather than more abstract diagnostics.
 - Compilation-database discovery should be retrieved again in later tooling
   work.
-- GoogleTest syntax, FetchContent, and CTest discovery have not yet been exercised.
+- Sanitizer and LLDB experience has not yet been diagnosed.
 
 ## Active detours or branches
 
@@ -98,13 +102,14 @@ Before implementation, run an adaptive diagnostic covering:
 
 ## Exact next action
 
-Learner creates the first public-interface GoogleTest case, then integrates the
-test target and CTest discovery incrementally.
+Commit the passing Milestone 0.2 implementation, then begin a short hands-on
+sanitizer/LLDB diagnostic rather than a theory-first sequence.
 
 ## Active learning artifacts
 
 - [`docs/learning/phase-0/compilation-linking-and-inline.md`](learning/phase-0/compilation-linking-and-inline.md)
 - [`docs/learning/phase-0/ninja-build-graph-lab.md`](learning/phase-0/ninja-build-graph-lab.md)
+- [`docs/learning/phase-0/cpp-testing-workflow.md`](learning/phase-0/cpp-testing-workflow.md)
 
 ## Last updated
 
