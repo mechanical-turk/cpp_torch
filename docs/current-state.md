@@ -8,14 +8,13 @@ belongs in the active milestone file.
 - Plan: [`docs/learning-plan.md`](learning-plan.md)
 - Active phase: Phase 0 — Engineering baseline
 - Active milestone: Milestone 0.2 — Testing Workflow and Test Design Foundations
-- Milestone file: not yet created; prerequisite diagnostic pending
-- Status: ready to begin
+- Milestone file: [`docs/milestones/00-02-testing-workflow.md`](milestones/00-02-testing-workflow.md)
+- Status: implementation ready to begin
 
 ## Current gate
 
-Milestone 0.1 is complete. The active gate is a short, hands-on diagnostic of the
-learner's current testing mental model before selecting and integrating a
-production C++ test framework.
+Milestone 0.1 is complete. Milestone 0.2 diagnostic is complete and the active
+gate is hands-on GoogleTest/CTest integration.
 
 Before implementation, run an adaptive diagnostic covering:
 
@@ -77,6 +76,10 @@ Before implementation, run an adaptive diagnostic covering:
 - Passed Milestone 0.1 based on implementation, experiments, failure diagnosis,
   and live mastery evidence. A duplicative written retrospective was waived due
   to low marginal learning value.
+- Established that testing concepts transfer from TypeScript/Python while C++
+  framework and compiled-test workflow experience is new.
+- Selected pinned GoogleTest v1.17.0 with CMake FetchContent and CTest discovery
+  for the first production testing workflow.
 
 ## Open questions and review findings
 
@@ -87,8 +90,7 @@ Before implementation, run an adaptive diagnostic covering:
   implementation rather than more abstract diagnostics.
 - Compilation-database discovery should be retrieved again in later tooling
   work.
-- Testing experience, terminology, and framework familiarity have not yet been
-  diagnosed.
+- GoogleTest syntax, FetchContent, and CTest discovery have not yet been exercised.
 
 ## Active detours or branches
 
@@ -96,8 +98,8 @@ Before implementation, run an adaptive diagnostic covering:
 
 ## Exact next action
 
-Begin Milestone 0.2 with a concise testing diagnostic tied immediately to a
-hands-on test of `cpp_torch::add`; avoid a long theory-only sequence.
+Learner creates the first public-interface GoogleTest case, then integrates the
+test target and CTest discovery incrementally.
 
 ## Active learning artifacts
 
