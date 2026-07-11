@@ -8,15 +8,13 @@ belongs in the active milestone file.
 - Plan: [`docs/learning-plan.md`](learning-plan.md)
 - Active phase: Phase 0 — Engineering baseline
 - Active milestone: Milestone 0.1 — Minimal C++23 Library Boundary
-- Milestone file: not yet created
-- Status: prerequisite diagnostic in progress
+- Milestone file: [`docs/milestones/00-01-minimal-cpp23-library-boundary.md`](milestones/00-01-minimal-cpp23-library-boundary.md)
+- Status: implementation ready to begin
 
 ## Current gate
 
-Prerequisite diagnostic is in progress. Compilation, separate translation units,
-object files, symbol resolution, the ODR, `inline`, basic linkage, static/shared
-library concepts, CMake's target model, and `clangd` compilation context have
-been probed. The work has shifted into a hands-on Ninja diagnostic lab.
+Prerequisite diagnostic is complete. The active gate is implementation of the
+minimal C++23 CMake library boundary defined by the milestone contract.
 
 Before implementation, run an adaptive diagnostic covering:
 
@@ -60,20 +58,19 @@ Before implementation, run an adaptive diagnostic covering:
 - Reproduced a stale build caused by missing header dependencies.
 - Added Clang-generated GCC-style depfiles and verified Ninja's recorded header
   dependencies with `ninja -t deps`.
+- Archived `math.o` into `libmath.a`, linked the consumer against it, and
+  inspected archive membership.
+- Confirmed with `nm -C` that the library object defines `add(int, int)` while
+  the consumer object holds an unresolved reference before final linking.
+- Defined the Milestone 0.1 implementation contract and mastery gate.
 
 ## Open questions and review findings
 
-- The prerequisite diagnostic must determine the milestone's exact learning
-  objectives and detours.
-- The milestone contract and acceptance criteria must be written after the
-  diagnostic, not assumed in advance.
 - Revisit the distinction between static and shared-library update behavior.
 - Later revisit namespace-scope `const` linkage; the topic was intentionally
   paused to establish the simpler model first.
-- Diagnose declarations/definitions and the ODR more deeply before creating the
-  milestone contract.
-- The diagnostic lab has not yet exercised static library creation or examined
-  real symbols and relocations.
+- CMake syntax and generated behavior must now be learned through the real
+  implementation rather than more abstract diagnostics.
 
 ## Active detours or branches
 
@@ -81,8 +78,9 @@ Before implementation, run an adaptive diagnostic covering:
 
 ## Exact next action
 
-Extend the Ninja lab by archiving `math.o` into a static library and linking the
-application against that archive. Continue with prediction before execution.
+Begin the learner-authored Milestone 0.1 implementation from its contract. Start
+with the project file layout and the smallest top-level `CMakeLists.txt`; review
+each target relationship through configure/build evidence.
 
 ## Active learning artifacts
 
