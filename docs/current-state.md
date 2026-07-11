@@ -7,14 +7,15 @@ belongs in the active milestone file.
 
 - Plan: [`docs/learning-plan.md`](learning-plan.md)
 - Active phase: Phase 0 — Engineering baseline
-- Active milestone: Milestone 0.1 — Minimal C++23 Library Boundary
-- Milestone file: [`docs/milestones/00-01-minimal-cpp23-library-boundary.md`](milestones/00-01-minimal-cpp23-library-boundary.md)
-- Status: final learner retrospective pending
+- Active milestone: Milestone 0.2 — Testing Workflow and Test Design Foundations
+- Milestone file: not yet created; prerequisite diagnostic pending
+- Status: ready to begin
 
 ## Current gate
 
-Implementation and active mastery assessment are complete. The final gate is a
-learner-authored retrospective, followed by milestone closure review.
+Milestone 0.1 is complete. The active gate is a short, hands-on diagnostic of the
+learner's current testing mental model before selecting and integrating a
+production C++ test framework.
 
 Before implementation, run an adaptive diagnostic covering:
 
@@ -73,6 +74,9 @@ Before implementation, run an adaptive diagnostic covering:
   failure, then restored a clean green build.
 - Completed the active mastery assessment with targeted correction and retrieval
   of translation-unit/object-file and CMake usage-requirement concepts.
+- Passed Milestone 0.1 based on implementation, experiments, failure diagnosis,
+  and live mastery evidence. A duplicative written retrospective was waived due
+  to low marginal learning value.
 
 ## Open questions and review findings
 
@@ -81,9 +85,10 @@ Before implementation, run an adaptive diagnostic covering:
   paused to establish the simpler model first.
 - CMake syntax and generated behavior must now be learned through the real
   implementation rather than more abstract diagnostics.
-- Compilation-database discovery should be retrieved again later; it does not
-  block closure after the verified tooling fix.
-- Learner-authored retrospective remains the only Milestone 0.1 gate.
+- Compilation-database discovery should be retrieved again in later tooling
+  work.
+- Testing experience, terminology, and framework familiarity have not yet been
+  diagnosed.
 
 ## Active detours or branches
 
@@ -91,9 +96,8 @@ Before implementation, run an adaptive diagnostic covering:
 
 ## Exact next action
 
-Learner writes the Milestone 0.1 retrospective in the milestone record. Review
-it for concrete mental-model change and remaining uncertainty, then either close
-the milestone or assign targeted remediation.
+Begin Milestone 0.2 with a concise testing diagnostic tied immediately to a
+hands-on test of `cpp_torch::add`; avoid a long theory-only sequence.
 
 ## Active learning artifacts
 

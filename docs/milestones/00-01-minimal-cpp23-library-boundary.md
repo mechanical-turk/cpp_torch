@@ -205,14 +205,29 @@ demonstrated. The learner can:
 - explain public header versus private implementation rebuild consequences; and
 - diagnose compile-time type failure versus link-time missing definition.
 
-Final completion awaits a short learner-authored retrospective. Compilation-
-database discovery should be scheduled for later retrieval rather than blocking
-the milestone, because the practical configuration is verified and the gap is
-terminological rather than architectural.
+Milestone passed. Compilation-database discovery should be scheduled for later
+retrieval because the practical configuration is verified and the remaining gap
+is terminological rather than architectural.
 
 ## Retrospective
 
-Pending.
+The planned written retrospective was waived after the learner judged it to be
+duplicative and low-value relative to moving into the next hands-on milestone.
+This does not waive the mastery gate: implementation evidence, deliberate
+failure diagnosis, rebuild predictions, and the live mastery assessment are all
+recorded above.
+
+The principal learning progression was from treating compilation/linking as a
+mostly implicit compiler action to observing an explicit dependency graph:
+translation units become objects, an archiver packages the library object, and
+the linker resolves the consumer's undefined public symbol. Handwritten Ninja
+made stale dependency graphs and incremental propagation observable; CMake then
+became a higher-level target and usage-requirement model rather than a mysterious
+compile script.
+
+Topics intentionally left for later retrieval include compilation-database
+discovery fluency, advanced ODR cases, ABI compatibility, and deeper CMake
+packaging mechanics.
 
 ## Follow-up milestones and backlog
 
