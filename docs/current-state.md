@@ -14,8 +14,9 @@ belongs in the active milestone file.
 ## Current gate
 
 Prerequisite diagnostic is in progress. Compilation, separate translation units,
-object files, symbol resolution, the ODR, `inline`, and basic linkage have been
-probed. Teaching pace was deliberately reduced to one distinction at a time.
+object files, symbol resolution, the ODR, `inline`, basic linkage, static/shared
+library concepts, CMake's target model, and `clangd` compilation context have
+been probed. The work has shifted into a hands-on Ninja diagnostic lab.
 
 Before implementation, run an adaptive diagnostic covering:
 
@@ -52,6 +53,13 @@ Before implementation, run an adaptive diagnostic covering:
   functions.
 - Correctly treated namespace-scope `static` and unnamed namespaces as ways to
   make functions translation-unit-local.
+- Authored a working Ninja graph that separately compiles two translation units
+  and links an executable.
+- Diagnosed a missing final newline from Ninja's unexpected-EOF error.
+- Correctly predicted and observed incremental rebuild propagation.
+- Reproduced a stale build caused by missing header dependencies.
+- Added Clang-generated GCC-style depfiles and verified Ninja's recorded header
+  dependencies with `ninja -t deps`.
 
 ## Open questions and review findings
 
@@ -64,6 +72,8 @@ Before implementation, run an adaptive diagnostic covering:
   paused to establish the simpler model first.
 - Diagnose declarations/definitions and the ODR more deeply before creating the
   milestone contract.
+- The diagnostic lab has not yet exercised static library creation or examined
+  real symbols and relocations.
 
 ## Active detours or branches
 
@@ -71,13 +81,13 @@ Before implementation, run an adaptive diagnostic covering:
 
 ## Exact next action
 
-Continue slowly from the established linkage model. Diagnose the difference
-between a declaration and a definition for functions and variables, then move
-to ODR requirements without introducing multiple new qualifiers at once.
+Extend the Ninja lab by archiving `math.o` into a static library and linking the
+application against that archive. Continue with prediction before execution.
 
 ## Active learning artifacts
 
 - [`docs/learning/phase-0/compilation-linking-and-inline.md`](learning/phase-0/compilation-linking-and-inline.md)
+- [`docs/learning/phase-0/ninja-build-graph-lab.md`](learning/phase-0/ninja-build-graph-lab.md)
 
 ## Last updated
 
