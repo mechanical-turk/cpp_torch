@@ -45,5 +45,56 @@ through real failing programs rather than flag memorization.
 
 ## Evidence, review, mastery, and retrospective
 
-Pending implementation.
+### Evidence
+
+- Manually compiled a heap-use-after-free program with ASan.
+- Read allocation, deallocation, invalid-read, region-size, shadow-memory, and
+  termination sections of the ASan report.
+- Manually compiled signed overflow with UBSan and observed the exact operands,
+  source location, violated type constraint, and forced abort.
+- Used LLDB to set a source breakpoint, run, inspect the pointer and pointee,
+  step over `delete`, continue, and print a backtrace.
+- Before deletion, LLDB observed `*value == 42`; after deletion, the pointer
+  address remained while the stale bytes read as `147`, directly demonstrating
+  that address retention does not preserve object lifetime or value.
+- Added an opt-in `CPP_TORCH_ENABLE_SANITIZERS` CMake option backed by an
+  `INTERFACE` usage-requirement target.
+- Verified ASan/UBSan compile instrumentation on the library and consumers and
+  runtime link options on executables.
+- Sanitized CTest passed for correct code.
+- A temporary heap-use-after-free inside `cpp_torch::add` was caught through the
+  real sanitized test target and then restored.
+- Ordinary Debug CTest remained passing with the sanitizer option disabled.
+
+### Review and mastery
+
+Demonstrated understanding:
+
+- ASan instruments memory operations and maintains shadow metadata describing
+  addressability and allocation lifetime.
+- UBSan detects executed operations that violate selected C++ semantic rules.
+- Instrumentation is inserted at compilation, while violations are detected only
+  on executed runtime paths.
+- Passing sanitizer runs do not prove absence of defects; coverage matters.
+- Sanitizers are normally excluded from shipped binaries due to runtime, memory,
+  binary-size, and dependency costs, but should be run proactively rather than
+  only after suspicion.
+- Sanitizer builds may use optimization and debug symbols; "sanitized" is not
+  synonymous with the ordinary Debug configuration.
+- The interface target packages non-artifact compiler/linker requirements, and
+  propagation ensures consumers of an instrumented static library link the
+  required runtime.
+
+Milestone passed.
+
+### Retrospective
+
+The disposable failures made sanitizer output and debugger state concrete before
+CMake abstraction. The most important observation was that LLDB could still read
+the same pointer address after `delete` while the bytes had already changed;
+neither an address nor readable physical memory proves a live C++ object exists.
+
+Deferred topics include allocator internals, ASan quarantine details, recovery
+modes, sanitizer compatibility, optimized-debugging behavior, and debugger
+watchpoints. They should return when tensor storage and indexing make them useful.
 

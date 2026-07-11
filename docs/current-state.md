@@ -7,14 +7,14 @@ belongs in the active milestone file.
 
 - Plan: [`docs/learning-plan.md`](learning-plan.md)
 - Active phase: Phase 0 — Engineering baseline
-- Active milestone: Milestone 0.3 — Sanitizers and LLDB
-- Milestone file: [`docs/milestones/00-03-sanitizers-and-lldb.md`](milestones/00-03-sanitizers-and-lldb.md)
-- Status: hands-on diagnostic ready to begin
+- Active milestone: Milestone 0.4 — Compiler Warnings and Static Diagnostics
+- Milestone file: not yet created; prerequisite diagnostic pending
+- Status: ready to begin
 
 ## Current gate
 
-Milestones 0.1 and 0.2 are complete. The learner reported no prior ASan, UBSan,
-or LLDB experience; Milestone 0.3 begins with a disposable ASan failure.
+Milestones 0.1 through 0.3 are complete. The next dependency is establishing a
+target-scoped compiler warning policy and static diagnostic workflow.
 
 Before implementation, run an adaptive diagnostic covering:
 
@@ -84,6 +84,8 @@ Before implementation, run an adaptive diagnostic covering:
   failure diagnostics, and a verified `BUILD_TESTING=OFF` configuration.
 - Added a narrow `.clang-format` rule after format-on-save collapsed short test
   bodies; command-line formatter installation remains deferred.
+- Completed manual ASan/UBSan failures, an LLDB inspection, opt-in target-scoped
+  sanitizer integration, and a real project-defect detection/restoration cycle.
 
 ## Open questions and review findings
 
@@ -94,7 +96,7 @@ Before implementation, run an adaptive diagnostic covering:
   implementation rather than more abstract diagnostics.
 - Compilation-database discovery should be retrieved again in later tooling
   work.
-- ASan, UBSan, and LLDB behavior has not yet been exercised.
+- Warning-policy and static-analysis experience has not yet been diagnosed.
 
 ## Active detours or branches
 
@@ -102,14 +104,15 @@ Before implementation, run an adaptive diagnostic covering:
 
 ## Exact next action
 
-Learner creates and runs a disposable heap-use-after-free program with ASan,
-then interprets the report before any CMake integration.
+Commit the Milestone 0.3 CMake and experiment sources, then begin a concise,
+hands-on warnings/static-diagnostics milestone.
 
 ## Active learning artifacts
 
 - [`docs/learning/phase-0/compilation-linking-and-inline.md`](learning/phase-0/compilation-linking-and-inline.md)
 - [`docs/learning/phase-0/ninja-build-graph-lab.md`](learning/phase-0/ninja-build-graph-lab.md)
 - [`docs/learning/phase-0/cpp-testing-workflow.md`](learning/phase-0/cpp-testing-workflow.md)
+- [`docs/learning/phase-0/sanitizers-and-lldb.md`](learning/phase-0/sanitizers-and-lldb.md)
 
 ## Last updated
 
