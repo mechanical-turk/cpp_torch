@@ -153,5 +153,39 @@ Answer these later without consulting the notes:
 
 ## Next diagnostic question
 
-Explain internal and external linkage for ordinary namespace-scope functions,
-`static` functions, and functions declared inside anonymous namespaces.
+Continue from the basic linkage model into declaration/definition and ODR rules,
+one distinction at a time.
+
+## Linkage checkpoint
+
+### Demonstrated
+
+The learner now independently applies this basic model:
+
+- `int x = 32;` at namespace scope is a definition with external linkage.
+- Two such definitions in separate translation units normally cause a duplicate
+  external-symbol failure at link time.
+- `static int x = 32;` is a definition with internal linkage; separate
+  translation units may each own a distinct `x`.
+- `extern int x;` is a non-defining declaration that may refer to an external
+  definition in another translation unit.
+- An internal-linkage definition cannot fulfill another translation unit's
+  external declaration.
+- Ordinary namespace-scope functions have external linkage by default.
+- Namespace-scope `static` functions and functions in unnamed namespaces are
+  translation-unit-local.
+
+### Important distinction
+
+Two independent questions must be asked about a namespace-scope declaration:
+
+1. Is it a definition—does it provide the entity or storage?
+2. What linkage does the name have—can declarations in other translation units
+   denote the same entity?
+
+### Teaching calibration
+
+The learner requested a slower pace after too many interacting cases were
+introduced together. Continue with one new rule or qualifier at a time, confirm
+the base model, and only then compose cases. `const` and inline variables remain
+revision topics rather than current diagnostic material.

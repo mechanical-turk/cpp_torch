@@ -14,8 +14,8 @@ belongs in the active milestone file.
 ## Current gate
 
 Prerequisite diagnostic is in progress. Compilation, separate translation units,
-object files, symbol resolution, the ODR, and `inline` have been probed. The next
-diagnostic subject is linkage.
+object files, symbol resolution, the ODR, `inline`, and basic linkage have been
+probed. Teaching pace was deliberately reduced to one distinction at a time.
 
 Before implementation, run an adaptive diagnostic covering:
 
@@ -44,6 +44,14 @@ Before implementation, run an adaptive diagnostic covering:
 - Correctly reasoned about duplicate non-inline header definitions.
 - After instruction, distinguished the `inline` keyword from optimization and
   identified build-time, visibility, and code-size tradeoffs.
+- Distinguished a variable declaration from a variable definition in the basic
+  namespace-scope case.
+- Correctly predicted unresolved external references and duplicate external
+  definitions.
+- Correctly applied internal versus external linkage to both variables and
+  functions.
+- Correctly treated namespace-scope `static` and unnamed namespaces as ways to
+  make functions translation-unit-local.
 
 ## Open questions and review findings
 
@@ -51,8 +59,11 @@ Before implementation, run an adaptive diagnostic covering:
   objectives and detours.
 - The milestone contract and acceptance criteria must be written after the
   diagnostic, not assumed in advance.
-- Linkage knowledge has not yet been diagnosed.
 - Revisit the distinction between static and shared-library update behavior.
+- Later revisit namespace-scope `const` linkage; the topic was intentionally
+  paused to establish the simpler model first.
+- Diagnose declarations/definitions and the ODR more deeply before creating the
+  milestone contract.
 
 ## Active detours or branches
 
@@ -60,8 +71,9 @@ Before implementation, run an adaptive diagnostic covering:
 
 ## Exact next action
 
-Ask what internal and external linkage mean, comparing an ordinary namespace-
-scope function, a `static` function, and a function in an anonymous namespace.
+Continue slowly from the established linkage model. Diagnose the difference
+between a declaration and a definition for functions and variables, then move
+to ODR requirements without introducing multiple new qualifiers at once.
 
 ## Active learning artifacts
 
@@ -70,4 +82,3 @@ scope function, a `static` function, and a function in an anonymous namespace.
 ## Last updated
 
 2026-07-10 — Compilation/linking diagnostic and `inline` detour recorded.
-
