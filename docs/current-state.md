@@ -8,13 +8,13 @@ belongs in the active milestone file.
 - Plan: [`docs/learning-plan.md`](learning-plan.md)
 - Active phase: Phase 0 — Engineering baseline
 - Active milestone: Milestone 0.3 — Sanitizers and LLDB
-- Milestone file: not yet created; prerequisite diagnostic pending
-- Status: ready to begin
+- Milestone file: [`docs/milestones/00-03-sanitizers-and-lldb.md`](milestones/00-03-sanitizers-and-lldb.md)
+- Status: hands-on diagnostic ready to begin
 
 ## Current gate
 
-Milestones 0.1 and 0.2 are complete. The next dependency is making memory and
-undefined-behavior defects observable with sanitizers and LLDB.
+Milestones 0.1 and 0.2 are complete. The learner reported no prior ASan, UBSan,
+or LLDB experience; Milestone 0.3 begins with a disposable ASan failure.
 
 Before implementation, run an adaptive diagnostic covering:
 
@@ -94,7 +94,7 @@ Before implementation, run an adaptive diagnostic covering:
   implementation rather than more abstract diagnostics.
 - Compilation-database discovery should be retrieved again in later tooling
   work.
-- Sanitizer and LLDB experience has not yet been diagnosed.
+- ASan, UBSan, and LLDB behavior has not yet been exercised.
 
 ## Active detours or branches
 
@@ -102,8 +102,8 @@ Before implementation, run an adaptive diagnostic covering:
 
 ## Exact next action
 
-Commit the passing Milestone 0.2 implementation, then begin a short hands-on
-sanitizer/LLDB diagnostic rather than a theory-first sequence.
+Learner creates and runs a disposable heap-use-after-free program with ASan,
+then interprets the report before any CMake integration.
 
 ## Active learning artifacts
 
