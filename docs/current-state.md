@@ -8,13 +8,13 @@ belongs in the active milestone file.
 - Plan: [`docs/learning-plan.md`](learning-plan.md)
 - Active phase: Phase 0 — Engineering baseline
 - Active milestone: Milestone 0.5 — Benchmarking and Profiling Baseline
-- Milestone file: not yet created; prerequisite diagnostic pending
-- Status: ready to begin
+- Milestone file: [`docs/milestones/00-05-benchmarking-and-profiling.md`](milestones/00-05-benchmarking-and-profiling.md)
+- Status: implementation ready to begin
 
 ## Current gate
 
-Milestones 0.1 through 0.4 are complete. The next dependency is establishing a
-measurement-first benchmark and profiling workflow.
+Milestones 0.1 through 0.4 are complete. Google Benchmark v1.9.5 has been selected
+and pinned for an opt-in, Release-oriented measurement workflow.
 
 Before implementation, run an adaptive diagnostic covering:
 
@@ -98,7 +98,7 @@ Before implementation, run an adaptive diagnostic covering:
   implementation rather than more abstract diagnostics.
 - Compilation-database discovery should be retrieved again in later tooling
   work.
-- Benchmarking and profiling experience has not yet been diagnosed.
+- Benchmark construction and profiling behavior have not yet been exercised.
 
 ## Active detours or branches
 
@@ -106,8 +106,8 @@ Before implementation, run an adaptive diagnostic covering:
 
 ## Exact next action
 
-Begin Milestone 0.5 with a concise benchmark/profiling diagnostic tied to a real
-but deliberately small function; avoid optimizing the trivial `add` operation.
+Learner writes an isolated vector-sum benchmark source before CMake integration;
+then optimizer barriers and measurement behavior are examined hands-on.
 
 ## Active learning artifacts
 
