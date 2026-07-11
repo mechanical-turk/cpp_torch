@@ -109,3 +109,22 @@ their source file and `math.hpp`.
 - Observe which steps rebuild after a source or public-header change.
 - Later replace the handwritten graph with an equivalent CMake target graph and
   compare generated behavior.
+
+## CMake and editor integration checkpoint
+
+The real Milestone 0.1 CMake graph generated `build/debug/compile_commands.json`
+with the correct public include path and C++23 mode for both translation units.
+Because that database lives below the source tree rather than in an ancestor
+directory of each source file, `clangd` did not discover it automatically and
+reported a false missing-header error.
+
+A repository `.clangd` now states:
+
+```yaml
+CompileFlags:
+  CompilationDatabase: build/debug
+```
+
+Direct `clangd --check` validation succeeded for the library source and consumer.
+This records a concrete distinction: a correct build does not automatically mean
+editor tooling has recovered the same compilation context.

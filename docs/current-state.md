@@ -63,6 +63,12 @@ Before implementation, run an adaptive diagnostic covering:
 - Confirmed with `nm -C` that the library object defines `add(int, int)` while
   the consumer object holds an unresolved reference before final linking.
 - Defined the Milestone 0.1 implementation contract and mastery gate.
+- Implemented and committed the minimal CMake library boundary with successful
+  Debug and Release builds.
+- Verified private-source (three-step) versus public-header (four-step)
+  incremental rebuild propagation.
+- Added `.clangd` pointing to `build/debug/compile_commands.json` and verified
+  both translation units with direct `clangd --check` runs.
 
 ## Open questions and review findings
 
@@ -71,6 +77,8 @@ Before implementation, run an adaptive diagnostic covering:
   paused to establish the simpler model first.
 - CMake syntax and generated behavior must now be learned through the real
   implementation rather than more abstract diagnostics.
+- One deliberate compile failure, one deliberate link failure, and the final
+  mastery assessment remain.
 
 ## Active detours or branches
 
@@ -78,9 +86,8 @@ Before implementation, run an adaptive diagnostic covering:
 
 ## Exact next action
 
-Begin the learner-authored Milestone 0.1 implementation from its contract. Start
-with the project file layout and the smallest top-level `CMakeLists.txt`; review
-each target relationship through configure/build evidence.
+Perform and explain the planned deliberate compile and link failures, restore a
+green build, then begin the concise Milestone 0.1 mastery assessment.
 
 ## Active learning artifacts
 
