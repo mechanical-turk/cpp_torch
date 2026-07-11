@@ -128,3 +128,28 @@ CompileFlags:
 Direct `clangd --check` validation succeeded for the library source and consumer.
 This records a concrete distinction: a correct build does not automatically mean
 editor tooling has recovered the same compilation context.
+
+## CMake usage-requirement checkpoint
+
+The useful model established during mastery assessment is:
+
+| Keyword | Current target needs requirement | Consumers inherit requirement |
+|---|---:|---:|
+| `PRIVATE` | yes | no |
+| `PUBLIC` | yes | yes |
+| `INTERFACE` | no | yes |
+
+This was grounded with a concrete dependency chain rather than learned as CMake
+vocabulary. A dependency used only from a library's `.cpp` is normally private.
+A dependency exposed through a public header must normally propagate to
+consumers. The same audience model applies to include directories, compile
+features, definitions, and linked targets.
+
+For this project:
+
+- `cpp_torch` publishes `include/` because both its source and its consumers
+  include the public header;
+- `cpp_torch` publishes C++23 because the chosen public contract requires
+  consumers to compile in the intended language mode; and
+- `basic_usage` privately depends on `cpp_torch` because it consumes the library
+  but has no downstream link consumer that should inherit the relationship.

@@ -141,7 +141,23 @@ The learner can, without consulting notes:
 
 ## Correctness evidence
 
-Pending implementation.
+- Debug and Release configure/build succeeded with Ninja.
+- `basic_usage` produced the documented result (`5`) in both configurations.
+- Both compilation databases contain the library and consumer translation units
+  with the public include directory and C++23 mode.
+- Direct `clangd --check` validation succeeded after repository configuration
+  pointed at the Debug compilation database.
+- A private-source change rebuilt the library object, archive, and final link
+  while preserving the consumer object.
+- A public-header change rebuilt both objects, the archive, and final link.
+- Symbol inspection showed `cpp_torch::add(int, int)` defined in the library
+  object/archive, unresolved in the consumer object, and resolved in the final
+  executable.
+- A deliberate incompatible call failed during consumer compilation with a
+  precise type diagnostic.
+- A deliberate wrong-arity implementation compiled as a distinct overload but
+  failed linking because the requested two-argument symbol remained undefined.
+- The final Debug build ran successfully and the worktree was clean.
 
 ## Performance evidence
 
@@ -159,11 +175,40 @@ configuration intent, but detailed flags and benchmarking are deferred.
 
 ## Review findings
 
-Pending implementation.
+- The first `CMakeLists.txt` copied schematic placeholders literally, creating a
+  target named `TARGET`; this exposed that CMake command examples must be read as
+  target construction, not shell-like templates.
+- Initial editor redlines came from missing compilation-database discovery, not
+  an invalid build graph.
+- Generated Ninja and binary artifacts were initially committed in a WIP commit;
+  `.gitignore` plus index removal corrected repository hygiene.
+- Final-newline discipline was corrected in authored text files after the first
+  Ninja parser failure made the issue observable.
+- The first mastery explanation conflated a translation unit with an object
+  file; this was corrected and successfully retrieved in the completed pipeline.
+- `PUBLIC`/`PRIVATE` usage requirements initially lacked intuition and required
+  a concrete A→B consumer example. The learner then correctly classified private
+  implementation dependencies, public header dependencies, public language
+  requirements, and the terminal consumer relationship.
+- The compilation-database explanation remains less fluent than the core build
+  graph and should be retrieved again in a later milestone.
 
 ## Mastery assessment
 
-Pending implementation and evidence collection.
+Implementation behavior and primary build-system concepts have been
+demonstrated. The learner can:
+
+- distinguish the roles of CMake and Ninja;
+- complete the preprocessing/compilation/assembly/archive/link pipeline;
+- explain defined versus unresolved library/consumer symbols;
+- classify concrete `PRIVATE` and `PUBLIC` requirements;
+- explain public header versus private implementation rebuild consequences; and
+- diagnose compile-time type failure versus link-time missing definition.
+
+Final completion awaits a short learner-authored retrospective. Compilation-
+database discovery should be scheduled for later retrieval rather than blocking
+the milestone, because the practical configuration is verified and the gap is
+terminological rather than architectural.
 
 ## Retrospective
 
@@ -178,4 +223,3 @@ Pending.
 - Benchmarking and profiling baseline
 - GitHub Actions acceptance checks
 - Installation and external consumer packaging
-

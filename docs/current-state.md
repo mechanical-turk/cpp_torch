@@ -9,12 +9,12 @@ belongs in the active milestone file.
 - Active phase: Phase 0 — Engineering baseline
 - Active milestone: Milestone 0.1 — Minimal C++23 Library Boundary
 - Milestone file: [`docs/milestones/00-01-minimal-cpp23-library-boundary.md`](milestones/00-01-minimal-cpp23-library-boundary.md)
-- Status: implementation ready to begin
+- Status: final learner retrospective pending
 
 ## Current gate
 
-Prerequisite diagnostic is complete. The active gate is implementation of the
-minimal C++23 CMake library boundary defined by the milestone contract.
+Implementation and active mastery assessment are complete. The final gate is a
+learner-authored retrospective, followed by milestone closure review.
 
 Before implementation, run an adaptive diagnostic covering:
 
@@ -69,6 +69,10 @@ Before implementation, run an adaptive diagnostic covering:
   incremental rebuild propagation.
 - Added `.clangd` pointing to `build/debug/compile_commands.json` and verified
   both translation units with direct `clangd --check` runs.
+- Diagnosed deliberate compile-time type failure and link-time missing-symbol
+  failure, then restored a clean green build.
+- Completed the active mastery assessment with targeted correction and retrieval
+  of translation-unit/object-file and CMake usage-requirement concepts.
 
 ## Open questions and review findings
 
@@ -77,8 +81,9 @@ Before implementation, run an adaptive diagnostic covering:
   paused to establish the simpler model first.
 - CMake syntax and generated behavior must now be learned through the real
   implementation rather than more abstract diagnostics.
-- One deliberate compile failure, one deliberate link failure, and the final
-  mastery assessment remain.
+- Compilation-database discovery should be retrieved again later; it does not
+  block closure after the verified tooling fix.
+- Learner-authored retrospective remains the only Milestone 0.1 gate.
 
 ## Active detours or branches
 
@@ -86,8 +91,9 @@ Before implementation, run an adaptive diagnostic covering:
 
 ## Exact next action
 
-Perform and explain the planned deliberate compile and link failures, restore a
-green build, then begin the concise Milestone 0.1 mastery assessment.
+Learner writes the Milestone 0.1 retrospective in the milestone record. Review
+it for concrete mental-model change and remaining uncertainty, then either close
+the milestone or assign targeted remediation.
 
 ## Active learning artifacts
 
