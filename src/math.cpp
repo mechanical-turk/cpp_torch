@@ -3,6 +3,8 @@
 
 namespace cpp_torch {
 
-int add(int a, int b) { return a + b; }
+int add(int a, int b) {
+  return a + b;
+}
 
 } // namespace cpp_torch

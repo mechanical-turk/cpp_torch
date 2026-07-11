@@ -50,5 +50,62 @@ single compiler invocation.
 
 ## Evidence, review, mastery, and retrospective
 
-Pending implementation.
+### Evidence
+
+- A disposable program compiled silently with default warnings.
+- `-Wall -Wextra -Wpedantic` surfaced unused state and signed/unsigned
+  comparison.
+- `-Wconversion -Wshadow` additionally surfaced float-to-int narrowing and local
+  shadowing.
+- Assignment in a condition produced `-Wparentheses` diagnostics with distinct
+  suggestions for intentional assignment versus intended equality.
+- A target-scoped `cpp_torch_warnings` interface target packages Clang/GCC and
+  MSVC-specific warning policies through generator expressions.
+- A separate `CPP_TORCH_WARNINGS_AS_ERRORS` option adds `-Werror`/`/WX` only when
+  requested.
+- Strict compilation commands contained the full warning policy for the library,
+  example, and test source, while GoogleTest's own sources did not.
+- Strict build and CTest passed.
+- Homebrew LLVM 20.1.3 was found already installed outside the shell `PATH`.
+- Root `.clang-tidy` checks enabled analyzer, bug-prone, and performance families
+  with project-header filtering.
+- Focused static analysis identified assignment-in-condition and narrowing as
+  bug-prone patterns in the disposable source.
+- Project translation units produced no surfaced clang-tidy findings.
+- Command-line clang-format validation exposed pre-existing short functions;
+  the project configuration reformatted them into the desired multiline style.
+- VS Code workspace configuration now inserts a final newline on save.
+
+### Review and mastery
+
+- Compiler acceptance, warning policy, sanitizer detection, and static analysis
+  are distinct layers with overlapping but non-identical findings.
+- `-Wall` is a curated set, not every available warning.
+- Focused warning groups increase coverage but also require conscious noise and
+  portability management.
+- Warnings-as-errors is opt-in so strict/CI workflows can enforce it without
+  making every exploratory build brittle.
+- Warning requirements are private to project-owned targets and must not leak
+  into consumers or third-party dependency compilation.
+- CMake interface targets can package non-artifact usage requirements such as
+  warning flags.
+- `clang-tidy` relies on the real compilation database for accurate language,
+  macro, and include context.
+
+Apple `clangd --check` reported an internal Extract Function tweak conflict on
+the GoogleTest macro expansion. This was not a compile, test, or clang-tidy
+failure; direct strict build and analysis remained clean.
+
+Milestone passed.
+
+### Retrospective
+
+The disposable source showed why a production warning policy must be empirical:
+valid code compiled silently by default, increasingly focused groups exposed
+different risks, and `-Weverything` produced unrelated platform noise. The final
+policy is intentionally strong but scoped to code owned by this project.
+
+More opinionated readability, modernization, include-cleanliness, and naming
+checks are deferred until the codebase contains enough real design to evaluate
+their signal-to-noise ratio.
 

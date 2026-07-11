@@ -3,4 +3,6 @@
 
 #include <iostream>
 
-int main() { std::cout << cpp_torch::add(2, 3) << '\n'; }
+int main() {
+  std::cout << cpp_torch::add(2, 3) << '\n';
+}

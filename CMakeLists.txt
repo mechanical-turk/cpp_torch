@@ -7,7 +7,31 @@ option(
   OFF
 )
 
+option(
+  CPP_TORCH_WARNINGS_AS_ERRORS
+  "Treat cpp_torch project warnings as errors"
+  OFF
+)
+
 include(CTest)
+
+add_library(cpp_torch_warnings INTERFACE)
+
+target_compile_options(
+  cpp_torch_warnings
+  INTERFACE
+    "$<$<CXX_COMPILER_ID:AppleClang,Clang,GNU>:-Wall;-Wextra;-Wpedantic;-Wconversion;-Wshadow>"
+    "$<$<CXX_COMPILER_ID:MSVC>:/W4>"
+)
+
+if(CPP_TORCH_WARNINGS_AS_ERRORS)
+  target_compile_options(
+    cpp_torch_warnings
+    INTERFACE
+      "$<$<CXX_COMPILER_ID:AppleClang,Clang,GNU>:-Werror>"
+      "$<$<CXX_COMPILER_ID:MSVC>:/WX>"
+  )
+endif()
 
 if(CPP_TORCH_ENABLE_SANITIZERS)
   add_library(cpp_torch_sanitizers INTERFACE)
@@ -28,6 +52,7 @@ endif()
 
 add_library(cpp_torch src/math.cpp)
 target_compile_features(cpp_torch PUBLIC cxx_std_23)
+target_link_libraries(cpp_torch PRIVATE cpp_torch_warnings)
 target_include_directories(
   cpp_torch
   PUBLIC
@@ -39,7 +64,12 @@ if(CPP_TORCH_ENABLE_SANITIZERS)
 endif()
 
 add_executable(basic_usage examples/basic_usage.cpp)
-target_link_libraries(basic_usage PRIVATE cpp_torch)
+target_link_libraries(
+  basic_usage
+  PRIVATE
+    cpp_torch
+    cpp_torch_warnings
+)
 
 if(BUILD_TESTING)
   include(FetchContent)
@@ -59,6 +89,7 @@ if(BUILD_TESTING)
     cpp_torch_tests
     PRIVATE
       cpp_torch
+      cpp_torch_warnings
       GTest::gtest_main
   )
 

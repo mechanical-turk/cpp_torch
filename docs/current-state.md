@@ -7,15 +7,14 @@ belongs in the active milestone file.
 
 - Plan: [`docs/learning-plan.md`](learning-plan.md)
 - Active phase: Phase 0 — Engineering baseline
-- Active milestone: Milestone 0.4 — Compiler Warnings and Static Diagnostics
-- Milestone file: [`docs/milestones/00-04-warnings-and-static-diagnostics.md`](milestones/00-04-warnings-and-static-diagnostics.md)
-- Status: hands-on warning diagnostic ready to begin
+- Active milestone: Milestone 0.5 — Benchmarking and Profiling Baseline
+- Milestone file: not yet created; prerequisite diagnostic pending
+- Status: ready to begin
 
 ## Current gate
 
-Milestones 0.1 through 0.3 are complete. Apple Clang is available, while
-command-line `clang-tidy` and `clang-format` are absent. Milestone 0.4 begins with
-compiler warnings before adding external tooling.
+Milestones 0.1 through 0.4 are complete. The next dependency is establishing a
+measurement-first benchmark and profiling workflow.
 
 Before implementation, run an adaptive diagnostic covering:
 
@@ -87,6 +86,8 @@ Before implementation, run an adaptive diagnostic covering:
   bodies; command-line formatter installation remains deferred.
 - Completed manual ASan/UBSan failures, an LLDB inspection, opt-in target-scoped
   sanitizer integration, and a real project-defect detection/restoration cycle.
+- Established target-scoped warnings, opt-in warnings-as-errors, project-filtered
+  clang-tidy, reproducible formatting, and editor final-newline behavior.
 
 ## Open questions and review findings
 
@@ -97,8 +98,7 @@ Before implementation, run an adaptive diagnostic covering:
   implementation rather than more abstract diagnostics.
 - Compilation-database discovery should be retrieved again in later tooling
   work.
-- Warning-group behavior and static-analysis experience have not yet been
-  exercised.
+- Benchmarking and profiling experience has not yet been diagnosed.
 
 ## Active detours or branches
 
@@ -106,8 +106,8 @@ Before implementation, run an adaptive diagnostic covering:
 
 ## Exact next action
 
-Learner compiles one suspicious disposable program under progressively stronger
-warning groups and explains the emitted diagnostics.
+Begin Milestone 0.5 with a concise benchmark/profiling diagnostic tied to a real
+but deliberately small function; avoid optimizing the trivial `add` operation.
 
 ## Active learning artifacts
 
@@ -115,6 +115,7 @@ warning groups and explains the emitted diagnostics.
 - [`docs/learning/phase-0/ninja-build-graph-lab.md`](learning/phase-0/ninja-build-graph-lab.md)
 - [`docs/learning/phase-0/cpp-testing-workflow.md`](learning/phase-0/cpp-testing-workflow.md)
 - [`docs/learning/phase-0/sanitizers-and-lldb.md`](learning/phase-0/sanitizers-and-lldb.md)
+- [`docs/learning/phase-0/warnings-and-static-analysis.md`](learning/phase-0/warnings-and-static-analysis.md)
 
 ## Last updated
 
