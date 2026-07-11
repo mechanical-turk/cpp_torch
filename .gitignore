@@ -1,0 +1,13 @@
+# CMake build trees
+/build/
+
+# Disposable Ninja lab outputs
+/experiments/phase-0/ninja-basics/*.o
+/experiments/phase-0/ninja-basics/*.a
+/experiments/phase-0/ninja-basics/*.d
+/experiments/phase-0/ninja-basics/app
+/experiments/phase-0/ninja-basics/.ninja_deps
+/experiments/phase-0/ninja-basics/.ninja_log
+
+# macOS
+.DS_Store
