@@ -7,14 +7,14 @@ belongs in the active milestone file.
 
 - Plan: [`docs/learning-plan.md`](learning-plan.md)
 - Active phase: Phase 0 — Engineering baseline
-- Active milestone: Milestone 0.5 — Benchmarking and Profiling Baseline
-- Milestone file: [`docs/milestones/00-05-benchmarking-and-profiling.md`](milestones/00-05-benchmarking-and-profiling.md)
-- Status: implementation ready to begin
+- Active milestone: Milestone 0.6 — GitHub Actions Acceptance Checks
+- Milestone file: not yet created; prerequisite diagnostic pending
+- Status: ready to begin
 
 ## Current gate
 
-Milestones 0.1 through 0.4 are complete. Google Benchmark v1.9.5 has been selected
-and pinned for an opt-in, Release-oriented measurement workflow.
+Milestones 0.1 through 0.5 are complete. The next dependency is moving the local
+acceptance configurations into focused GitHub Actions checks.
 
 Before implementation, run an adaptive diagnostic covering:
 
@@ -88,6 +88,8 @@ Before implementation, run an adaptive diagnostic covering:
   sanitizer integration, and a real project-defect detection/restoration cycle.
 - Established target-scoped warnings, opt-in warnings-as-errors, project-filtered
   clang-tidy, reproducible formatting, and editor final-newline behavior.
+- Established pinned, opt-in Release benchmarks, optimizer-elimination evidence,
+  assembly inspection, profiler sampling, and reproducible CMake presets.
 
 ## Open questions and review findings
 
@@ -98,7 +100,8 @@ Before implementation, run an adaptive diagnostic covering:
   implementation rather than more abstract diagnostics.
 - Compilation-database discovery should be retrieved again in later tooling
   work.
-- Benchmark construction and profiling behavior have not yet been exercised.
+- GitHub Actions and CI acceptance behavior have not yet been exercised in this
+  repository.
 
 ## Active detours or branches
 
@@ -106,8 +109,9 @@ Before implementation, run an adaptive diagnostic covering:
 
 ## Exact next action
 
-Learner writes an isolated vector-sum benchmark source before CMake integration;
-then optimizer barriers and measurement behavior are examined hands-on.
+Begin Milestone 0.6 by defining which existing presets belong in CI, what should
+run on every push/PR, and which platform/compiler matrix provides useful early
+signal without excessive duplication.
 
 ## Active learning artifacts
 
@@ -116,6 +120,7 @@ then optimizer barriers and measurement behavior are examined hands-on.
 - [`docs/learning/phase-0/cpp-testing-workflow.md`](learning/phase-0/cpp-testing-workflow.md)
 - [`docs/learning/phase-0/sanitizers-and-lldb.md`](learning/phase-0/sanitizers-and-lldb.md)
 - [`docs/learning/phase-0/warnings-and-static-analysis.md`](learning/phase-0/warnings-and-static-analysis.md)
+- [`docs/learning/phase-0/benchmarking-and-profiling.md`](learning/phase-0/benchmarking-and-profiling.md)
 
 ## Last updated
 

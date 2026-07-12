@@ -57,5 +57,67 @@ timings, and how benchmarks differ from profilers and correctness tests.
 
 ## Evidence, review, mastery, and retrospective
 
-Pending implementation.
+### Evidence
+
+- Google Benchmark v1.9.5 is pinned by its exact release commit and enabled only
+  through `CPP_TORCH_BUILD_BENCHMARKS`.
+- Dependency tests and install rules are disabled when embedded.
+- `cpp_torch_benchmarks` builds in a dedicated Release preset with `-O3` and
+  `NDEBUG`, C++23, and project warnings.
+- A complete `dev` compilation database includes library, example, tests, and
+  benchmark sources for `clangd`, while actual measurements remain in the
+  optimized benchmark tree.
+- The valid reduction benchmark keeps allocation outside the timed loop, uses
+  runtime-sized input, prevents result elimination, and reports processed items.
+- Google Benchmark v1.9.5 deprecated the const-reference `DoNotOptimize`
+  overload; changing the local result to non-const selected the supported barrier
+  and restored warning-clean compilation.
+- Three-repetition baseline:
+  - 1,024 doubles: approximately 908 ns CPU and 1.128 billion items/second.
+  - 1,048,576 doubles: approximately 1.009 ms CPU and 1.039 billion
+    items/second.
+  - observed CPU-time coefficient of variation below 0.2% in that run.
+- An intentionally unobserved reduction reported `0.000 ns` for both sizes,
+  including one million elements.
+- Disassembly showed a load/`fadd` reduction loop in the valid benchmark and no
+  reduction instructions between `StartKeepRunning` and `FinishKeepRunning` in
+  the flawed benchmark.
+- macOS `sample` collected 3,318 top-of-stack samples in
+  `BM_VectorSum(benchmark::State&)` during a five-second profile of the large
+  input. `std::accumulate` was inlined, consistent with the disassembly.
+- A ten-second profiled run processed the large case at approximately 1.036
+  billion items/second.
+
+### Review and mastery
+
+- A benchmark measures the optimized executable, not the apparent source text.
+- Setup outside the state loop is excluded from the timed operation.
+- `DoNotOptimize` makes the result observable to the optimizer; it is not a CPU
+  timing instruction.
+- Repetitions, mean, median, standard deviation, and coefficient of variation
+  characterize sample stability but do not eliminate environmental bias.
+- Wall time and CPU time answer different questions.
+- Throughput requires explicit workload accounting.
+- Near-linear scaling and stable throughput are consistent with an O(n)
+  reduction but are not a proof of complexity or a full hardware diagnosis.
+- A profiler attributes execution time; it does not replace controlled benchmark
+  comparison. Assembly verifies what code was actually generated.
+
+Milestone passed.
+
+### Retrospective
+
+The zero-nanosecond flawed benchmark was the critical observation: plausible
+source code is not necessarily present in the executable. Measurement requires
+an optimizer-aware harness, and performance claims require triangulation among
+timings, generated code, and profiler evidence.
+
+macOS could not provide Google Benchmark reliable frequency metadata or thread
+affinity. Those warnings do not invalidate the timer readings, but they identify
+environmental limitations and reinforce reporting variance rather than treating
+one number as universal.
+
+Hardware counters, Instruments Time Profiler, vectorization reports, cache
+analysis, and cross-machine baselines are deferred until numerical kernels create
+meaningful optimization questions.
 
