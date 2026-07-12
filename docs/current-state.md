@@ -8,14 +8,13 @@ belongs in the active milestone file.
 - Plan: [`docs/learning-plan.md`](learning-plan.md)
 - Active phase: Phase 1 — Scalar learning systems laboratory
 - Active milestone: Milestone 1.1 — Manual Linear Regression
-- Milestone file: not yet created; prerequisite diagnostic pending
-- Status: Phase 0 complete; ready to begin rigorous ML foundations
+- Milestone file: [`docs/milestones/01-01-manual-linear-regression.md`](milestones/01-01-manual-linear-regression.md)
+- Status: mathematical diagnostic in progress
 
 ## Current gate
 
-Phase 0 is complete. The first GitHub Actions run passed across GCC, Clang,
-Apple Clang, ASan/UBSan, Release, and benchmark-build jobs. The project is ready
-to begin the scalar ML laboratory with manual linear regression.
+Phase 0 is complete. Manual linear-regression work has begun with affine-model,
+MSE, chain-rule, and gradient-descent foundations. No implementation has started.
 
 Before implementation, run an adaptive diagnostic covering:
 
@@ -93,6 +92,10 @@ Before implementation, run an adaptive diagnostic covering:
   assembly inspection, profiler sampling, and reproducible CMake presets.
 - Established and remotely verified cross-platform/compiler GitHub Actions
   acceptance checks.
+- Derived and retrieved per-observation and mean MSE gradients with respect to
+  slope and intercept.
+- Demonstrated gradient versus negative-gradient direction, learning-rate
+  scaling, and first-order local loss-change reasoning through a quiz.
 
 ## Open questions and review findings
 
@@ -103,8 +106,8 @@ Before implementation, run an adaptive diagnostic covering:
   implementation rather than more abstract diagnostics.
 - Compilation-database discovery should be retrieved again in later tooling
   work.
-- Determine the learner's current linear algebra, calculus, probability, and
-  regression mental models before defining Milestone 1.1.
+- Dot product, directional derivative, gradient geometry, curvature, and convexity
+  are not yet sufficiently grounded.
 - Additional sanitizers remain dependency-triggered: TSan for concurrency, MSan
   for specialized Linux uninitialized-read coverage, and vptr checks when
   polymorphism becomes real.
@@ -115,9 +118,8 @@ Before implementation, run an adaptive diagnostic covering:
 
 ## Exact next action
 
-Begin the adaptive, hands-on mathematical diagnostic for manual linear
-regression. Use derivations and computational experiments before framework
-abstractions.
+Introduce dot-product geometry one Socratic step at a time, then connect it to
+directional derivatives and negative-gradient steepest descent.
 
 ## Active learning artifacts
 
@@ -127,6 +129,7 @@ abstractions.
 - [`docs/learning/phase-0/sanitizers-and-lldb.md`](learning/phase-0/sanitizers-and-lldb.md)
 - [`docs/learning/phase-0/warnings-and-static-analysis.md`](learning/phase-0/warnings-and-static-analysis.md)
 - [`docs/learning/phase-0/benchmarking-and-profiling.md`](learning/phase-0/benchmarking-and-profiling.md)
+- [`docs/learning/phase-1/gradient-descent-foundations.md`](learning/phase-1/gradient-descent-foundations.md)
 
 ## Last updated
 
