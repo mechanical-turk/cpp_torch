@@ -50,5 +50,46 @@ performance measurements.
 
 ## Evidence, review, mastery, and retrospective
 
-Pending first GitHub run.
+### Evidence
+
+Initial push run
+[`29173619835`](https://github.com/mechanical-turk/cpp_torch/actions/runs/29173619835)
+completed successfully. All five jobs passed:
+
+- Strict (Linux GCC)
+- Strict (Linux Clang)
+- Strict (macOS Apple Clang)
+- ASan and UBSan (Linux Clang)
+- Release and benchmark builds (Linux GCC)
+
+Every configure, build, and CTest step completed successfully. The repository's
+local branch is `main`, tracks `origin/main`, and GitHub authentication now has
+the required `repo` and `workflow` scopes.
+
+### Review and mastery
+
+The matrix is deliberately not a full Cartesian product of every configuration,
+compiler, and operating system:
+
+- strict cells maximize early source portability and diagnostic diversity;
+- one canonical Linux Clang sanitizer cell provides runtime instrumentation
+  without tripling expensive sanitizer work; and
+- one Linux GCC optimized job verifies Release and benchmark compilation without
+  treating hosted-runner benchmark timings as stable performance evidence.
+
+This is coverage allocation, not a claim that sanitized macOS or optimized Clang
+can never matter. The matrix should expand when platform-specific code, devices,
+concurrency, or packaging create new failure modes.
+
+Milestone passed.
+
+### Retrospective
+
+Checked-in presets kept the workflow thin: CI names acceptance configurations
+instead of recreating compiler flags in YAML. The initial authentication failure
+also demonstrated that workflow files require explicit GitHub token permission.
+
+Future additions should be driven by observed risk. Candidate checks include
+format/static-analysis jobs, ThreadSanitizer when concurrency begins, optimized
+Clang coverage, and platform-specific sanitizer cells.
 

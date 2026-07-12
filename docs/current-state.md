@@ -6,16 +6,16 @@ belongs in the active milestone file.
 ## Governing plan
 
 - Plan: [`docs/learning-plan.md`](learning-plan.md)
-- Active phase: Phase 0 — Engineering baseline
-- Active milestone: Milestone 0.6 — GitHub Actions Acceptance Checks
-- Milestone file: [`docs/milestones/00-06-github-actions.md`](milestones/00-06-github-actions.md)
-- Status: local workflow committed; push blocked by GitHub authentication
+- Active phase: Phase 1 — Scalar learning systems laboratory
+- Active milestone: Milestone 1.1 — Manual Linear Regression
+- Milestone file: not yet created; prerequisite diagnostic pending
+- Status: Phase 0 complete; ready to begin rigorous ML foundations
 
 ## Current gate
 
-Milestones 0.1 through 0.5 are complete. The first GitHub Actions workflow now
-maps existing presets onto GCC, Clang, Apple Clang, sanitizer, Release, and
-benchmark-build jobs; remote validation remains.
+Phase 0 is complete. The first GitHub Actions run passed across GCC, Clang,
+Apple Clang, ASan/UBSan, Release, and benchmark-build jobs. The project is ready
+to begin the scalar ML laboratory with manual linear regression.
 
 Before implementation, run an adaptive diagnostic covering:
 
@@ -91,6 +91,8 @@ Before implementation, run an adaptive diagnostic covering:
   clang-tidy, reproducible formatting, and editor final-newline behavior.
 - Established pinned, opt-in Release benchmarks, optimizer-elimination evidence,
   assembly inspection, profiler sampling, and reproducible CMake presets.
+- Established and remotely verified cross-platform/compiler GitHub Actions
+  acceptance checks.
 
 ## Open questions and review findings
 
@@ -101,14 +103,11 @@ Before implementation, run an adaptive diagnostic covering:
   implementation rather than more abstract diagnostics.
 - Compilation-database discovery should be retrieved again in later tooling
   work.
-- Workflow has not yet been pushed or accepted by GitHub.
-- Hosted-runner tool availability and compiler-specific warnings remain empirical
-  until the first run.
-- Local branch is `main` and tracks no remote branch yet.
-- HTTPS push was rejected because the active personal access token lacks
-  permission to create/update workflow files.
-- SSH access failed with `Permission denied (publickey)`.
-- `gh auth status` reports the stored `mechanical-turk` token is invalid.
+- Determine the learner's current linear algebra, calculus, probability, and
+  regression mental models before defining Milestone 1.1.
+- Additional sanitizers remain dependency-triggered: TSan for concurrency, MSan
+  for specialized Linux uninitialized-read coverage, and vptr checks when
+  polymorphism becomes real.
 
 ## Active detours or branches
 
@@ -116,9 +115,9 @@ Before implementation, run an adaptive diagnostic covering:
 
 ## Exact next action
 
-Learner reauthenticates GitHub CLI with repository and workflow permissions.
-Then push local `main` to `origin`, set upstream tracking, and inspect/remediate
-the first GitHub Actions run.
+Begin the adaptive, hands-on mathematical diagnostic for manual linear
+regression. Use derivations and computational experiments before framework
+abstractions.
 
 ## Active learning artifacts
 
