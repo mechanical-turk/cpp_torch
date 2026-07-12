@@ -9,7 +9,7 @@ belongs in the active milestone file.
 - Active phase: Phase 0 — Engineering baseline
 - Active milestone: Milestone 0.6 — GitHub Actions Acceptance Checks
 - Milestone file: [`docs/milestones/00-06-github-actions.md`](milestones/00-06-github-actions.md)
-- Status: local workflow authored; first GitHub run pending
+- Status: local workflow committed; push blocked by GitHub authentication
 
 ## Current gate
 
@@ -104,6 +104,11 @@ Before implementation, run an adaptive diagnostic covering:
 - Workflow has not yet been pushed or accepted by GitHub.
 - Hosted-runner tool availability and compiler-specific warnings remain empirical
   until the first run.
+- Local branch is `main` and tracks no remote branch yet.
+- HTTPS push was rejected because the active personal access token lacks
+  permission to create/update workflow files.
+- SSH access failed with `Permission denied (publickey)`.
+- `gh auth status` reports the stored `mechanical-turk` token is invalid.
 
 ## Active detours or branches
 
@@ -111,8 +116,9 @@ Before implementation, run an adaptive diagnostic covering:
 
 ## Exact next action
 
-Validate local YAML and preset behavior, commit the workflow, push with explicit
-authorization, then inspect and remediate the first GitHub Actions run.
+Learner reauthenticates GitHub CLI with repository and workflow permissions.
+Then push local `main` to `origin`, set upstream tracking, and inspect/remediate
+the first GitHub Actions run.
 
 ## Active learning artifacts
 
