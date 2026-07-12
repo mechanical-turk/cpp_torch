@@ -3,7 +3,7 @@ name: CI
 on:
   push:
     branches:
-      - master
+      - main
   pull_request:
   workflow_dispatch:
 
@@ -93,4 +93,3 @@ jobs:
 
       - name: Build benchmarks
         run: cmake --build --preset benchmark
-
