@@ -96,6 +96,8 @@ Before implementation, run an adaptive diagnostic covering:
   slope and intercept.
 - Demonstrated gradient versus negative-gradient direction, learning-rate
   scaling, and first-order local loss-change reasoning through a quiz.
+- Derived directional derivatives by restricting a two-variable loss to a path,
+  and proved negative-gradient steepest descent using dot-product geometry.
 
 ## Open questions and review findings
 
@@ -106,8 +108,8 @@ Before implementation, run an adaptive diagnostic covering:
   implementation rather than more abstract diagnostics.
 - Compilation-database discovery should be retrieved again in later tooling
   work.
-- Dot product, directional derivative, gradient geometry, curvature, and convexity
-  are not yet sufficiently grounded.
+- Curvature, Hessians, convexity, and learning-rate stability are not yet
+  sufficiently grounded.
 - Additional sanitizers remain dependency-triggered: TSan for concurrency, MSan
   for specialized Linux uninitialized-read coverage, and vptr checks when
   polymorphism becomes real.
@@ -118,8 +120,8 @@ Before implementation, run an adaptive diagnostic covering:
 
 ## Exact next action
 
-Introduce dot-product geometry one Socratic step at a time, then connect it to
-directional derivatives and negative-gradient steepest descent.
+Introduce curvature through a one-dimensional quadratic one Socratic step at a
+time, then generalize to the linear-regression Hessian and stable learning rates.
 
 ## Active learning artifacts
 
