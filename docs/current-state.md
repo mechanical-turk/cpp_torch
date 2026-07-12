@@ -8,13 +8,14 @@ belongs in the active milestone file.
 - Plan: [`docs/learning-plan.md`](learning-plan.md)
 - Active phase: Phase 0 — Engineering baseline
 - Active milestone: Milestone 0.6 — GitHub Actions Acceptance Checks
-- Milestone file: not yet created; prerequisite diagnostic pending
-- Status: ready to begin
+- Milestone file: [`docs/milestones/00-06-github-actions.md`](milestones/00-06-github-actions.md)
+- Status: local workflow authored; first GitHub run pending
 
 ## Current gate
 
-Milestones 0.1 through 0.5 are complete. The next dependency is moving the local
-acceptance configurations into focused GitHub Actions checks.
+Milestones 0.1 through 0.5 are complete. The first GitHub Actions workflow now
+maps existing presets onto GCC, Clang, Apple Clang, sanitizer, Release, and
+benchmark-build jobs; remote validation remains.
 
 Before implementation, run an adaptive diagnostic covering:
 
@@ -100,8 +101,9 @@ Before implementation, run an adaptive diagnostic covering:
   implementation rather than more abstract diagnostics.
 - Compilation-database discovery should be retrieved again in later tooling
   work.
-- GitHub Actions and CI acceptance behavior have not yet been exercised in this
-  repository.
+- Workflow has not yet been pushed or accepted by GitHub.
+- Hosted-runner tool availability and compiler-specific warnings remain empirical
+  until the first run.
 
 ## Active detours or branches
 
@@ -109,9 +111,8 @@ Before implementation, run an adaptive diagnostic covering:
 
 ## Exact next action
 
-Begin Milestone 0.6 by defining which existing presets belong in CI, what should
-run on every push/PR, and which platform/compiler matrix provides useful early
-signal without excessive duplication.
+Validate local YAML and preset behavior, commit the workflow, push with explicit
+authorization, then inspect and remediate the first GitHub Actions run.
 
 ## Active learning artifacts
 
