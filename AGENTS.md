@@ -49,6 +49,11 @@ The north star is maximum durable learning and intellectual growth.
 - Keep optimization evidence-based and tied to a learning objective.
 - Do not let advanced feature ambitions bypass mathematical, ML, C++, numerical,
   or systems foundations.
+- Do not assign repetitive arithmetic or other mechanical calculations merely to
+  create activity. Codex should perform routine numerical work unless the
+  mechanics themselves are the learning objective. Reserve learner effort for
+  derivations, conceptual predictions, implementation, debugging, and decisions
+  with meaningful learning value.
 
 ## Drift prevention
 
