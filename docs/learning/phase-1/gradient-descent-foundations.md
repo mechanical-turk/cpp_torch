@@ -71,10 +71,85 @@ The learner correctly retrieved:
 - Assign derivations and conceptual explanations to the learner.
 - Codex performs repetitive numerical arithmetic unless it is itself instructive.
 
+## Numerical-gradient checkpoint
+
+The first dataset-level numerical-gradient implementation summed per-example
+gradients, while the analytic implementation differentiated mean loss. For a
+dataset of size `n`, the numerical result was therefore `n` times the analytic
+result. Dividing by the sample count aligned the objectives. At `(w,b)=(1,1)`,
+both components then agreed to approximately `2e-11`.
+
+This established an important checking invariant: two gradient implementations
+are comparable only when they differentiate exactly the same scalar objective,
+including reductions such as sum versus mean.
+
+Checks at `(1,1)`, the exact-fit point `(2,1)`, and `(-1.5,3)` produced maximum
+absolute disagreement of roughly `1.3e-10`. At the optimum, the analytic
+gradient was exactly zero while numerical `dL/db` was about `3.7e-17`, showing
+why floating-point checks need tolerances rather than exact equality.
+
+The checks are now automated with per-component `EXPECT_NEAR` assertions at
+`1e-8`. The code was separated from `main()` into a reusable CMake library. A
+`PUBLIC` C++23 requirement and include directory propagate to linked consumers;
+without the target edge, the example lacked both `-std=gnu++2b` and the header
+search path during compilation.
+
+## Convergence and instability checkpoint
+
+The optimizer was separated from console output through a silent
+`gradient_descent_step`. Automated evidence now shows that learning rate `0.1`
+converges from `(1,1)` to the exact `(2,1)` solution, while learning rate `1.0`
+raises loss from approximately `1.67` to `5.42e11` after only 10 epochs. This
+observed contrast supplies the concrete motivation for deriving the curvature
+of this particular loss surface; curvature is no longer an unmotivated detour.
+
+## Exact two-parameter stability derivation
+
+The learner reconstructed the dataset loss and gradients manually:
+
+\[
+L(w,b)=\frac{1}{3}(5w^2+3b^2+6wb-26w-18b+35),
+\]
+
+\[
+\frac{\partial L}{\partial w}=\frac{10w+6b-26}{3},
+\qquad
+\frac{\partial L}{\partial b}=2w+2b-6.
+\]
+
+Using errors `u=w-2` and `v=b-1`, the learner derived the coupled update and
+represented repeated gradient descent as `z_n=A^n z_0`. Two preserved error
+ratios were found:
+
+\[
+r_{1,2}=\frac{-1\pm\sqrt{10}}{3}.
+\]
+
+Their scalar update multipliers imply the joint stability interval:
+
+\[
+0<a<\frac{4-\sqrt{10}}{2}\approx0.4189.
+\]
+
+The learner then independently closed the generalization gap: direction vectors
+on the two distinct preserved lines are linearly independent and form a basis of
+`R^2`; by linearity, every starting error decomposes into those directions, and
+both components converge when both scalar multipliers have magnitude below one.
+
+Terminology and teaching corrections established during this unit:
+
+- Coupling means each coordinate update depends on both errors; individual
+  coordinate errors need not decrease monotonically for total loss to decrease.
+- The preserved-ratio search is motivated by reducing a coupled recurrence to a
+  scalar multiplier, not by assuming arbitrary linear combinations already have
+  that form.
+- New geometric or algebraic terminology must follow concrete motivation rather
+  than precede it.
+
 ## Next concept
 
-Build curvature intuition from a one-dimensional quadratic, then connect the
-Hessian of linear-regression MSE to convexity and learning-rate stability.
+Turn the single-point numerical comparison into systematic multi-point
+correctness evidence, then add convergence and unstable-learning-rate evidence.
 
 ## Directional derivative checkpoint
 

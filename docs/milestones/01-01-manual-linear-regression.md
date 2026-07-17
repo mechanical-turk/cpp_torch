@@ -69,5 +69,14 @@ so later abstractions have concrete meaning.
 
 ## Evidence, review, mastery, and retrospective
 
-Diagnostic in progress; implementation has not begun.
-
+The learner has implemented an explicit scalar training loop and analytic MSE
+gradients. A central-difference checker exposed and corrected a sum-versus-mean
+objective mismatch. At `(w,b)=(1,1)`, numerical and analytic components agree to
+approximately `2e-11`. Systematic multi-point checks and GoogleTest coverage are
+now implemented: both components agree within a `1e-8` assertion tolerance at
+three parameter points. The regression behavior is exposed through a small
+header/source boundary using `std::span<const Sample>`, with CMake library,
+example, and test targets. Convergence and unstable-learning-rate evidence remain.
+The optimizer has since been separated from console output, and an automated
+test verifies convergence from `(1,1)` to the known `(2,1)` relationship at
+learning rate `0.1`. Excessive-learning-rate evidence remains.

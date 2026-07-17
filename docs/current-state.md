@@ -9,23 +9,13 @@ belongs in the active milestone file.
 - Active phase: Phase 1 — Scalar learning systems laboratory
 - Active milestone: Milestone 1.1 — Manual Linear Regression
 - Milestone file: [`docs/milestones/01-01-manual-linear-regression.md`](milestones/01-01-manual-linear-regression.md)
-- Status: mathematical diagnostic in progress
+- Status: manual implementation and correctness validation in progress
 
 ## Current gate
 
-Phase 0 is complete. Manual linear-regression work has begun with affine-model,
-MSE, chain-rule, and gradient-descent foundations. No implementation has started.
-
-Before implementation, run an adaptive diagnostic covering:
-
-- translation units and the compilation pipeline;
-- declarations, definitions, and the One Definition Rule;
-- internal and external linkage;
-- headers and public/private implementation boundaries;
-- static and shared libraries;
-- compiler versus linker responsibilities;
-- CMake targets and usage requirements; and
-- how `compile_commands.json` supports `clangd`.
+The first explicit scalar linear-regression training loop works. The active gate
+is correctness validation: verify the analytic MSE gradient against central
+differences at several parameter points before adding convergence tests.
 
 ## Completed work
 
@@ -90,6 +80,10 @@ Before implementation, run an adaptive diagnostic covering:
   clang-tidy, reproducible formatting, and editor final-newline behavior.
 - Established pinned, opt-in Release benchmarks, optimizer-elimination evidence,
   assembly inspection, profiler sampling, and reproducible CMake presets.
+- Updated the Phase 0 formatting policy so reference ampersands bind visually to
+  the referenced type and multiline function parameters use one parameter per
+  line with the closing parenthesis on its own line, while preserving the
+  learner's existing formatter rules.
 - Established and remotely verified cross-platform/compiler GitHub Actions
   acceptance checks.
 - Derived and retrieved per-observation and mean MSE gradients with respect to
@@ -98,6 +92,33 @@ Before implementation, run an adaptive diagnostic covering:
   scaling, and first-order local loss-change reasoning through a quiz.
 - Derived directional derivatives by restricting a two-variable loss to a path,
   and proved negative-gradient steepest descent using dot-product geometry.
+- Implemented a learner-authored scalar linear-regression experiment with explicit
+  prediction, residual, MSE, analytic gradient, and gradient-descent updates.
+- Added central-difference numerical gradients and corrected a sum-versus-mean
+  mismatch: both numerical and analytic gradients now describe mean loss.
+- Verified at `(w,b)=(1,1)` that both gradient components agree to approximately
+  `2e-11`, with a strictly warning-clean C++23 build.
+- Extended the comparison to `(2,1)` and `(-1.5,3)`. The analytic and numerical
+  gradients agree within approximately `1.3e-10`; the exact-fit point has zero
+  analytic gradient and only floating-point-scale numerical residue.
+- Extracted the regression behavior behind a reusable header/source boundary,
+  replacing compile-time `std::array` dataset-size templates with a read-only
+  `std::span<const Sample>` view.
+- Added a GoogleTest that compares both analytic gradient components against
+  central differences at three parameter points with `1e-8` tolerance.
+- Added CMake library and example targets, connected the test target to the
+  library's public C++23/include usage requirements, refreshed the `dev`
+  compilation database, and verified both discovered tests pass.
+- Separated a silent `gradient_descent_step` from orchestration and presentation,
+  then added a strict automated convergence test. From `(w,b)=(1,1)`, learning
+  rate `0.1` reaches the known `(2,1)` solution and near-zero loss within
+  `1e-8` after 1000 epochs.
+- Added deliberate instability evidence: with the same start and data, learning
+  rate `1.0` increases loss from about `1.67` to `5.42e11` after 10 epochs.
+- Derived the exact global learning-rate stability interval
+  `0 < a < (4-sqrt(10))/2 ≈ 0.4189` by reducing two preserved error relationships
+  to scalar recurrences, then independently proved the two directions form a
+  basis and therefore cover every initial error vector.
 
 ## Open questions and review findings
 
@@ -113,15 +134,24 @@ Before implementation, run an adaptive diagnostic covering:
 - Additional sanitizers remain dependency-triggered: TSan for concurrency, MSan
   for specialized Linux uninitialized-read coverage, and vptr checks when
   polymorphism becomes real.
+- Teaching protocol update: before every new subject, provide a named unit and
+  purpose/scope/value explainer so the learner can decide whether to pursue it.
 
 ## Active detours or branches
 
 - Completed short diagnostic detour: modern `inline` and ODR semantics.
+- Active required detour: rebuild CMake intuition from first principles in
+  `/Users/keremkazan/Documents/Projects/cmake-tutorial`. The recent target and
+  usage-requirement work was mechanically successful but not yet retained well
+  enough to count as mastery.
+- Completed 2026-07-13: CMake targets-from-first-principles detour. The learner
+  explained compiled, interface, and executable targets; usage requirements;
+  target linking; generated artifacts; and incremental rebuild propagation.
 
 ## Exact next action
 
-Introduce curvature through a one-dimensional quadratic one Socratic step at a
-time, then generalize to the linear-regression Hessian and stable learning rates.
+Orient the learner to the Hessian/convexity unit, then connect the completed
+stability proof to curvature and uniqueness of the optimum if accepted.
 
 ## Active learning artifacts
 
@@ -132,7 +162,9 @@ time, then generalize to the linear-regression Hessian and stable learning rates
 - [`docs/learning/phase-0/warnings-and-static-analysis.md`](learning/phase-0/warnings-and-static-analysis.md)
 - [`docs/learning/phase-0/benchmarking-and-profiling.md`](learning/phase-0/benchmarking-and-profiling.md)
 - [`docs/learning/phase-1/gradient-descent-foundations.md`](learning/phase-1/gradient-descent-foundations.md)
+- [`docs/learning/detours/cmake-targets-from-first-principles.md`](learning/detours/cmake-targets-from-first-principles.md)
 
 ## Last updated
 
-2026-07-10 — Compilation/linking diagnostic and `inline` detour recorded.
+2026-07-12 — Recorded the manual regression implementation and numerical-gradient
+validation handoff.

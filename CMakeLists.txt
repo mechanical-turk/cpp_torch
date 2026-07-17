@@ -69,6 +69,27 @@ if(CPP_TORCH_ENABLE_SANITIZERS)
   target_link_libraries(cpp_torch PUBLIC cpp_torch_sanitizers)
 endif()
 
+add_library(
+  manual_linear_regression
+  experiments/phase-1/manual-linear-regression/linear_regression.cpp
+)
+target_compile_features(manual_linear_regression PUBLIC cxx_std_23)
+target_include_directories(
+  manual_linear_regression
+  PUBLIC
+    ${CMAKE_CURRENT_SOURCE_DIR}/experiments/phase-1/manual-linear-regression/
+)
+add_executable(
+  manual_linear_regression_example
+  experiments/phase-1/manual-linear-regression/main.cpp
+)
+target_link_libraries(
+  manual_linear_regression_example
+  PRIVATE
+    manual_linear_regression
+    cpp_torch_warnings
+)
+
 add_executable(basic_usage examples/basic_usage.cpp)
 target_link_libraries(
   basic_usage
@@ -89,13 +110,14 @@ if(BUILD_TESTING)
 
   FetchContent_MakeAvailable(googletest)
 
-  add_executable(cpp_torch_tests tests/math_test.cpp)
+  add_executable(cpp_torch_tests tests/math_test.cpp tests/manual_linear_regression_test.cpp)
 
   target_link_libraries(
     cpp_torch_tests
     PRIVATE
       cpp_torch
       cpp_torch_warnings
+      manual_linear_regression
       GTest::gtest_main
   )
 
