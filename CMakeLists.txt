@@ -26,16 +26,16 @@ add_library(cpp_torch_warnings INTERFACE)
 target_compile_options(
   cpp_torch_warnings
   INTERFACE
-    "$<$<CXX_COMPILER_ID:AppleClang,Clang,GNU>:-Wall;-Wextra;-Wpedantic;-Wconversion;-Wshadow>"
-    "$<$<CXX_COMPILER_ID:MSVC>:/W4>"
+  "$<$<CXX_COMPILER_ID:AppleClang,Clang,GNU>:-Wall;-Wextra;-Wpedantic;-Wconversion;-Wshadow>"
+  "$<$<CXX_COMPILER_ID:MSVC>:/W4>"
 )
 
 if(CPP_TORCH_WARNINGS_AS_ERRORS)
   target_compile_options(
     cpp_torch_warnings
     INTERFACE
-      "$<$<CXX_COMPILER_ID:AppleClang,Clang,GNU>:-Werror>"
-      "$<$<CXX_COMPILER_ID:MSVC>:/WX>"
+    "$<$<CXX_COMPILER_ID:AppleClang,Clang,GNU>:-Werror>"
+    "$<$<CXX_COMPILER_ID:MSVC>:/WX>"
   )
 endif()
 
@@ -45,14 +45,14 @@ if(CPP_TORCH_ENABLE_SANITIZERS)
   target_compile_options(
     cpp_torch_sanitizers
     INTERFACE
-      -fsanitize=address,undefined
-      -fno-omit-frame-pointer
+    -fsanitize=address,undefined
+    -fno-omit-frame-pointer
   )
 
   target_link_options(
     cpp_torch_sanitizers
     INTERFACE
-      -fsanitize=address,undefined
+    -fsanitize=address,undefined
   )
 endif()
 
@@ -62,7 +62,7 @@ target_link_libraries(cpp_torch PRIVATE cpp_torch_warnings)
 target_include_directories(
   cpp_torch
   PUBLIC
-    ${CMAKE_CURRENT_SOURCE_DIR}/include
+  ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
 
 if(CPP_TORCH_ENABLE_SANITIZERS)
@@ -77,7 +77,7 @@ target_compile_features(manual_linear_regression PUBLIC cxx_std_23)
 target_include_directories(
   manual_linear_regression
   PUBLIC
-    ${CMAKE_CURRENT_SOURCE_DIR}/experiments/phase-1/manual-linear-regression/
+  ${CMAKE_CURRENT_SOURCE_DIR}/experiments/phase-1/manual-linear-regression/
 )
 add_executable(
   manual_linear_regression_example
@@ -86,16 +86,26 @@ add_executable(
 target_link_libraries(
   manual_linear_regression_example
   PRIVATE
-    manual_linear_regression
-    cpp_torch_warnings
+  manual_linear_regression
+  cpp_torch_warnings
+)
+add_executable(
+  manual_linear_regression_learning_rate_experiment
+  experiments/phase-1/manual-linear-regression/learning_rate_experiment.cpp
+)
+target_link_libraries(
+  manual_linear_regression_learning_rate_experiment
+  PRIVATE
+  manual_linear_regression
+  cpp_torch_warnings
 )
 
 add_executable(basic_usage examples/basic_usage.cpp)
 target_link_libraries(
   basic_usage
   PRIVATE
-    cpp_torch
-    cpp_torch_warnings
+  cpp_torch
+  cpp_torch_warnings
 )
 
 if(BUILD_TESTING)
@@ -104,7 +114,7 @@ if(BUILD_TESTING)
   FetchContent_Declare(
     googletest
     URL
-      https://github.com/google/googletest/archive/52eb8108c5bdec04579160ae17225d66034bd723.zip
+    https://github.com/google/googletest/archive/52eb8108c5bdec04579160ae17225d66034bd723.zip
     DOWNLOAD_EXTRACT_TIMESTAMP TRUE
   )
 
@@ -115,10 +125,10 @@ if(BUILD_TESTING)
   target_link_libraries(
     cpp_torch_tests
     PRIVATE
-      cpp_torch
-      cpp_torch_warnings
-      manual_linear_regression
-      GTest::gtest_main
+    cpp_torch
+    cpp_torch_warnings
+    manual_linear_regression
+    GTest::gtest_main
   )
 
   include(GoogleTest)
@@ -135,7 +145,7 @@ if(CPP_TORCH_BUILD_BENCHMARKS)
   FetchContent_Declare(
     google_benchmark
     URL
-      https://github.com/google/benchmark/archive/192ef10025eb2c4cdd392bc502f0c852196baa48.zip
+    https://github.com/google/benchmark/archive/192ef10025eb2c4cdd392bc502f0c852196baa48.zip
     DOWNLOAD_EXTRACT_TIMESTAMP TRUE
   )
 
@@ -151,7 +161,7 @@ if(CPP_TORCH_BUILD_BENCHMARKS)
   target_link_libraries(
     cpp_torch_benchmarks
     PRIVATE
-      cpp_torch_warnings
-      benchmark::benchmark_main
+    cpp_torch_warnings
+    benchmark::benchmark_main
   )
 endif()

@@ -79,4 +79,43 @@ header/source boundary using `std::span<const Sample>`, with CMake library,
 example, and test targets. Convergence and unstable-learning-rate evidence remain.
 The optimizer has since been separated from console output, and an automated
 test verifies convergence from `(1,1)` to the known `(2,1)` relationship at
-learning rate `0.1`. Excessive-learning-rate evidence remains.
+learning rate `0.1`. Excessive-learning-rate behavior, boundary visualization,
+and invalid-input contracts are now also verified. Focused prediction and
+known-value loss tests now pass under strict and sanitized builds. The final
+derivation, code, and design mastery review is complete.
+
+### Mastery evidence
+
+- Re-derived MSE gradients and correctly distinguished residual dependence on
+  `x_i` from the additional slope sensitivity factor `x_i`.
+- Explained central differences, their reduced truncation bias, and the
+  floating-point cancellation tradeoff in choosing epsilon.
+- Derived the exact Hessian and global learning-rate boundary, then generalized
+  from its two preserved directions to arbitrary initial errors using a basis
+  decomposition.
+- Connected gradient convergence to parameter convergence through the constant,
+  invertible Hessian and proved global optimality from zero nonnegative MSE.
+- Explained `std::span` container flexibility and, after correction, its
+  non-owning lifetime contract.
+- Defended public/private implementation boundaries, exception-based invalid
+  input contracts, and dataset-dependent learning-rate policy.
+- Distinguished successful optimization of empirical risk from generalization:
+  finite training samples do not prove the real data-generating relationship is
+  linear or that unseen points lie on the fitted line.
+
+### Revision topics
+
+- Retrieve sum-loss versus mean-loss gradient scaling without prompting.
+- Continue sharpening the distinction between API-surface motivation and linkage
+  mechanics.
+- State non-owning view lifetime obligations immediately when proposing spans.
+
+### Retrospective
+
+The implementation progressed from a printed scalar loop to a tested library,
+reproducible stability experiment, and Python visualization. The most valuable
+mathematical redesign was introducing the Hessian only after observed divergence
+created a concrete question. The teaching process also established a permanent
+requirement to orient new subjects before introducing their notation.
+
+**Status: complete — 2026-07-20.**

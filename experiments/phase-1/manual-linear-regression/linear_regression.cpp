@@ -17,6 +17,10 @@ double central_difference(
     double second,
     double epsilon
 ) {
+  if (epsilon <= 0.0) {
+    throw std::invalid_argument("epsilon must be positive.");
+  }
+
   return (first - second) / (2 * epsilon);
 }
 
@@ -60,6 +64,11 @@ Gradient numerical_gradient(
     double b,
     double epsilon
 ) {
+  if (samples.empty()) {
+    throw std::invalid_argument(
+        "cannot compute a numerical gradient for an empty dataset"
+    );
+  }
 
   Gradient ans {0.0, 0.0};
   for (const auto& sample : samples) {
@@ -106,6 +115,10 @@ Evaluation evaluate(
     double w,
     double b
 ) {
+
+  if (samples.empty()) {
+    throw std::invalid_argument("cannot evaluate an empty dataset");
+  }
 
   double sum_loss = 0.0;
   double sum_dw = 0.0;

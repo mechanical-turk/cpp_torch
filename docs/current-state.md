@@ -7,9 +7,9 @@ belongs in the active milestone file.
 
 - Plan: [`docs/learning-plan.md`](learning-plan.md)
 - Active phase: Phase 1 — Scalar learning systems laboratory
-- Active milestone: Milestone 1.1 — Manual Linear Regression
+- Active milestone: Milestone 1.1 — Manual Linear Regression (complete)
 - Milestone file: [`docs/milestones/01-01-manual-linear-regression.md`](milestones/01-01-manual-linear-regression.md)
-- Status: manual implementation and correctness validation in progress
+- Status: mastery gate passed; next milestone not yet accepted
 
 ## Current gate
 
@@ -119,6 +119,22 @@ differences at several parameter points before adding convergence tests.
   `0 < a < (4-sqrt(10))/2 ≈ 0.4189` by reducing two preserved error relationships
   to scalar recurrences, then independently proved the two directions form a
   basis and therefore cover every initial error vector.
+- Added a CMake-built CSV experiment comparing rates `0.4`, the theoretical
+  boundary, and `0.43`. At epoch 100, loss is approximately `9.97e-9`, `1.5712`,
+  and `4.98e4` respectively, matching convergence, non-decaying boundary
+  behavior, and divergence.
+- Added a Python/Matplotlib loss visualization over 200 epochs. The stable run
+  reaches floating-point-scale loss, the boundary remains at `1.5712`, and the
+  unstable run grows to approximately `1.58e9`.
+- Established public invalid-input contracts: dataset evaluation and numerical
+  gradients reject empty datasets, and numerical gradients reject non-positive
+  finite-difference steps with `std::invalid_argument`. Seven tests pass under
+  both strict and ASan/UBSan configurations.
+- Added explicit known-value prediction, MSE, and analytic-gradient tests. Nine
+  tests now pass under both strict and ASan/UBSan configurations, completing the
+  milestone's implementation-level correctness evidence.
+- Passed the mastery review across derivation, stability, numerical checking,
+  C++ boundaries, invalid-input policy, and optimization-versus-generalization.
 
 ## Open questions and review findings
 
@@ -150,8 +166,8 @@ differences at several parameter points before adding convergence tests.
 
 ## Exact next action
 
-Orient the learner to the Hessian/convexity unit, then connect the completed
-stability proof to curvature and uniqueness of the optimum if accepted.
+Present the scalar reverse-mode autograd milestone orientation. Do not begin its
+concepts or implementation until the learner accepts the unit.
 
 ## Active learning artifacts
 

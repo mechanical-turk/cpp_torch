@@ -136,6 +136,22 @@ on the two distinct preserved lines are linearly independent and form a basis of
 `R^2`; by linearity, every starting error decomposes into those directions, and
 both components converge when both scalar multipliers have magnitude below one.
 
+The learner connected the Hessian to gradient change through
+`delta_g = H delta_theta`, then derived the exact quadratic relationship
+`g(theta)=H[u,v]` by measuring from the zero-gradient optimum. Since `H` is
+invertible, gradient convergence implies parameter-error convergence. The exact
+solution has zero MSE, which is globally minimal because squared loss is
+nonnegative.
+
+Numerical verification now compares learning rates on both sides of the derived
+boundary. After 100 epochs, `0.4` reaches loss near `1e-8`, the boundary retains
+loss near `1.57`, and `0.43` grows to roughly `5e4`.
+
+A Matplotlib plot over 200 epochs makes the orders-of-magnitude behavior visible:
+the stable loss reaches floating-point scale, the boundary loss remains near
+`1.5712`, and the unstable loss reaches roughly `1.58e9`. Parameter plots remain
+to expose the sign-alternating boundary behavior hidden by squared loss.
+
 Terminology and teaching corrections established during this unit:
 
 - Coupling means each coordinate update depends on both errors; individual
