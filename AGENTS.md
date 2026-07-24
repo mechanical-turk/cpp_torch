@@ -49,6 +49,9 @@ The north star is maximum durable learning and intellectual growth.
 - Keep optimization evidence-based and tied to a learning objective.
 - Do not let advanced feature ambitions bypass mathematical, ML, C++, numerical,
   or systems foundations.
+- Treat a learner's clarifying question as a request to clarify the pending
+  question, not as an answer to it. After clarifying, restate the original
+  question and wait for the learner's answer.
 
 ## Topic orientation requirement
 

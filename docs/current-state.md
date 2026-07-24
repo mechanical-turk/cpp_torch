@@ -6,16 +6,16 @@ belongs in the active milestone file.
 ## Governing plan
 
 - Plan: [`docs/learning-plan.md`](learning-plan.md)
-- Active phase: Phase 1 — Scalar learning systems laboratory
-- Active milestone: Milestone 1.1 — Manual Linear Regression (complete)
-- Milestone file: [`docs/milestones/01-01-manual-linear-regression.md`](milestones/01-01-manual-linear-regression.md)
-- Status: mastery gate passed; next milestone not yet accepted
+- Active phase: Phase 2 — Contiguous tensor foundations
+- Active milestone: Milestone 2.1 — Contiguous Tensor Representation
+- Milestone file: [`docs/milestones/02-01-contiguous-tensor-representation.md`](milestones/02-01-contiguous-tensor-representation.md)
+- Status: representation and checked-indexing implementation active
 
 ## Current gate
 
-The first explicit scalar linear-regression training loop works. The active gate
-is correctness validation: verify the analytic MSE gradient against central
-differences at several parameter points before adding convergence tests.
+The active gate is the contiguous representation contract: demonstrate correct
+row-major indexing and failure behavior across ordinary, scalar, and zero-sized
+shapes before extracting the experiment into reusable project code.
 
 ## Completed work
 
@@ -135,6 +135,23 @@ differences at several parameter points before adding convergence tests.
   milestone's implementation-level correctness evidence.
 - Passed the mastery review across derivation, stability, numerical checking,
   C++ boundaries, invalid-input policy, and optimization-versus-generalization.
+- Implemented a value-semantic contiguous `double` tensor experiment with
+  explicit scalar, singleton, empty, and overflow-safe shape semantics.
+- Implemented row-major stride construction and checked multidimensional
+  indexing. Observed correct values for several rank-3 coordinates.
+- Diagnosed an unsigned reverse-loop underflow with ASan: `i >= 0` is always
+  true for `std::size_t`, causing `result[i - 1]` to write before the vector.
+  Replaced it with the terminating condition `i > 0`.
+- Verified the current tensor experiment is warning-clean under the strict
+  compiler flags and passes both ASan and UBSan.
+- Added const and mutable `at()` overloads that share one checked offset helper.
+  Spans are passed by value as lightweight non-owning views. Assigning through
+  the mutable reference changed the selected stored value to `42`; strict and
+  sanitized runs remained clean.
+- Promoted `Tensor` into the public `cpp_torch` library boundary. Removed the
+  obsolete production `math.cpp`, `math.hpp`, and `math_test.cpp`; CMake now
+  builds `src/tensor.cpp`, and `basic_usage` consumes the tensor API. The `dev`
+  build succeeds and all eight remaining tests pass.
 
 ## Open questions and review findings
 
@@ -152,6 +169,14 @@ differences at several parameter points before adding convergence tests.
   polymorphism becomes real.
 - Teaching protocol update: before every new subject, provide a named unit and
   purpose/scope/value explainer so the learner can decide whether to pursue it.
+- Deferred at the learner's request: explicit observed evidence for rank
+  mismatch, per-axis bounds failure, rank-0 scalar access, and zero-sized tensor
+  access. The implementation contains the checks, but this portion of the
+  indexing gate has not been demonstrated.
+- Deferred at the learner's request: the copy/move experiment currently accesses
+  a moved-from tensor before reassignment and terminates with
+  `std::invalid_argument`. Independent-copy output and safe reuse after
+  reassignment remain unverified.
 
 ## Active detours or branches
 
@@ -163,11 +188,15 @@ differences at several parameter points before adding convergence tests.
 - Completed 2026-07-13: CMake targets-from-first-principles detour. The learner
   explained compiled, interface, and executable targets; usage requirements;
   target linking; generated artifacts; and incremental rebuild propagation.
+- Closed 2026-07-23: C++20 named-modules detour. The manual pipeline and a
+  working single-file `Value` module were demonstrated, then all experiment code
+  was deleted because further tooling mechanics had lower learning value than
+  returning to autograd. Modules remain a future tooling topic.
 
 ## Exact next action
 
-Present the scalar reverse-mode autograd milestone orientation. Do not begin its
-concepts or implementation until the learner accepts the unit.
+Add a focused tensor test target/file for the promoted public representation;
+retain the explicitly deferred indexing and copy/move cases as milestone debt.
 
 ## Active learning artifacts
 
@@ -178,9 +207,12 @@ concepts or implementation until the learner accepts the unit.
 - [`docs/learning/phase-0/warnings-and-static-analysis.md`](learning/phase-0/warnings-and-static-analysis.md)
 - [`docs/learning/phase-0/benchmarking-and-profiling.md`](learning/phase-0/benchmarking-and-profiling.md)
 - [`docs/learning/phase-1/gradient-descent-foundations.md`](learning/phase-1/gradient-descent-foundations.md)
+- [`docs/learning/phase-1/scalar-autograd-foundations.md`](learning/phase-1/scalar-autograd-foundations.md)
+- [`docs/learning/phase-2/contiguous-tensor-foundations.md`](learning/phase-2/contiguous-tensor-foundations.md)
 - [`docs/learning/detours/cmake-targets-from-first-principles.md`](learning/detours/cmake-targets-from-first-principles.md)
 
 ## Last updated
 
-2026-07-12 — Recorded the manual regression implementation and numerical-gradient
-validation handoff.
+2026-07-24 — Recorded checked row-major indexing, mutable access, library
+promotion, removal of the obsolete math scaffold, and successful build/test
+verification.

@@ -56,7 +56,7 @@ if(CPP_TORCH_ENABLE_SANITIZERS)
   )
 endif()
 
-add_library(cpp_torch src/math.cpp)
+add_library(cpp_torch src/tensor.cpp)
 target_compile_features(cpp_torch PUBLIC cxx_std_23)
 target_link_libraries(cpp_torch PRIVATE cpp_torch_warnings)
 target_include_directories(
@@ -100,6 +100,37 @@ target_link_libraries(
   cpp_torch_warnings
 )
 
+add_library(
+  scalar_autograd
+  experiments/phase-1/scalar-autograd/value-engine/value.cpp
+)
+target_compile_features(scalar_autograd PUBLIC cxx_std_23)
+target_include_directories(
+  scalar_autograd
+  PUBLIC
+  ${CMAKE_CURRENT_SOURCE_DIR}/experiments/phase-1/scalar-autograd/value-engine
+)
+target_link_libraries(
+  scalar_autograd
+  PRIVATE
+  cpp_torch_warnings
+)
+
+if(CPP_TORCH_ENABLE_SANITIZERS)
+  target_link_libraries(scalar_autograd PUBLIC cpp_torch_sanitizers)
+endif()
+
+add_executable(
+  scalar_autograd_training
+  experiments/phase-1/scalar-autograd/value-engine/training.cpp
+)
+target_link_libraries(
+  scalar_autograd_training
+  PRIVATE
+  scalar_autograd
+  cpp_torch_warnings
+)
+
 add_executable(basic_usage examples/basic_usage.cpp)
 target_link_libraries(
   basic_usage
@@ -120,7 +151,7 @@ if(BUILD_TESTING)
 
   FetchContent_MakeAvailable(googletest)
 
-  add_executable(cpp_torch_tests tests/math_test.cpp tests/manual_linear_regression_test.cpp)
+  add_executable(cpp_torch_tests tests/manual_linear_regression_test.cpp)
 
   target_link_libraries(
     cpp_torch_tests
