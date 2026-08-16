@@ -112,3 +112,98 @@ The first move experiment incorrectly accessed the moved-from tensor without
 reassignment and terminated because its observed rank was zero. The learner
 chose to move on; safe post-move reassignment and independent-copy evidence
 remain open.
+
+The focused GoogleTest representation contract was also deferred in favor of
+beginning tensor arithmetic. Manual strict and sanitizer evidence exists, but
+the representation milestone cannot be marked complete until its automated
+contract and skipped edge cases are revisited.
+
+## First elementwise operation
+
+The learner implemented equal-shape `Tensor::operator+` as a const operation
+returning independently owned output. The design discussion established:
+
+- a member binary operator is valid for `Tensor + Tensor`;
+- a non-member becomes more useful when symmetric conversions or
+  `scalar + Tensor` enter the API;
+- constructor sink parameters accepted by value avoid repeated overloads;
+- completed local shape/storage vectors should be moved into those parameters,
+  eliminating a second deep copy while retaining cheap vector moves.
+
+The known first output value was observed as `3` for `[2,3] + [1,4]` under
+normal and ASan/UBSan builds. Full operation coverage remains part of the
+deferred tensor test debt.
+
+Elementwise multiplication was then implemented with the same ownership and
+shape contract. After correcting operation-specific validation terminology and
+actually exercising every output element, strict and sanitized builds observed:
+
+```text
+[2,3] + [1,4] = [3,7]
+[2,3] * [1,4] = [2,12]
+```
+
+The two concrete implementations now provide evidence for analyzing a shared
+internal elementwise traversal rather than abstracting from only one example.
+
+The learner identified the varying part as a scalar
+`(double,double) -> double` callable and chose a private member helper so it can
+access both tensors' private storage directly. This is legal because class
+members may access private fields on every instance of their class, not only
+`this`. Addition and multiplication now pass lambdas into an abbreviated
+function template while sharing validation, allocation, traversal, and result
+construction.
+
+The learner then established why this template may remain defined in
+`tensor.cpp`: only the non-template operator bodies in that translation unit
+instantiate it, and the full definition is visible there. If those callers were
+moved into the public header while the helper definition remained hidden, a
+consumer could not instantiate the required lambda specialization.
+
+## Full reduction semantics
+
+The learner chose a rank-0 `Tensor` rather than `double` as the result of a
+full-tensor sum, preserving tensor composition and future autograd tracking.
+The sum of empty storage was identified as `0`, the additive identity, with
+scalar shape `[]` rather than singleton-vector shape `[1]`.
+
+The first example supplied one index to the rank-0 result and terminated. Codex
+later corrected the mechanical example while verifying dot composition; empty
+reduction remains validation debt.
+
+## Dot-product composition
+
+The learner implemented rank-1 dot product as:
+
+```text
+dot(left,right) = sum(left * right)
+```
+
+This made the distinction between unambiguous vector dot product and
+higher-rank axis contraction explicit. For `[2,3]` and `[1,4]`, strict and
+sanitized builds produced a rank-0 tensor containing `14`.
+
+## Automated contract closure
+
+Codex added the routine GoogleTest harness under the standing example/harness
+ownership rule. Seven tensor tests now cover metadata, checked access and
+mutation, constructor/index failures, scalar/singleton/empty distinctions,
+empty reduction, copy/move behavior, reference arithmetic, and invalid
+operands. All 15 repository tests pass under warnings-as-errors and ASan/UBSan.
+
+This closes mechanical validation debt only. The learner must still retrieve and
+defend the ownership and representation model before Milestone 2.1 passes.
+
+## Mastery retrieval
+
+The learner subsequently retrieved the ownership, scalar/empty, overflow,
+row-major indexing, and constructor-invariant models. Two corrections were
+needed and accepted:
+
+- destruction, as well as reassignment, is guaranteed for a moved-from tensor;
+- scalar shape `[]` is not an exception to the shape-product/storage-size
+  invariant because the empty product is one.
+
+The learner also identified the current performance limitation that every
+`at()` call reconstructs and allocates the row-major stride vector. Milestone
+2.1 is complete; this observation motivates stored layout metadata in Phase 3.

@@ -15,6 +15,10 @@
 # Generated experiment and Python outputs
 __pycache__/
 *.py[cod]
+.venv/
 /example.csv
 /learning_rate_loss.png
 /learning_rate_parameters.png
+
+# Private YouTube channel analytics
+/youtube-series/analytics/private/

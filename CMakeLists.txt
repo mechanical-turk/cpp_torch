@@ -151,7 +151,11 @@ if(BUILD_TESTING)
 
   FetchContent_MakeAvailable(googletest)
 
-  add_executable(cpp_torch_tests tests/manual_linear_regression_test.cpp)
+  add_executable(
+    cpp_torch_tests
+    tests/manual_linear_regression_test.cpp
+    tests/tensor_test.cpp
+  )
 
   target_link_libraries(
     cpp_torch_tests
@@ -184,6 +188,7 @@ if(CPP_TORCH_BUILD_BENCHMARKS)
 
   add_executable(
     cpp_torch_benchmarks
+    benchmarks/tensor_traversal_benchmark.cpp
     benchmarks/vector_sum_benchmark.cpp
   )
 
@@ -192,6 +197,7 @@ if(CPP_TORCH_BUILD_BENCHMARKS)
   target_link_libraries(
     cpp_torch_benchmarks
     PRIVATE
+    cpp_torch
     cpp_torch_warnings
     benchmark::benchmark_main
   )

@@ -1,0 +1,78 @@
+# Visual Asset Guidelines
+
+These rules govern generated diagrams and lower-screen overlays for *Deep
+Learning, All the Way Down*.
+
+## Semantic consistency
+
+- Related concepts must use one consistent visual grammar. Do not vary shape,
+  container style, scale, or decoration unless that difference communicates a
+  real conceptual distinction.
+- Repeated objects must be literal duplicates of one canonical object. Do not
+  ask an image model to independently redraw two objects that are intended to
+  be identical.
+- A singleton vector must not visually imply unused capacity or additional
+  hidden elements. Show one element and nothing more.
+- When comparing a singleton and an empty vector, use identical vector brackets:
+  the singleton contains one element; the empty vector contains none.
+- Use brackets to communicate the vector container. A scalar value uses the
+  same element glyph without surrounding brackets.
+
+## Overlay construction
+
+- The current `1080 x 1920` vertical layout assigns the top `1080 x 744` region
+  to the webcam (`y = 0` through `743`) and the entire remaining `1080 x 1176`
+  region to the visual aid (`y = 744` through `1919`).
+- Generate final lower-screen visual assets at exactly `1080 x 1176` unless
+  that layout is explicitly revised. The asset must occupy the complete
+  remaining vertical region, not float inside a smaller source box.
+- Design the content for that taller region rather than padding a wide card.
+  Distribute notation, labels, metadata, and diagrams across approximately
+  ninety percent of the available height while preserving intentional edge
+  margins.
+- Lower-screen OBS overlays default to a fully opaque, edge-to-edge rectangular
+  background with sharp corners.
+- Do not rely on transparency, rounded outer corners, or the appearance of the
+  source beneath the overlay unless a specific composition requires it.
+- Design the overlay as a complete rectangular region that can safely cover
+  whatever is beneath it in OBS.
+- Freely positioned attention markers, pointers, and similar compositing assets
+  are an explicit exception: they require a transparent background so they can
+  move across camera and visual-aid regions without bringing a bounding box.
+- Keep essential text and diagrams legible at phone size and within the central
+  safe area.
+
+## Alignment and typography
+
+- Peer headings in comparison columns use one identical font family, size,
+  weight, letter spacing, color, and baseline. Determine the shared size from
+  the longest heading; do not enlarge shorter headings to fill available space.
+- Reserve explicit inner gutters on both sides of every column separator. The
+  longest heading must fit inside the padded content width rather than visually
+  crowding the divider.
+- Prefer contemporary, highly legible technical typefaces such as Helvetica
+  Neue. Avoid default textbook-style typography, unintended italic faces, and
+  glyph variants such as slashed zero when they make mathematical notation less
+  immediately recognizable.
+- Repeated metadata rows share exact baselines and column positions.
+- Labels align with labels; values align with values. Do not approximate the
+  grid separately in each comparison column.
+- Preserve exact mathematical notation and verify every number, bracket, and
+  label before accepting an asset.
+- Prefer restrained technical styling over decorative effects.
+
+## Generation workflow
+
+1. Define one canonical instance of every repeated object.
+2. Duplicate that instance for all equivalent uses.
+3. When exact typography, alignment, or repeated geometry is required, build
+   the final asset in a deterministic vector format such as SVG. Do not rely on
+   a raster image generator to independently redraw elements that must match.
+4. Verify object dimensions and alignment, not merely visual similarity.
+5. Verify the semantic reading of containers, empty states, and values.
+6. Export an opaque `1080 x 1176` rectangular PNG for the current OBS layout
+   unless different dimensions or transparency were explicitly chosen for a
+   concrete reason.
+7. Inspect the final file at its intended phone-size scale before recording.
+8. Confirm that the composition uses the vertical allowance deliberately and
+   does not merely center a shorter legacy asset inside the larger canvas.

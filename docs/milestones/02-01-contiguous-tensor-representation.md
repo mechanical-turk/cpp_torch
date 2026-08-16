@@ -86,11 +86,51 @@ storage contains, and what additional information is required to locate element
   `src/tensor.cpp`. The obsolete production math scaffold was removed, the
   basic consumer now uses `Tensor`, and the complete `dev` build plus eight
   pre-existing tests pass.
+- A high-value arithmetic branch produced equal-shape elementwise addition,
+  with normal and sanitized execution of a known output.
+- Equal-shape elementwise multiplication followed; complete known addition and
+  multiplication outputs now pass strict and sanitized builds.
 
 The learner chose to defer direct scalar, rank-mismatch, per-axis bounds, and
-zero-sized indexing demonstrations. These remain validation debt and do not
-count as completed mastery evidence.
+zero-sized indexing demonstrations. These are now mechanically covered by the
+Codex-authored test harness but still do not count as learner mastery evidence.
 
 The copy/move observation is also incomplete: direct access to the moved-from
 object terminated with `std::invalid_argument`, and the planned reassignment
-demonstration was deferred.
+demonstration was deferred. Automated coverage now passes, but conceptual
+retrieval remains required.
+
+The learner also deferred the focused tensor test file and chose to begin
+elementwise arithmetic. This is allowed as a high-value branch for momentum,
+but Milestone 2.1 remains open. Codex has since supplied the mechanical test
+harness under the updated workflow agreement.
+
+Full sum reduction was implemented with rank-0 output and additive-identity
+empty semantics. Ordinary scalar access is now exercised through rank-1 dot
+product: the known result `14` passes strict and sanitized execution. Empty
+reduction remains open.
+
+Seven tensor tests and all eight pre-existing tests pass under both strict and
+sanitized presets. The remaining gate is learner explanation, not behavior.
+
+## Mastery gate result
+
+Passed on 2026-07-24. In live retrieval, the learner correctly explained:
+
+- why tensor copies deeply own independent vector allocations while moves
+  cheaply transfer vector ownership;
+- destruction and reassignment guarantees for moved-from tensors, after
+  correcting the overly strong claim that assignment was the only safe action;
+- the rank/storage distinction among scalar `[]`, singleton `[1]`, and empty
+  `[0]`;
+- why overflowing nonzero shapes are rejected while any zero-dimensional shape
+  has zero elements;
+- row-major stride derivation and offset-as-dot-product;
+- the single shape-product/storage-size invariant, after correcting the claim
+  that scalars were an exception; and
+- the per-access cost of recomputing and allocating strides.
+
+Together with strict and sanitized contract coverage, this satisfies Milestone
+2.1. Stored strides, offsets, views, shared storage, and non-contiguous layouts
+now become Phase 3 redesign subjects rather than patches to this deliberately
+limited first tensor.
