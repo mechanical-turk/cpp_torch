@@ -1,9 +1,0 @@
-BasedOnStyle: LLVM
-AlignAfterOpenBracket: BlockIndent
-AllowAllParametersOfDeclarationOnNextLine: false
-AllowShortFunctionsOnASingleLine: None
-BinPackParameters: false
-BracedInitializerIndentWidth: 2
-BreakFunctionDefinitionParameters: true
-ReferenceAlignment: Left
-SpaceBeforeCpp11BracedList: true

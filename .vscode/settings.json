@@ -1,7 +1,0 @@
-{
-  "files.insertFinalNewline": true,
-  "clangd.arguments": [
-    "--background-index",
-    "--clang-tidy"
-  ]
-}

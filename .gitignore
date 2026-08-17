@@ -1,24 +1,13 @@
-# CMake build trees
+# Local tooling caches (uv, etc.)
 /build/
-
-# Disposable Ninja lab outputs
-/experiments/phase-0/ninja-basics/*.o
-/experiments/phase-0/ninja-basics/*.a
-/experiments/phase-0/ninja-basics/*.d
-/experiments/phase-0/ninja-basics/app
-/experiments/phase-0/ninja-basics/.ninja_deps
-/experiments/phase-0/ninja-basics/.ninja_log
 
 # macOS
 .DS_Store
 
-# Generated experiment and Python outputs
+# Python outputs
 __pycache__/
 *.py[cod]
 .venv/
-/example.csv
-/learning_rate_loss.png
-/learning_rate_parameters.png
 
 # Private YouTube channel analytics
 /youtube-series/analytics/private/
