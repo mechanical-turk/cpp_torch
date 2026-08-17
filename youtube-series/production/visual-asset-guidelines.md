@@ -42,6 +42,22 @@ Learning, All the Way Down*.
 - Keep essential text and diagrams legible at phone size and within the central
   safe area.
 
+## Platform interface safety
+
+- A `1080 x 1920` canvas is not automatically portable across YouTube Shorts,
+  TikTok, and Instagram Reels. Each platform overlays different controls,
+  captions, account metadata, and navigation on the video.
+- Record and export one universal vertical master whose essential content fits
+  inside the intersection of all three platforms' safe areas. Do not create a
+  separate edit for each platform unless a future platform feature makes that
+  unavoidable.
+- Treat the right edge, bottom region, and extreme top as interface space. Do
+  not place a comparison column, conclusion, label, or other essential content
+  beneath interaction controls, captions, account metadata, or navigation.
+- Preview the same master inside all three real posting interfaces before its
+  first publication. If one interface obscures essential content, correct the
+  universal composition and reuse the corrected export everywhere.
+
 ## Alignment and typography
 
 - Peer headings in comparison columns use one identical font family, size,

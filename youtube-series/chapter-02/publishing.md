@@ -115,25 +115,24 @@ the durable series and source-code destinations.
 
 ### Timing
 
-Publish **Monday between 9:00 and 10:30 AM ET**, two days after the Saturday
-release. This staggers distribution and places the professional-network post in
-a weekday window.
+Publish **Monday, August 17 between 4:15 and 4:45 PM ET**. The original morning
+window passed. Publishing this afternoon preserves the Episode 2 follow-up
+without competing with the Episode 3 announcement because they use different
+platforms. Leave the next LinkedIn episode announcement at least a full day of
+space.
 
 ### Copy
 
 ```text
-Deep learning frameworks make sophisticated systems remarkably easy to build. I am working backward through those abstractions to understand the machinery underneath.
+An empty shape does not mean an empty tensor.
 
-Episode 2 of Deep Learning, All the Way Down extends our tensor implementation in modern C++.
+That sounds like a small distinction, but following it carefully forces us to answer some important questions: what exactly is a scalar tensor, what should an empty tensor contain, and how do we keep shape and indexing arithmetic correct at the boundaries?
 
-We cover:
+Episode 2 of Deep Learning, All the Way Down works through those questions in modern C++.
 
-• scalar and empty tensor semantics
-• overflow-safe shape and indexing arithmetic
-• checked mutation without exposing storage
-• sum as our first tensor reduction
+We add scalar and empty tensors, overflow-safe shape and indexing arithmetic, checked mutation, and sum as our first reduction.
 
-The implementation remains deliberately small: one C++23 file, the standard library, ordinary assertions, and exceptions. The goal is to make every representation and correctness decision visible before introducing more powerful abstractions.
+The implementation is still one C++23 file using only the standard library, so every representation and correctness decision remains visible.
 
 Watch Episode 2:
 https://www.youtube.com/watch?v=8kzL5NdxGCo

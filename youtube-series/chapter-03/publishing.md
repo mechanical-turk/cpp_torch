@@ -12,7 +12,7 @@ metadata, and playback checks are complete.
 
 ## Final title
 
-Tensor Operations in C++: Arithmetic, Reductions & Dot Products | Deep Learning, All the Way Down #3
+Building a Linear Prediction from Scratch in C++ | Deep Learning, All the Way Down #3
 
 ## YouTube description
 
@@ -69,30 +69,25 @@ The computation shown is the exact example used in the episode:
 
 ## Chapter timestamps
 
-These timestamps come from the recording script. Replace them with timestamps
-from the final exported edit before scheduling the video.
-
-```text
-00:00 Teaching tensors to compute
-00:35 Questions from Episode 2
-03:25 Defining elementwise computation
-07:25 Implementing tensor addition
-13:25 Separating traversal from arithmetic
-20:25 Keeping reductions inside the tensor abstraction
-25:25 Building dot product by composition
-32:55 Expressing a linear prediction
-39:00 What we built
-41:30 What comes next
-42:00 Questions for Episode 4
-```
-
-Do not publish these unchanged if the final edit moved section boundaries.
-YouTube chapters require the first timestamp to begin at `00:00`.
+Manual chapter timestamps are intentionally omitted from the initial release.
+The edited video no longer matches the recording-script estimates, and manually
+recovering every boundary would have lower value than completing the release and
+the next episode. Revisit chapters after a transcript-assisted workflow exists.
 
 ## Pinned comment
 
 ```text
-Thanks for watching!
+Answers to the questions at the end:
+
+1. Equal-shape elementwise operations preserve shape because every shared
+coordinate produces exactly one output coordinate.
+
+2. A full sum reduces every axis, leaving one scalar with shape []. Constructing
+that result tensor can allocate and throw, so sum() cannot remain noexcept.
+
+3. weights.dot(features) multiplies corresponding features and weights and
+reduces their contributions to one scalar. Adding the scalar bias produces the
+linear prediction.
 
 Source code:
 https://github.com/mechanical-turk/deep-learning-all-the-way-down
@@ -117,7 +112,7 @@ PyTorch internals, systems programming
 - Set the language to English.
 - Mark the video as not made for children.
 - Upload `thumbnail.png` as the custom thumbnail.
-- Add the final corrected chapter timestamps to the description.
+- Do not add the obsolete recording-script timestamps to the description.
 - Add reviewed English captions. Do not rely on unreviewed automatic captions
   for C++ identifiers or mathematical terminology.
 - Add an end screen linking to Episode 2 and the complete playlist.
@@ -132,21 +127,22 @@ PyTorch internals, systems programming
 
 ### Timing
 
-Publish Monday at approximately **12:00 PM ET**, about one hour after the
-YouTube release. Do not publish another teaser beforehand.
-
-Replace `[EPISODE_3_URL]` with the public YouTube URL.
+Publish Monday, August 17 at approximately **4:00 PM ET**. The original noon
+window passed, so publish once rather than postponing the announcement or
+adding a separate teaser.
 
 ### Copy
 
 ```text
-Episode 3 of Deep Learning, All the Way Down is live.
+Episode 3 is out.
 
-Our C++ tensor can now add, subtract, multiply, reduce, and compute dot products. We finish by composing those operations into a complete linear prediction.
+We take the tensor we've been building in C++ and use it to compute a complete linear prediction:
 
-Built from first principles with C++23 and only the standard library.
+prediction = weights.dot(features) + bias
 
-[EPISODE_3_URL]
+The whole thing is built from smaller tensor operations, using C++23 and only the standard library.
+
+https://www.youtube.com/watch?v=R_NZJ_rcX7E
 ```
 
 ### Series navigation reply
@@ -163,9 +159,13 @@ https://github.com/mechanical-turk/deep-learning-all-the-way-down
 
 ### X strategy
 
-- Use the direct YouTube URL so X can generate its native preview.
-- If the preview fails after publication, attach the episode thumbnail rather
-  than deleting and repeatedly reposting the announcement.
+- YouTube currently advertises Episode 3 to X as a compact `player` card rather
+  than the full-width `summary_large_image` card used by Episodes 1 and 2.
+  Remove the compact preview in the composer and upload `thumbnail.png`
+  directly so the announcement retains the established full-width visual
+  treatment. Keep the direct YouTube URL in the post text.
+- The uploaded image itself will not function as an embedded YouTube player;
+  the visible YouTube URL remains the clickable destination.
 - Remain available for technical replies during the first hour.
 - Do not publish another link-only reminder on launch day.
 - A later technical post should teach one idea from the episode rather than
@@ -182,7 +182,11 @@ Publish Tuesday, August 18 between **9:00 and 10:30 AM ET**. This gives the X
 announcement its own launch-day window while reaching the professional network
 before Episode 4's Wednesday target.
 
-Replace `[EPISODE_3_URL]` with the public YouTube URL.
+The public Episode 3 URL is:
+
+```text
+https://www.youtube.com/watch?v=R_NZJ_rcX7E
+```
 
 ### Copy
 
@@ -202,7 +206,7 @@ We implement:
 The implementation remains deliberately small: one C++23 file using only the standard library, assertions, and exceptions. That keeps the contracts, allocations, and tradeoffs visible before more powerful abstractions arrive.
 
 Watch Episode 3:
-[EPISODE_3_URL]
+https://www.youtube.com/watch?v=R_NZJ_rcX7E
 
 Source code:
 https://github.com/mechanical-turk/deep-learning-all-the-way-down
@@ -301,7 +305,7 @@ contributions to one scalar. Together, those two operations are the dot product.
 - [ ] Watch the exported file from beginning to end without editing.
 - [ ] Check code legibility at ordinary YouTube playback size.
 - [ ] Check for clipped audio, abrupt edits, frozen frames, and cursor mistakes.
-- [ ] Record the actual chapter boundary timestamps.
+- [x] Decide explicitly to omit manual chapters from the initial release.
 - [ ] Upload the video as private or unlisted.
 - [ ] Add the final title, description, thumbnail, tags, playlist, captions,
       cards if used, and end screen.
@@ -315,7 +319,7 @@ contributions to one scalar. Together, those two operations are the dot product.
 
 - [ ] At 10:30 AM, capture Episode 2's approximately 48-hour analytics.
 - [ ] At 10:45 AM, verify Episode 3 is still scheduled for 11:00 AM and that
-      thumbnail, description, chapters, captions, playlist, and end screen are
+      thumbnail, description, captions, playlist, and end screen are
       present.
 - [ ] At 11:00 AM, confirm that Episode 3 is publicly playable.
 - [ ] Add the pinned comment.

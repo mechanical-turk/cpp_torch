@@ -123,7 +123,7 @@ def list_all_pages(
 def channel_details(youtube: Any) -> dict[str, Any]:
     response = execute(
         youtube.channels().list(
-            part="id,snippet,contentDetails,statistics,status",
+            part="id,snippet,brandingSettings,contentDetails,statistics,status",
             mine=True,
         )
     )
@@ -133,6 +133,37 @@ def channel_details(youtube: Any) -> dict[str, Any]:
             f"Expected exactly one authorized YouTube channel, found {len(items)}"
         )
     return items[0]
+
+
+def command_channel_description(args: argparse.Namespace) -> int:
+    services = build_services(authorize())
+    channel = channel_details(services.youtube)
+    branding_settings = channel.get("brandingSettings", {})
+    channel_settings = dict(branding_settings.get("channel", {}))
+    current = channel_settings.get("description", "")
+    render_diff("Channel description", current, args.description)
+    if not args.apply:
+        print("Dry run only; pass --apply to update the channel.")
+        return 0
+
+    channel_settings["description"] = args.description
+    result = execute(
+        services.youtube.channels().update(
+            part="brandingSettings",
+            body={
+                "id": channel["id"],
+                "brandingSettings": {
+                    **branding_settings,
+                    "channel": channel_settings,
+                },
+            },
+        )
+    )
+    updated = result.get("brandingSettings", {}).get("channel", {})
+    if updated.get("description") != args.description:
+        raise RuntimeError("YouTube did not return the requested description")
+    print("Channel description updated.")
+    return 0
 
 
 def uploaded_video_ids(youtube: Any, uploads_playlist_id: str) -> list[str]:
@@ -283,6 +314,15 @@ def collect_video_analytics(
             sort="-views",
             **common,
         ),
+        "retention": safe_analytics_query(
+            report_name="retention",
+            metrics=(
+                "audienceWatchRatio,relativeRetentionPerformance,"
+                "totalSegmentImpressions"
+            ),
+            dimensions="elapsedVideoTimeRatio",
+            **common,
+        ),
     }
     if full:
         reports["devices"] = safe_analytics_query(
@@ -366,15 +406,20 @@ def command_sync(args: argparse.Namespace) -> int:
     return 0
 
 
-def first_row(report: dict[str, Any]) -> dict[str, Any] | None:
+def report_rows(report: dict[str, Any]) -> list[dict[str, Any]]:
     if report.get("status") != "ok":
-        return None
+        return []
     response = report["response"]
     rows = response.get("rows") or []
     if not rows:
-        return None
+        return []
     headers = [header["name"] for header in response.get("columnHeaders", [])]
-    return dict(zip(headers, rows[0], strict=True))
+    return [dict(zip(headers, row, strict=True)) for row in rows]
+
+
+def first_row(report: dict[str, Any]) -> dict[str, Any] | None:
+    rows = report_rows(report)
+    return rows[0] if rows else None
 
 
 def command_report(_: argparse.Namespace) -> int:
@@ -418,6 +463,17 @@ def command_report(_: argparse.Namespace) -> int:
             f"subscribers=+{row.get('subscribersGained', 0)}"
             f"/-{row.get('subscribersLost', 0)}"
         )
+        retention_rows = report_rows(video_analytics.get("retention", {}))
+        if retention_rows:
+            opening = " ".join(
+                (
+                    f"{retention['elapsedVideoTimeRatio']:.0%}:"
+                    f"{retention['audienceWatchRatio']:.1%}"
+                    f"(relative={retention['relativeRetentionPerformance']:.3f})"
+                )
+                for retention in retention_rows[:5]
+            )
+            print(f"  opening_retention={opening}")
     return 0
 
 
@@ -550,14 +606,29 @@ def command_package(args: argparse.Namespace) -> int:
         "\n".join(desired.get("tags", [])),
     )
 
-    comment_exists = channel_comment_exists(
-        services.youtube,
-        channel_id=channel["id"],
-        video_id=args.video_id,
-        text=package["pinned_comment"],
-    )
+    comment_available = True
+    try:
+        comment_exists = channel_comment_exists(
+            services.youtube,
+            channel_id=channel["id"],
+            video_id=args.video_id,
+            text=package["pinned_comment"],
+        )
+    except HttpError as error:
+        reasons = {
+            detail.get("reason")
+            for detail in getattr(error, "error_details", [])
+            if isinstance(detail, dict)
+        }
+        if error.resp.status != 403 or "commentsDisabled" not in reasons:
+            raise
+        comment_available = False
+        comment_exists = False
     print("\nPinned-comment text:")
-    print("  already posted" if comment_exists else package["pinned_comment"])
+    if not comment_available:
+        print("  unavailable while comments are disabled or the video is private")
+    else:
+        print("  already posted" if comment_exists else package["pinned_comment"])
 
     if not args.apply:
         print("\nDry run only. Re-run with `--apply` to update metadata and post the comment.")
@@ -570,7 +641,7 @@ def command_package(args: argparse.Namespace) -> int:
         )
     )
     print("Metadata updated.")
-    if not comment_exists:
+    if comment_available and not comment_exists:
         result = post_comment(
             services.youtube,
             video_id=args.video_id,
@@ -578,7 +649,10 @@ def command_package(args: argparse.Namespace) -> int:
         )
         comment_id = result["snippet"]["topLevelComment"]["id"]
         print(f"Comment posted: {comment_id}")
-    print("Pinning is not exposed by the YouTube API; pin this comment in Studio.")
+    if comment_available:
+        print("Pinning is not exposed by the YouTube API; pin this comment in Studio.")
+    else:
+        print("Post and pin the comment after comments become available.")
     return 0
 
 
@@ -708,6 +782,13 @@ def parser() -> argparse.ArgumentParser:
 
     report = commands.add_parser("report", help="Summarize the latest snapshot")
     report.set_defaults(handler=command_report)
+
+    channel_description = commands.add_parser(
+        "channel-description", help="Diff or update the channel description"
+    )
+    channel_description.add_argument("--description", required=True)
+    channel_description.add_argument("--apply", action="store_true")
+    channel_description.set_defaults(handler=command_channel_description)
 
     package = commands.add_parser(
         "package",

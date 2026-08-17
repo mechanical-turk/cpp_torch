@@ -142,11 +142,11 @@ Short.
 ### Copy
 
 ```text
-A tensor with shape [] contains one value.
+A tensor with shape [] contains one scalar.
 
-A tensor with shape [0] contains none.
+A tensor with shape [0] contains no values.
 
-The distinction comes down to axes, multiplication, and the identity value we start from when counting elements.
+The first has no axes. The second has one axis of length zero. Those are not the same thing.
 ```
 
 ### Series navigation reply

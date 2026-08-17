@@ -22,10 +22,11 @@ Shorts will be selected, scripted, and recorded separately in native vertical
 format. They may revisit an idea from a long-form episode, but each Short will
 be designed as its own complete lesson rather than cut from the main recording.
 
-The long-form learning loop is: concise cold open, brief previous-episode recap,
-explicit current-episode roadmap, brisk answers to the previous questions,
-concept-to-code-to-verification, review, concise next setup, and retrieval
-questions as the final spoken content.
+The long-form learning loop is: concise opening, brief previous-episode recap
+and current destination, concept-to-code-to-verification, review, concise next
+setup, and retrieval questions as the final spoken content. Answers to those
+questions appear in the same episode's first pinned comment under
+[Decision 0007](0007-move-retrieval-answers-to-first-comment.md).
 
 ## Consequences
 

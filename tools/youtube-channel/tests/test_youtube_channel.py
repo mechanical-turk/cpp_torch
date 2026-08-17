@@ -8,6 +8,7 @@ from youtube_channel import (
     analytics_start_date,
     desired_video_snippet,
     publishing_package,
+    report_rows,
     series_videos,
 )
 
@@ -130,6 +131,34 @@ class SeriesBoundaryTest(unittest.TestCase):
         }
 
         self.assertEqual(analytics_start_date(video), "2026-08-12")
+
+
+class AnalyticsReportTest(unittest.TestCase):
+    def test_maps_report_headers_to_every_row(self) -> None:
+        report = {
+            "status": "ok",
+            "response": {
+                "columnHeaders": [
+                    {"name": "elapsedVideoTimeRatio"},
+                    {"name": "audienceWatchRatio"},
+                ],
+                "rows": [[0.01, 0.5], [0.02, 0.25]],
+            },
+        }
+
+        self.assertEqual(
+            report_rows(report),
+            [
+                {
+                    "elapsedVideoTimeRatio": 0.01,
+                    "audienceWatchRatio": 0.5,
+                },
+                {
+                    "elapsedVideoTimeRatio": 0.02,
+                    "audienceWatchRatio": 0.25,
+                },
+            ],
+        )
 
 
 if __name__ == "__main__":

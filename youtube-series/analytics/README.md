@@ -44,6 +44,20 @@ Run the local safety tests:
 make youtube-channel-test
 ```
 
+## Cross-platform dashboard
+
+Open the read-only local dashboard over the latest YouTube, X, and Instagram
+snapshots:
+
+```sh
+make analytics-dashboard
+```
+
+Then visit <http://127.0.0.1:8765>. The dashboard never refreshes an external
+API on page load, which prevents accidental X credit usage. Run the platform
+sync commands deliberately, then reload the page. TikTok and LinkedIn remain
+marked unavailable until a manual follower snapshot or API collector exists.
+
 ## Private state
 
 OAuth credentials are stored outside the repository under:

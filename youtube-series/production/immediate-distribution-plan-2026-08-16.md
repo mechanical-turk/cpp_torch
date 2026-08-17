@@ -22,8 +22,9 @@ cross-platform Short cycle. Exact completed timestamps belong in
 
 - [x] Publish Short 1.
 - [x] Post and pin its channel comment.
-- [ ] Confirm Episode 2 is selected as its related long-form video.
-- [ ] Confirm it belongs to the dedicated Shorts playlist.
+- [ ] Confirm Episode 2 is selected as its related long-form video. YouTube does
+  not expose this Shorts-specific field through Data API v3.
+- [x] Confirm it belongs to the dedicated Shorts playlist.
 - [ ] Reply to any substantive early comment.
 
 ### 3:00-3:45 PM: prepare native distribution
@@ -62,9 +63,10 @@ https://github.com/mechanical-turk/deep-learning-all-the-way-down
 
 ### 4:30-8:00 PM: Episode 4 critical path
 
-- [ ] Finalize Episode 4's learning promise and dependency chain.
-- [ ] Write and validate its complete single-file reference implementation.
-- [ ] Draft the full recording script using the established episode structure.
+- [x] Finalize Episode 4's learning promise and dependency chain.
+- [x] Write and validate its complete single-file reference implementation.
+- [x] Replace the initial script after the comprehensive retention audit and
+  validate the new integration sequence against the Episode 3 starting file.
 - [ ] Stop before recording if the code or conceptual sequence remains unstable.
 
 ### Personal X presence

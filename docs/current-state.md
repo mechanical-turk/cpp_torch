@@ -48,6 +48,27 @@ scalar reverse-mode model to a tensor-valued matrix-multiplication node.
   Learning, All the Way Down*. Long-form episodes optimize for coherent 16:9
   teaching, while Shorts are scripted and recorded separately under
   [Decision 0006](decisions/0006-record-shorts-separately.md).
+- X analytics read-only authorization and bounded collection are operational
+  for `@mechaturka`. The first snapshot retrieved seven posts from the permanent
+  boundary of August 13, 2026 at 9:10 AM ET onward; the earliest result was the
+  Episode 1 announcement at 9:14 AM. Full account history must never be pulled
+  without explicit learner approval. Next gate: inspect the actual API charge
+  before choosing any recurring snapshot schedule.
+- Instagram Login analytics are operational for the new `@mechaturka` Creator
+  account without a Facebook Page. At approximately 6:29 PM ET, the first Reel
+  had 118 plays, reached 109 accounts, averaged 5.44 seconds of watch time, and
+  had no interactions. This suggests an initial cold sample with shallow
+  consumption, but remains an early baseline. Reassess at 24 and 72 hours.
+- The initial X analysis found nearly identical reach for the Episode 1 and 2
+  announcements (798 versus 800 impressions), but Episode 1 generated 102
+  engagements and 20 link clicks versus Episode 2's 19 and four. Current
+  working priority: improve announcement conversion and avoid inferring causes
+  from the seven-post sample. Report:
+  [`youtube-series/analytics/reports/2026-08-16-x-initial-analysis.md`](../youtube-series/analytics/reports/2026-08-16-x-initial-analysis.md).
+- Cross-channel branding refresh is complete. X, LinkedIn, and YouTube now use
+  the approved positioning and coordinated banner system. LinkedIn features the
+  YouTube playlist and GitHub repository; X retains GitHub as its professional
+  destination and keeps the high-performing Episode 1 announcement pinned.
 - Chapter 2 recording has reached the overflow unit. Its script now resolves
   both Chapter 1 overflow TODOs: checked shape-product construction, including
   later zero dimensions, and two-pass coordinate validation that makes
@@ -55,11 +76,14 @@ scalar reverse-mode model to a tensor-valued matrix-multiplication node.
 - Chapter 2 is complete. The public `cpp_ml` README now treats `main.cpp` as the
   evolving series implementation, records the capabilities added in Episodes 1
   and 2, and uses episode-neutral build instructions.
-- The first native-Short slate has been derived from Episodes 1-3 and recorded
-  at
-  [`youtube-series/shorts/episodes-01-03-ideas.md`](../youtube-series/shorts/episodes-01-03-ideas.md).
-  The recommended first recording batch is: scalar shape `[]`, the unsigned
-  reverse-loop failure, and why dot product returns one number.
+- The native-Short backlog now contains 62 standalone ideas derived from
+  Episodes 1-4 at
+  [`youtube-series/shorts/episodes-01-04-ideas.md`](../youtube-series/shorts/episodes-01-04-ideas.md).
+  This single file is both the idea ledger and the evidence-informed priority
+  order. Its current leaders are the unsigned reverse-loop failure, the
+  linear-versus-affine naming surprise, why dot product returns one number, and
+  matrix multiplication as repeated dot products. Each targets an 18-24 second
+  causal explanation with progressive disclosure and no CTA.
 - Native Short 1 now has a complete recording script and quality gate at
   [`youtube-series/shorts/short-01-scalar-shapes/script.md`](../youtube-series/shorts/short-01-scalar-shapes/script.md).
   Its narration has been reduced to one 35-42 second causal chain with an
@@ -89,12 +113,68 @@ scalar reverse-mode model to a tensor-valued matrix-multiplication node.
   implementation, `(*this * other).sum()`. Its size-`n` intermediate allocation
   is documented as a performance hypothesis and TODO; fused multiply-accumulate
   will be compared only after reliable benchmarking is introduced.
+- Episode 3 is scheduled for August 17 at 11:00 AM ET. Its HD processing,
+  custom thumbnail, main-playlist membership, final description, and 19 tags
+  are API-verified. Manual chapters are intentionally deferred. The remaining
+  release checks are comments, end screen, and brief desktop/mobile playback;
+  captions are not yet available.
+- The first processed retention curve is now available for Episode 1. Audience
+  watch ratio is 51.58% near 0:22, 18.95% near 0:45, and 13.68% near 1:07;
+  relative retention also falls sharply. Episode 1 does not reach its
+  tensor-specific lesson until approximately 2:10 or live coding until roughly
+  7:35. Episode 2 still returns no retention rows; its three processed views
+  predate public release and must not be treated as public watch behavior.
+  Detailed report:
+  [`youtube-series/analytics/reports/2026-08-16-retention-and-episode-04-strategy.md`](../youtube-series/analytics/reports/2026-08-16-retention-and-episode-04-strategy.md).
+- Episode 4's first draft was rejected after the full YouTube audit. Although it
+  displayed `inputs.matmul(weights) + bias` immediately, it delayed live code
+  until 8:15 and the promised computation until 38:15, preserving the measured
+  structural problem. The rewritten script targets 23-27 minutes, resolves one
+  row-column dot product immediately, surfaces the real rank failure inside the
+  first minute, begins implementation around minute two, produces matrix
+  multiplication around minute five, makes the layer work with an intentionally
+  expanded bias, and then derives broadcasting from that waste. The exact final
+  expression works before edge-case hardening.
+  The final reference implementation passed strict warning checks and
+  ASan/UBSan in isolation; a second integration audit reconciled the obsolete
+  Episode 3 shape-mismatch test, variable names, deliberate failure, and final
+  output with the inherited single-file harness.
+  Exact next production action: learner review of the replacement causal arc
+  before recording.
+- Episode 4's opening no longer previews finished code or a completed output
+  before recording begins. Narration now starts immediately with the required
+  series sentence while a one-observation dot product expands visually into
+  `[m,n] @ [n,p] -> [m,p]`. The first live action constructs the batch and
+  triggers the current rank error; unrelated header and exception cleanup has
+  been removed from the opening path.
+- Episode 4 now has a matched 1920x1080 opening visual pair under
+  `youtube-series/chapter-04/assets/`. The first depicts a visually horizontal
+  rank-one observation dotted with the same weights plus a scalar bias to
+  produce one scalar prediction. The second preserves the composition while
+  adding input rows, broadcasting the same bias, and producing one prediction
+  per observation. Editable SVG sources and rendered PNGs are both retained.
+  The opening script now discusses the first image while recapping the scalar
+  prediction, switches to the second precisely when observations are stacked,
+  and uses that transition to introduce matmul and scalar-bias broadcasting.
 - Future episodes end with at most five retrieval questions and normally about
   three; Episode 3 now closes with three questions covering its central
   dependency chain.
-- Future episode openings follow this exact order: cold open, concise previous-
-  episode recap, explicit current-episode roadmap, then answers to the previous
-  episode's closing questions. Episode 3 has been restructured accordingly.
+- Beginning with Episode 3's publishing package, every episode answers its own
+  closing retrieval questions in its first pinned comment. Episode openings now
+  move directly from the required series sentence and economical recap into the
+  new problem. Episode 4 therefore contains no spoken answer segment. See
+  [Decision 0007](decisions/0007-move-retrieval-answers-to-first-comment.md).
+- Episode openings are now standalone by default and no longer lead with "last
+  episode" or "last time." Required prior ideas are restated directly, and
+  publication continuity is mentioned only when indispensable. Episode 4's
+  visual opening now begins with the single-observation computation itself.
+  See [Decision 0008](decisions/0008-standalone-episode-openings.md).
+- Episode 4's opening language and visual workflow are locked. Narration is
+  written for natural speech rather than symmetrical explanatory prose; it
+  begins immediately, discusses each visual while shown, does not preview
+  nonexistent finished code, and moves from the established scalar computation
+  into the real matrix limitation. These rules now govern future scripts in
+  `AGENTS.md`.
 - The opening itself begins with "Welcome back to Deep Learning, All the Way
   Down, where we...". There is no separate pre-introduction hook before that
   sentence; Episode 3's deleted preview block has been fully reconciled.
@@ -106,16 +186,23 @@ scalar reverse-mode model to a tensor-valued matrix-multiplication node.
   one weight per feature, weighted contributions, summation, bias, and expanded
   linear-model notation before compressing the computation into a dot product
   and translating it into C++.
+- Initial cross-platform evidence now drives a named three-episode and
+  three-Short experiment: capability-led packaging, a complete insight in the
+  opening sentence, a concrete failure inside the first minute, meaningful code
+  around minute two, and 20-25 second single-idea Shorts with progressive
+  disclosure. Episode 3's scheduled title has been changed and API-verified as
+  `Building a Linear Prediction from Scratch in C++ | Deep Learning, All the
+  Way Down #3`. Long-form episode titles must retain the exact series name and
+  episode number even when their leading promise changes.
 - X publishing packages now use one durable navigation reply beneath every
   episode announcement: complete YouTube playlist plus GitHub source. The main
   tweet continues to link directly to its specific episode.
 - Episode 3 now closes by previewing Episode 4's complete destination:
   matrix multiplication plus broadcasting to evaluate
   `inputs.matmul(weights) + bias` for batched dense computation.
-- Retrieval sections must reproduce and answer the preceding episode's actual
-  closing questions without silent substitution or omission. Episode 3 now
-  answers all eight legacy Episode 2 questions; the newer three-question target
-  begins with Episode 3's own closing set.
+- Retrieval answer keys must reproduce and answer the same episode's actual
+  closing questions without silent substitution or omission. Episode 3's
+  publishing package now contains the first pinned-comment answer key.
 
 
 ## Completed work
@@ -398,8 +485,9 @@ scalar reverse-mode model to a tensor-valued matrix-multiplication node.
 
 ## Exact next action
 
-Run the Milestone 4.2 diagnostic for `[2,3] + [3]`: derive output shape and map
-output coordinates to both operands.
+Review Episode 4's replacement, analytics-driven causal arc before recording.
+When the technical learning track resumes, begin the Milestone 5.1 diagnostic
+for the backward contract of `C = A.matmul(B)` under a scalar downstream loss.
 
 ## Active learning artifacts
 
@@ -424,12 +512,18 @@ output coordinates to both operands.
 - Episodes 1 and 2 are public. Two X announcements and one LinkedIn announcement
   are confirmed.
 - Episode 3 is now uploaded and scheduled for Monday, 2026-08-17 at 11:00 AM
-  ET; final prepublication verification remains.
+  ET. The August 16 API audit verified HD processing, custom thumbnail, main
+  playlist membership, and the exact schedule. Remaining prepublication work:
+  end-screen verification, a manual comments-setting check, and brief desktop
+  and mobile playback. Tags are live; captions are not yet available. Manual
+  chapters are intentionally omitted until a transcript-assisted workflow makes
+  them inexpensive and reliable.
 - The target cadence is Monday-Wednesday-Saturday at 11:00 AM ET.
-- The next distribution actions are Short 1's manual launch checks and native X
-  upload, Episode 2's approximately 48-hour analytics snapshot, Episode 3's
-  release and X announcement, and a tailored r/cpp Show and Tell submission.
-  The missed Episode 2 LinkedIn announcement has been cancelled.
+- The next distribution actions are the Episode 2 approximately 48-hour
+  analytics snapshot, Episode 3's release and X announcement, Short 1's 24-hour
+  cross-platform checkpoint, and a tailored r/cpp Show and Tell submission.
+  Short 1 is already public on YouTube, X, and Instagram. The missed Episode 2
+  LinkedIn announcement has been cancelled.
 - The native vertical recording system is documented in
   [`youtube-series/production/vertical-obs-setup.md`](../youtube-series/production/vertical-obs-setup.md): separate OBS profile and scene collection, calibrated mobile code typography, camera/X branding, sharp and 4 px blurred code states, and deterministic production hotkeys.
 - Short 1 now has its final 1080x1920 branded thumbnail at
@@ -454,7 +548,9 @@ output coordinates to both operands.
 - Short 1 published at exactly 2:00:03 PM ET on 2026-08-16:
   `https://www.youtube.com/shorts/pC-Ng6V9a_Q`. The first API snapshot recorded
   8 views. The finalized channel comment was posted through the API and manually
-  pinned; playlist assignment and related-video verification remain unresolved.
+  pinned. The Short is in the dedicated public Shorts playlist. YouTube does not
+  expose its related-video field through Data API v3, so that setting remains
+  unverified.
 - The first series-only analytics analysis is recorded at
   [`youtube-series/analytics/reports/2026-08-16-initial-baseline.md`](../youtube-series/analytics/reports/2026-08-16-initial-baseline.md).
   It keeps current public counters separate from delayed detailed Analytics and
@@ -463,10 +559,18 @@ output coordinates to both operands.
   [`youtube-series/production/immediate-distribution-plan-2026-08-16.md`](../youtube-series/production/immediate-distribution-plan-2026-08-16.md).
   Long-form production remains the critical path; native Shorts, X, LinkedIn,
   Reddit, blogging, and Hacker News each have separate gates and windows.
+- Cross-platform analytics access and profile branding are now an active
+  distribution branch documented at
+  [`youtube-series/production/social-analytics-and-branding-plan.md`](../youtube-series/production/social-analytics-and-branding-plan.md).
+  YouTube, bounded X, and owned-profile Instagram collection are operational.
+  LinkedIn personal analytics still requires vetted Community Management
+  access.
 
 ## Last updated
 
-2026-08-16 — Short 1's script, comparison visual, attention arrow, branded
-thumbnail, and publishing package are ready. The technical learning track
-remains at the Milestone 5.1 tensor-autograd diagnostic; video production and
-distribution are the active high-value branch.
+2026-08-17 — Episode 4 was rewritten around a stronger dense-layer promise, an
+immediate row-column result, a real rank failure, early implementation, and
+repeated observable payoffs. Decision 0007 moves each episode's retrieval
+answers into that episode's own first pinned comment. The technical learning
+track remains at the Milestone 5.1 tensor-autograd diagnostic; video production
+and distribution are the active high-value branch.

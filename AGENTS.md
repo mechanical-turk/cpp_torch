@@ -48,6 +48,102 @@ not an optional session-handoff task.
 - Reconcile the ledger at every meaningful stopping point in video production
   or distribution work, even when the learner does not request an update.
 
+## Primary directive: preserve distribution lessons
+
+Codex must preserve important lessons derived from platform analytics so they
+continue shaping future publishing decisions after sessions are wiped. Record
+the detailed evidence in dated analytics reports and keep the durable operating
+principles here. Do not merely collect metrics; interpret what part of the
+distribution funnel they describe and turn the strongest findings into future
+experiments.
+
+- Analyze **reach and conversion separately**. Similar impressions do not imply
+  similar performance. Ask what happened after the impression: engagements,
+  link clicks, profile visits, watch behavior, and subscriptions.
+- Episode announcements should lead with the intellectual payoff,
+  transformation, paradox, or newly unlocked capability. Do not lead with an
+  implementation inventory that is meaningful only after someone already cares.
+  Technical details support the promise; they are not automatically the promise.
+- The initial X comparison established the first concrete example. The Episode
+  1 and Episode 2 announcements received essentially identical reach (798 and
+  800 impressions), but Episode 1 generated 102 engagements, 20 link clicks,
+  and 15 profile clicks versus Episode 2's 19, four, and four. The current
+  interpretation is that Episode 1 framed an ambitious journey and concrete
+  starting point, while Episode 2 primarily listed features. Therefore Episode
+  3 should lead with the capability it unlocks, such as completing a machine
+  learning prediction, and only then name the tensor operations involved.
+- Treat the opening twenty seconds as part of the lesson's payoff, not as
+  administrative space. Episode 1's first processed retention curve measured
+  51.58% audience watch ratio near 0:22 and only 18.95% near 0:45; its relative
+  retention also declined sharply against videos of similar length. A displayed
+  destination is only a promise, not a payoff. Future long-form openings must
+  resolve or demonstrate one concrete new fact, preferably through an
+  observable result or failure, while keeping the series identity to one
+  clause. Compress retrieval to the prerequisites needed now and expose the
+  first new problem inside the opening minute.
+- Episode 2's final transcript placed its first new subject at approximately
+  3:04 and implementation at approximately 5:09. Episode 2 does not yet have a
+  usable retention curve, so this timing is a structural risk and the basis for
+  an Episode 4 experiment, not proof of where its viewers left. Use the repeated
+  sequence need -> derivation -> code -> observable result instead of a long
+  setup followed by a feature inventory.
+- Episode 1 did not begin its episode-specific tensor subject until roughly
+  2:10 and did not begin live coding until roughly 7:35. Episode 4 therefore
+  tests a materially different order: begin changing code within the first few
+  minutes, produce an intermediate working result around minute six, deliver
+  the main promised computation before hardening, and move exhaustive edge
+  cases after the central payoff. Preserve rigor by attaching each derivation
+  to the failure it removes, not by postponing code until all theory is stated.
+- Episode 1's current processed sample combines weak consumption with strong
+  idea conversion: 52 seconds average view duration and 2.37% average viewed,
+  but six subscribers from 96 processed views. Treat this as evidence that the
+  premise and rigor may be attractive while the delivery order is weak. Do not
+  respond by diluting the technical depth; move the technical substance
+  forward.
+- The first Short's YouTube watch metrics were still unprocessed at its initial
+  checkpoint. On Instagram, the same lesson reached 109 accounts but averaged
+  5.44 seconds of watch time and received no interactions. Future Short
+  experiments should reveal the answer progressively, avoid showing the entire
+  comparison in the first frame, use natural spoken notation, keep one central
+  contrast, target approximately 20-25 seconds when the idea permits it, and
+  keep the CTA to at most two seconds. Recheck at 24 and 72 hours before
+  declaring a conclusion.
+- Treat navigation replies as infrastructure for high-intent readers, not as a
+  reach mechanism. Low impressions do not make them useless when they provide
+  direct paths to the playlist and repository.
+- Continue native technical and personal posts between releases, but do not
+  declare a winning format from one or two posts.
+- State the limits of every conclusion. Separate observed facts from plausible
+  explanations, and use small samples to design the next comparison rather than
+  claiming universal causation.
+- Before writing any new episode announcement, consult the latest dated report
+  under `youtube-series/analytics/reports/` and explicitly apply or test the
+  relevant lessons.
+- Keep the ledger focused on the learner's observable timeline and next actions:
+  recordings, edits, scheduling, releases, social announcements, community
+  posts, Shorts, and decision-relevant analytics checkpoints. Update it as soon
+  as the learner supplies a timestamp, URL, completion, cancellation, or changed
+  plan. Do not clutter it with internal tooling, OAuth/API work, asset creation,
+  script preparation, or routine document maintenance unless that work creates
+  a concrete learner action or blocker.
+- Perform routine authorized YouTube channel operations directly whenever the
+  local channel tooling and granted API scopes support them, including playlist
+  assignment, metadata reconciliation, comment posting, and analytics capture.
+  Do not turn API-capable operational checks into learner TODOs. Clearly isolate
+  the rare Studio-only action when YouTube exposes no corresponding API field.
+- Track audience size on every platform alongside content performance. Every
+  analytics refresh must preserve the available YouTube subscriber count, X
+  follower count, Instagram follower count, and any future TikTok or LinkedIn
+  follower counts. Never overwrite history with only the latest value; retain
+  timestamped observations so absolute change and growth rate can be compared
+  with releases and distribution events. Mark unavailable or manually supplied
+  counts explicitly rather than treating them as zero.
+- Maintain a local, read-only cross-platform dashboard as the primary human
+  view of analytics. It must distinguish platform-specific definitions instead
+  of collapsing unlike views into a misleading universal score; show data
+  freshness and unavailable metrics; separate reach, consumption, engagement,
+  conversion, and audience growth; and keep raw private snapshots gitignored.
+
 ## YouTube channel operations
 
 - Use the local tool under `tools/youtube-channel/` as the canonical routine
@@ -75,6 +171,19 @@ not an optional session-handoff task.
   the intended comment through the API when authorized, then record pinning,
   related-video assignment, end screens, cards, and other unsupported actions as
   manual or separately verified browser steps.
+
+## Instagram analytics operations
+
+- Use `make instagram-analytics-sync` as the canonical routine source for the
+  owned `@mechaturka` Instagram profile and Reel insights. Refresh it before an
+  Instagram distribution decision when current performance could change the
+  recommendation.
+- Instagram credentials must remain outside the repository under
+  `~/.config/dlatwd/instagram-analytics/`. Raw snapshots remain private under
+  the gitignored `youtube-series/analytics/private/instagram/` directory.
+- The current Instagram Login integration is read-only in practice. Do not add
+  publishing, messaging, comment-management, or Facebook Page permissions
+  unless the learner explicitly authorizes a new capability.
 
 ## Required context
 
@@ -258,6 +367,17 @@ Before ending a substantive session:
 
 When planning or writing a chapter for *Deep Learning, All the Way Down*:
 
+- Maintain uncommitted video, Short, post, and content concepts in
+  `youtube-series/content-ideas.md`. Keep this idea backlog separate from active
+  scripts, publishing packages, and the distribution timeline. Preserve the
+  learner's proposed wording unless a later ideation session explicitly
+  develops alternatives.
+- Every long-form episode title must include the exact series name
+  `Deep Learning, All the Way Down` and its episode number in the form `#N`.
+  Capability-led title experiments may change the leading promise, but must not
+  remove this canonical series suffix. Use exactly one vertical bar in the
+  title, reserved for separating the episode-specific title from the series
+  suffix. Separate an episode title from its technical subtitle with a colon.
 - Keep early chapter compilation commands minimal, using only the selected C++
   language standard unless a flag is itself being taught. Introduce warning
   groups such as `-Wall`, `-Wextra`, and `-Wpedantic` later as part of an
@@ -265,32 +385,48 @@ When planning or writing a chapter for *Deep Learning, All the Way Down*:
 - Use this mandatory chapter skeleton:
   1. an opening that begins with "Welcome back to Deep Learning, All the Way
      Down, where we..." and concisely frames the series;
-  2. a brief recap of what the previous episode established;
+  2. a self-contained statement of the current problem and why it matters;
   3. a direct statement of what the current episode will accomplish;
-  4. a short retrieval section that answers the questions posed at the end of
-     the previous episode;
-  5. the chapter's cohesive concept-to-code-to-verification sequence; and
-  6. a closing review, a concise next-chapter hook, and retrieval questions as
+  4. the chapter's cohesive concept-to-code-to-verification sequence; and
+  5. a closing review, a concise next-chapter hook, and retrieval questions as
      the final spoken content.
-- Keep the recap and current-episode roadmap adjacent and economical. They are
-  explicit steps immediately after the opening sentence and should feel like
-  one continuous transition into the previous episode's questions rather than
-  separate title sequences or repeated introductions. Do not place a separate
-  pre-introduction hook before the "Welcome back" opening.
-- Keep the previous-question retrieval brisk. Retrieve the prerequisite ideas
-  needed by the current chapter; do not reteach the previous chapter in
-  miniature.
-- The retrieval section must reproduce and answer the actual questions posed at
-  the end of the preceding episode. Do not silently substitute, rewrite, or
-  omit them. If an exception is educationally necessary, identify it explicitly
-  in the script and preserve a record of the unanswered question.
+- Make every opening understandable to a viewer entering the series through
+  that episode. Do not say "last episode," "last time," or otherwise lead with
+  continuity unless a prior result is indispensable to understanding the
+  current problem. Restate required prior ideas directly instead of narrating
+  the publication sequence.
+- Write narration for speech, not for an essay. Prefer connected, conversational
+  sentences that sound natural when spoken aloud. Avoid artificial symmetry,
+  clipped instructional fragments, slogan-like contrasts, repeated rhetorical
+  templates, tidy three-beat cadences, and phrases whose primary effect is to
+  sound polished. Read every opening aloud in substance before treating it as
+  final; if a capable person would not naturally say it to another person, rewrite
+  it.
+- Respect the live-build format. Do not open by showing finished code, final
+  output, or a successful end state that does not exist yet. The learner builds
+  the implementation while recording. Begin from the code or understanding
+  already available, surface the real limitation or failure, and let the viewer
+  experience the result when it is actually produced.
+- Do not use silent slideshows or show a visual before the narration gives the
+  viewer a reason to inspect it. Begin speaking immediately and discuss each
+  visual while it is visible. When a matched visual sequence is used, keep its
+  layout stable and change only the structure needed to express the new idea.
+- Treat structured educational visuals as a shared row-and-column grid. Titles,
+  subtitles, column headings, column subheadings, operators, and complete visual
+  objects must each align on their own common baseline or center. Render and
+  inspect every final image before reporting completion.
+- Keep the problem and current-episode roadmap adjacent and economical so they
+  feel like one continuous transition into new substance. Do not place a
+  separate pre-introduction hook before the "Welcome back" opening.
+- Do not answer retrieval questions in the next video's opening. Reproduce and
+  answer each episode's exact closing questions in that same episode's first
+  pinned comment. The corresponding `publishing.md` must contain this answer
+  key. Do not silently substitute, rewrite, or omit a question.
 - Place closing retrieval questions after the review and next-chapter teaser,
   not between them. End on the questions so viewers leave with an active task.
 - Keep closing retrieval to at most five questions and prefer approximately
   three. Select the questions that retrieve the chapter's central dependency
   chain rather than attempting exhaustive coverage.
-- Chapter 1 is the only exception to the previous-question segment because no
-  earlier episode exists.
 - Optimize the long-form chapter only for a natural, coherent 16:9 lesson. Do
   not constrain its composition, narration, or structure to make excerpts work
   as vertical Shorts.
@@ -303,10 +439,10 @@ When planning or writing a chapter for *Deep Learning, All the Way Down*:
   an X announcement, a LinkedIn announcement, a Reddit decision and draft when
   appropriate, and a separately produced Shorts plan.
 - Every `publishing.md` package, including packages for native Shorts and other
-  video formats, must contain a platform-ready pinned comment. Keep it concise,
-  make its links explicit, and direct viewers to the most relevant full lesson,
-  series playlist, source code, or next action without repeating the entire
-  description.
+  video formats, must contain a platform-ready pinned comment. Keep it concise
+  outside the required retrieval answer key, make its links explicit, and
+  direct viewers to the most relevant full lesson, series playlist, source code,
+  or next action without repeating the entire description.
 - The X and LinkedIn sections must include platform-ready copy, recommended
   publication timing relative to the YouTube release, and a concise rollout
   strategy. Adapt timing to the actual release day, audience evidence, and
@@ -323,6 +459,36 @@ When planning or writing a chapter for *Deep Learning, All the Way Down*:
   the complete YouTube playlist and GitHub repository. Use it beneath every
   episode announcement. The main post links the specific episode; do not create
   an expanding chain of episode-to-episode replies.
+
+### Current content experiments from the initial analytics
+
+These are active hypotheses for the next three long-form episodes and next
+three Shorts, not permanent universal laws. Reassess them after the comparison
+sample exists.
+
+- A displayed destination or roadmap is a promise, not a payoff. The opening
+  sentence should teach one complete fact or resolve one visible step while it
+  introduces the episode.
+- Surface the concrete failure or limitation motivating the lesson inside the
+  first minute, begin meaningful code around minute two, and create recurring
+  observable results rather than postponing the opening promise until the end.
+- Lead titles, thumbnails, and announcements with the capability,
+  transformation, paradox, or failure the audience can understand before
+  watching. Operation names and implementation inventories support that value;
+  they do not replace it.
+- Preserve rigorous mathematics and systems reasoning, but move administrative
+  framing, repeated summaries, exhaustive edge cases, and previously learned
+  machinery behind the first working result.
+- For the next three native Shorts, test approximately 20-25 seconds, one idea,
+  progressive visual disclosure, and the first explanatory result inside three
+  to five seconds. Omit the CTA or keep it under two seconds.
+- Treat personal X posts as a relationship and conversation layer distinct
+  from announcements. Keep them self-contained and do not judge them by native
+  video's reach objective.
+- Do not infer the ideal runtime, posting hour, thumbnail style, topic family,
+  or winning platform from the current small sample. Publish controlled
+  experiments and compare reach, consumption, engagement, conversion, and
+  audience growth separately.
 
 ## Video visual assets
 
