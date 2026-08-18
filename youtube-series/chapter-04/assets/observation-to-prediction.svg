@@ -17,11 +17,11 @@
       <path d="M64 0H0V64" fill="none" stroke="#16304a" stroke-width="1" opacity="0.32"/>
     </pattern>
     <filter id="blueGlow" x="-80%" y="-80%" width="260%" height="260%">
-      <feGaussianBlur stdDeviation="11" result="blur"/>
+      <feGaussianBlur stdDeviation="10" result="blur"/>
       <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
     </filter>
     <filter id="orangeGlow" x="-80%" y="-80%" width="260%" height="260%">
-      <feGaussianBlur stdDeviation="11" result="blur"/>
+      <feGaussianBlur stdDeviation="10" result="blur"/>
       <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
     </filter>
     <filter id="softGlow" x="-50%" y="-50%" width="200%" height="200%">
@@ -29,12 +29,12 @@
       <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
     </filter>
     <g id="blue-cell">
-      <rect width="126" height="126" rx="10" fill="url(#blueCell)" stroke="#2eb8ff" stroke-width="4"/>
-      <rect x="8" y="8" width="110" height="110" rx="6" fill="none" stroke="#8ad9ff" stroke-width="1.5" opacity="0.55"/>
+      <rect width="118" height="118" rx="10" fill="url(#blueCell)" stroke="#2eb8ff" stroke-width="3.5"/>
+      <rect x="7" y="7" width="104" height="104" rx="6" fill="none" stroke="#8ad9ff" stroke-width="1.4" opacity="0.55"/>
     </g>
     <g id="orange-cell">
-      <rect width="126" height="126" rx="10" fill="url(#orangeCell)" stroke="#ff9d19" stroke-width="4"/>
-      <rect x="8" y="8" width="110" height="110" rx="6" fill="none" stroke="#ffd17d" stroke-width="1.5" opacity="0.62"/>
+      <rect width="118" height="118" rx="10" fill="url(#orangeCell)" stroke="#ff9d19" stroke-width="3.5"/>
+      <rect x="7" y="7" width="104" height="104" rx="6" fill="none" stroke="#ffd17d" stroke-width="1.4" opacity="0.62"/>
     </g>
   </defs>
 
@@ -42,52 +42,29 @@
   <rect width="1920" height="1080" fill="url(#grid)"/>
   <path d="M0 900 C480 790 1440 1030 1920 875" fill="none" stroke="#1166b0" stroke-width="2" opacity="0.25"/>
 
-  <text x="960" y="125" text-anchor="middle" fill="#f4f8ff" font-family="Helvetica Neue, Arial, sans-serif" font-size="68" font-weight="800" letter-spacing="2">ONE OBSERVATION → ONE PREDICTION</text>
-  <text x="960" y="190" text-anchor="middle" fill="#8fa9c5" font-family="SFMono-Regular, Menlo, monospace" font-size="31">x [n]  ·  w [n]  +  b  =  ŷ</text>
+  <text x="960" y="125" text-anchor="middle" fill="#f4f8ff" font-family="Helvetica Neue, Arial, sans-serif" font-size="66" font-weight="800" letter-spacing="2">1 OBSERVATION &#8594; 1 PREDICTION</text>
+  <text x="960" y="188" text-anchor="middle" fill="#8fa9c5" font-family="SFMono-Regular, Menlo, monospace" font-size="28">x [n]  &#183;  w [n]  +  b  =  &#375;</text>
 
-  <text x="310" y="335" text-anchor="middle" fill="#dbeeff" font-family="Helvetica Neue, Arial, sans-serif" font-size="30" font-weight="700" letter-spacing="3">OBSERVATION</text>
-  <text x="310" y="375" text-anchor="middle" fill="#6faedb" font-family="SFMono-Regular, Menlo, monospace" font-size="25">x  [3]</text>
-
-  <g filter="url(#blueGlow)">
-    <use href="#blue-cell" x="95" y="541"/>
-    <use href="#blue-cell" x="229" y="541"/>
-    <use href="#blue-cell" x="363" y="541"/>
-  </g>
-  <g fill="#f3f8ff" font-family="SFMono-Regular, Menlo, monospace" font-size="46" font-weight="700" text-anchor="middle">
-    <text x="158" y="621">4</text>
-    <text x="292" y="621">3</text>
-    <text x="426" y="621">2</text>
-  </g>
-  <path d="M73 521H48V687H73 M511 521H536V687H511" fill="none" stroke="#9cb6d0" stroke-width="7"/>
-
-  <text x="604" y="625" text-anchor="middle" fill="#f6fbff" font-family="Helvetica Neue, Arial, sans-serif" font-size="78" font-weight="500" filter="url(#softGlow)">·</text>
-
-  <text x="790" y="335" text-anchor="middle" fill="#dbeeff" font-family="Helvetica Neue, Arial, sans-serif" font-size="30" font-weight="700" letter-spacing="3">WEIGHTS</text>
-  <text x="790" y="375" text-anchor="middle" fill="#6faedb" font-family="SFMono-Regular, Menlo, monospace" font-size="25">w  [3]</text>
-  <g filter="url(#blueGlow)">
-    <use href="#blue-cell" x="727" y="407"/>
-    <use href="#blue-cell" x="727" y="541"/>
-    <use href="#blue-cell" x="727" y="675"/>
-  </g>
-  <g fill="#f3f8ff" font-family="SFMono-Regular, Menlo, monospace" font-size="42" font-weight="700" text-anchor="middle">
-    <text x="790" y="487">0.5</text>
-    <text x="790" y="621">−1</text>
-    <text x="790" y="755">2</text>
-  </g>
-  <path d="M705 389H680V819H705 M875 389H900V819H875" fill="none" stroke="#9cb6d0" stroke-width="7"/>
-
-  <text x="1030" y="625" text-anchor="middle" fill="#f6fbff" font-family="Helvetica Neue, Arial, sans-serif" font-size="66" font-weight="400">+</text>
-
-  <text x="1195" y="335" text-anchor="middle" fill="#ffd49a" font-family="Helvetica Neue, Arial, sans-serif" font-size="30" font-weight="700" letter-spacing="3">BIAS</text>
-  <text x="1195" y="375" text-anchor="middle" fill="#d99a43" font-family="SFMono-Regular, Menlo, monospace" font-size="25">b  scalar</text>
-  <g filter="url(#orangeGlow)"><use href="#orange-cell" x="1132" y="541"/></g>
-  <text x="1195" y="621" text-anchor="middle" fill="#fff4df" font-family="SFMono-Regular, Menlo, monospace" font-size="42" font-weight="700">0.5</text>
-
-  <text x="1370" y="625" text-anchor="middle" fill="#f6fbff" font-family="Helvetica Neue, Arial, sans-serif" font-size="66" font-weight="400">=</text>
-
-  <text x="1605" y="335" text-anchor="middle" fill="#dbeeff" font-family="Helvetica Neue, Arial, sans-serif" font-size="30" font-weight="700" letter-spacing="3">PREDICTION</text>
-  <text x="1605" y="375" text-anchor="middle" fill="#6faedb" font-family="SFMono-Regular, Menlo, monospace" font-size="25">ŷ  scalar</text>
-  <g filter="url(#blueGlow)"><use href="#blue-cell" x="1542" y="541"/></g>
-  <text x="1605" y="621" text-anchor="middle" fill="#f3f8ff" font-family="SFMono-Regular, Menlo, monospace" font-size="42" font-weight="700">3.5</text>
+  <text x="438" y="335" text-anchor="middle" fill="#dbeeff" font-family="Helvetica Neue, Arial, sans-serif" font-size="28" font-weight="700" letter-spacing="2.5">OBSERVATION</text>
+<text x="438" y="373" text-anchor="middle" fill="#6faedb" font-family="SFMono-Regular, Menlo, monospace" font-size="23">x  [3]</text>
+<g filter="url(#blueGlow)"><use href="#blue-cell" x="253" y="545"/><use href="#blue-cell" x="379" y="545"/><use href="#blue-cell" x="505" y="545"/></g>
+<g fill="#f3f8ff" font-family="SFMono-Regular, Menlo, monospace" font-size="38" font-weight="700" text-anchor="middle"><text x="312" y="617">4.0</text><text x="438" y="617">3.0</text><text x="564" y="617">2.0</text></g>
+<path d="M233 527H210V681H233 M643 527H666V681H643" fill="none" stroke="#9cb6d0" stroke-width="6"/>
+<text x="738" y="618" text-anchor="middle" fill="#f6fbff" font-family="Helvetica Neue, Arial, sans-serif" font-size="70" font-weight="500" filter="url(#softGlow)">&#183;</text>
+<text x="912" y="335" text-anchor="middle" fill="#dbeeff" font-family="Helvetica Neue, Arial, sans-serif" font-size="28" font-weight="700" letter-spacing="2.5">WEIGHTS</text>
+<text x="912" y="373" text-anchor="middle" fill="#6faedb" font-family="SFMono-Regular, Menlo, monospace" font-size="23">w  [3]</text>
+<g filter="url(#blueGlow)"><use href="#blue-cell" x="853" y="419"/><use href="#blue-cell" x="853" y="545"/><use href="#blue-cell" x="853" y="671"/></g>
+<g fill="#f3f8ff" font-family="SFMono-Regular, Menlo, monospace" font-size="38" font-weight="700" text-anchor="middle"><text x="912" y="491">0.5</text><text x="912" y="617">-1.0</text><text x="912" y="743">2.0</text></g>
+<path d="M833 401H810V807H833 M991 401H1014V807H991" fill="none" stroke="#9cb6d0" stroke-width="6"/>
+<text x="1086" y="612" text-anchor="middle" fill="#f6fbff" font-family="Helvetica Neue, Arial, sans-serif" font-size="56" font-weight="400">+</text>
+<text x="1260" y="335" text-anchor="middle" fill="#ffd49a" font-family="Helvetica Neue, Arial, sans-serif" font-size="28" font-weight="700" letter-spacing="2.5">BIAS</text>
+<text x="1260" y="373" text-anchor="middle" fill="#d99a43" font-family="SFMono-Regular, Menlo, monospace" font-size="23">b  scalar</text>
+<g filter="url(#orangeGlow)"><use href="#orange-cell" x="1201" y="545"/></g>
+<g fill="#fff4df" font-family="SFMono-Regular, Menlo, monospace" font-size="38" font-weight="700" text-anchor="middle"><text x="1260" y="617">0.5</text></g>
+<text x="1434" y="612" text-anchor="middle" fill="#f6fbff" font-family="Helvetica Neue, Arial, sans-serif" font-size="56" font-weight="400">=</text>
+<text x="1608" y="335" text-anchor="middle" fill="#dbeeff" font-family="Helvetica Neue, Arial, sans-serif" font-size="28" font-weight="700" letter-spacing="2.5">PREDICTION</text>
+<text x="1608" y="373" text-anchor="middle" fill="#6faedb" font-family="SFMono-Regular, Menlo, monospace" font-size="23">&#375;  scalar</text>
+<g filter="url(#blueGlow)"><use href="#blue-cell" x="1549" y="545"/></g>
+<g fill="#f3f8ff" font-family="SFMono-Regular, Menlo, monospace" font-size="38" font-weight="700" text-anchor="middle"><text x="1608" y="617">3.5</text></g>
 
 </svg>
