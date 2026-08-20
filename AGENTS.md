@@ -16,6 +16,25 @@ The north star is a durably growing, high-quality series: rigorous technical
 substance, delivered so people actually watch, distributed without diluting
 that substance for reach.
 
+## Reference implementation
+
+- The series' own demonstration code — the actual `Tensor` class viewers
+  watch get built live — lives outside this repository, at
+  `/Users/keremkazan/Documents/Projects/deep-learning-all-the-way-down`. Its
+  `main.cpp` is a running checkpoint: each commit captures the code exactly
+  as an episode leaves it (for example, `022c750` is "chapter 04 - matmul").
+  Read this file before writing or revising any chapter's live-coding beats;
+  do not assume a prior chapter's script was followed verbatim on camera.
+- This checkpoint file is a working scratchpad, not camera-ready prose: it
+  keeps scratch test-numbered variable names (`matmul_23`, `weights_`,
+  `scalar_16`, and similar) and inline test assertions from whatever state
+  testing left them in. A chapter's script may rename these on screen as
+  part of its own live-coding beats, but the beat must start from what the
+  file actually contains, not from a cleaner name an earlier script merely
+  planned to use.
+- Treat that repository's git history as the authoritative timeline of what
+  code state existed after each recorded episode.
+
 Start every session by reading `docs/distribution-timeline.md` for the
 current release/production state before recommending any release,
 announcement, or distribution action.
@@ -26,6 +45,12 @@ Codex must keep the production, release, and distribution history of *Deep
 Learning, All the Way Down* continuously organized in
 `docs/distribution-timeline.md`. This is a primary operational responsibility,
 not an optional session-handoff task.
+
+The standing weekly cadence across all channels (long-form, Shorts, native X,
+native LinkedIn, episode announcements, personal posts) is maintained at
+`youtube-series/production/posting-cadence.md`. Consult it before proposing a
+one-off schedule; update it, not a fresh ad-hoc plan, when the cadence itself
+needs to change.
 
 - Consult the ledger before recommending a release date, announcement, repost,
   community submission, Short, or other distribution action.

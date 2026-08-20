@@ -32,16 +32,23 @@ switch to
 
 > Welcome back to *Deep Learning, All the Way Down*.
 >
-> So right now, if you give this thing one observation, it does one dot
+> Right now, if you give this thing one observation, it does one dot
 > product, adds the bias, and hands you back one prediction. But normally you
 > don't want to do that one observation at a time, you want to stack a bunch
-> of them into a matrix and run all of them through the same weights at once.
-> And once you do that, the dot product isn't a dot product anymore, it's
+> of them
+
+Switch to new image
+
+>  into a matrix and run all of them through the same weights at once.
+
+> And once you do that, your core process evolves from a single dot product into 
 > matrix multiplication. And since every row is using the exact same bias, at
 > some point we're going to need a way to reuse that one value instead of
 > copying it everywhere, and that's broadcasting.
 >
-> Let's get the batch working first. Here's what happens when we just hand
+> Let's get the batch working first. 
+> 
+> Here's what happens when we just hand
 > our `dot()` a matrix.
 
 ---
@@ -59,21 +66,28 @@ At the bottom of `main()`, remove the Episode 3 prediction demo beginning with:
 Remove that block through the old `"Success!"` print, but keep `return 0;`.
 Replace it with:
 
+> Suppose we have 2 observations
+> And suppose each observation has 3 features
+
+> That set of observations can be expressed as a 2 by matrix
+> Each row represents one observation
+> Each column represents one feature
+
 ```cpp
 const Tensor inputs(
     {2, 3},
     {
-        1.0, 2.0, 3.0,
-        4.0, 5.0, 6.0
+        4.0, 3.0, 2.0,
+        1.0, 2.0, 0.5
     }
 );
 
 const Tensor weights(
-    {3, 2},
+    {3, 1},
     {
-        1.0, 0.0,
-        0.0, 1.0,
-        1.0, 1.0
+        0.5,
+        -1.0,
+        2.0
     }
 );
 
@@ -113,109 +127,91 @@ C_{i,j} = \sum_{r=0}^{k-1} A_{i,r}B_{r,j}
 
 ## 01:20-04:00 - Implement matrix multiplication
 
-### Narration
-
-> One small thing before we get into matmul itself. It needs to allocate its
-> output, so I'm just pulling that overflow-safe element count we already
-> wrote into its own helper instead of copy-pasting it in again.
-
 ### Live coding
-
-Add this private helper:
-
-```cpp
-[[nodiscard]] static std::size_t checked_numel(
-    const std::vector<std::size_t>& shape
-) {
-  for (const std::size_t dimension : shape) {
-    if (dimension == 0) {
-      return 0;
-    }
-  }
-
-  std::size_t result = 1;
-
-  for (const std::size_t dimension : shape) {
-    if (
-        result >
-        std::numeric_limits<std::size_t>::max() / dimension
-    ) {
-      throw std::overflow_error(
-          "tensor element count overflows size_t"
-      );
-    }
-
-    result *= dimension;
-  }
-
-  return result;
-}
-```
-
-Replace the constructor's inline element-count calculation with a call to
-`checked_numel(shape_)`. No semantics changed; construction and matmul now
-share one checked definition.
 
 Add the public operation:
 
 ```cpp
 [[nodiscard]] Tensor matmul(const Tensor& other) const {
   if (rank() != 2 || other.rank() != 2) {
-    throw std::invalid_argument(
-        "matmul requires two rank-two tensors"
-    );
+    throw std::invalid_argument("matmul requires two rank-two tensors");
   }
 
-  const std::size_t rows = shape_[0];
-  const std::size_t inner = shape_[1];
-  const std::size_t other_inner = other.shape_[0];
-  const std::size_t columns = other.shape_[1];
+  const std::size_t left_rows = shape_[0];
+  const std::size_t left_cols = shape_[1];
+  const std::size_t right_rows = other.shape_[0];
+  const std::size_t right_cols = other.shape_[1];
 
-  if (inner != other_inner) {
-    throw std::invalid_argument(
-        "matmul inner dimensions must match"
-    );
+  if (left_cols != right_rows) {
+    throw std::invalid_argument("matmul inner dimensions must match");
   }
 
   const std::vector<std::size_t> result_shape{
-      rows,
-      columns
+      left_rows,
+      right_cols
   };
 
   std::vector<double> result_data(
-      checked_numel(result_shape),
+      left_rows * right_cols,
       0.0
   );
 ```
 
 ### Narration
 
-> So `rows` comes from the left matrix, `columns` comes from the right, and
-> the two of them have to agree on whatever's in the middle, that's the
-> length of the dot product.
+> The result keeps the number of rows from the left matrix and the number of
+> columns from the right matrix. The two inner dimensions have to match,
+> because they determine the length of every dot product we're about to do.
+
+### On screen
+
+```text
+inputs                  weights          result
+
+[ 4.0  3.0  2.0 ]      [  0.5 ]         [  3.0 ]
+[ 1.0  2.0  0.5 ]  @   [ -1.0 ]    =    [ -0.5 ]
+                         [  2.0 ]
+
+result[0,0] = [4.0, 3.0, 2.0] dot [0.5, -1.0, 2.0] = 3.0
+result[1,0] = [1.0, 2.0, 0.5] dot [0.5, -1.0, 2.0] = -0.5
+```
+
+### Narration
+
+> Before we write the loops, let's make the actual job clear. To produce one
+> value in the result, we take one row from the left matrix and one column
+> from the right matrix, then compute their dot product. The output coordinate
+> tells us exactly which row and which column to use.
+>
+> In this example the weights only have one column, so the result only has one
+> column. The first output value is the first input row dotted with the weights,
+> and the second output value is the second input row dotted with those same
+> weights.
+
+> This is the same basic idea as a stride. Every output row contains right_cols values, so moving to the next row means skipping right_cols elements. row * right_cols skips all the complete rows before the one we want, and adding column moves to the correct position inside that row.
 
 Continue inside `matmul()`:
 
 ```cpp
-  for (std::size_t row = 0; row < rows; ++row) {
+  for (std::size_t row = 0; row < left_rows; ++row) {
     for (
         std::size_t column = 0;
-        column < columns;
+        column < right_cols;
         ++column
     ) {
       double sum = 0.0;
 
       for (
           std::size_t index = 0;
-          index < inner;
+          index < left_cols;
           ++index
       ) {
         sum +=
-            data_[row * inner + index] *
-            other.data_[index * columns + column];
+            at({row, index}) *
+            other.at({index, column});
       }
 
-      result_data[row * columns + column] = sum;
+      result_data[row * right_cols + column] = sum;
     }
   }
 
@@ -230,9 +226,16 @@ Continue inside `matmul()`:
 
 > The two outer loops are just picking one output row and one output column.
 > The inner loop is what's actually computing the dot product that lands
-> there. And because we're still contiguous row-major, `[row,index]` works
-> out to `row * inner + index`, and `[index,column]` works out to
-> `index * columns + column`.
+> there. Using `at()` makes that relationship explicit: read one value from
+> the selected row on the left, read the corresponding value from the selected
+> column on the right, multiply them, and add the product to the running sum.
+>
+> Once that dot product is finished, we still need to place it into the flat
+> output storage. This is the same basic idea as a stride. Every output row
+> contains `right_cols` values, so moving to the next row means skipping
+> `right_cols` elements. `row * right_cols` skips all the complete rows before
+> the one we want, and adding `column` moves to the correct position inside
+> that row.
 
 ### Verify immediately
 
@@ -241,12 +244,12 @@ const Tensor linear = inputs.matmul(weights);
 
 assert((
     linear.shape() ==
-    std::vector<std::size_t>{2, 2}
+    std::vector<std::size_t>{2, 1}
 ));
 
 assert((
     linear.data() ==
-    std::vector<double>{4.0, 5.0, 10.0, 11.0}
+    std::vector<double>{3.0, -0.5}
 ));
 ```
 
@@ -256,15 +259,39 @@ assert((
 inputs.matmul(weights)
 
 [
-  [ 4,  5],
-  [10, 11]
+  [ 3.0],
+  [-0.5]
 ]
 ```
 
 ### Narration
 
 > And matrix multiplication works. Every input row is producing its own
-> output vector now. The only thing left is one bias per output column.
+> prediction now. This version is easy to read, but `at()` does more work than
+> we need inside
+> the hottest loop. Every lookup constructs an index vector, checks it, and
+> converts the two-dimensional coordinate into a flat storage index.
+>
+> We already checked both ranks and the inner dimensions before entering the
+> loops, and our tensor is still stored contiguously in row-major order. So we
+> can compute those flat indices directly here.
+
+Replace the accumulation inside the innermost loop:
+
+```cpp
+        sum +=
+            data_[row * left_cols + index] *
+            other.data_[index * right_cols + column];
+```
+
+### Narration
+
+> On the left, `[row,index]` maps to `row * left_cols + index`. On the right,
+> `[index,column]` maps to `index * right_cols + column`. The calculation is
+> unchanged; we've just removed the temporary index vectors and repeated
+> checked lookups from the inner loop.
+>
+> Matrix multiplication is done. The only thing left is the bias.
 
 ---
 
@@ -274,10 +301,10 @@ inputs.matmul(weights)
 
 ```cpp
 const Tensor expanded_bias(
-    {2, 2},
+    {2, 1},
     {
-        10.0, -10.0,
-        10.0, -10.0
+        0.5,
+        0.5
     }
 );
 
@@ -286,26 +313,24 @@ const Tensor copied_predictions =
 
 assert((
     copied_predictions.data() ==
-    std::vector<double>{14.0, -5.0, 20.0, 1.0}
+    std::vector<double>{3.5, 0.0}
 ));
 ```
 
 ### On screen
 
 ```text
-[
-  [ 4,  5],       [10, -10]       [14, -5],
-  [10, 11]    +   [10, -10]   =   [20,  1]
-]
+[ 3.0]      [0.5]      [3.5]
+[-0.5]  +   [0.5]  =   [0.0]
 ```
 
 ### Narration
 
 > Okay, that's the right answer, but look at what we just did to get it.
-> Those two bias values are identical on every single row, and we copied them
-> into a whole matrix just so addition would accept two equal shapes.
-> Broadcasting is going to let the smaller tensor describe that reuse
-> directly, without us ever copying anything.
+> That's the exact same bias value on every row, and we copied it into a
+> whole column just so addition would accept two equal shapes. Broadcasting
+> is going to let the smaller tensor describe that reuse directly, without
+> us ever copying anything.
 
 ---
 

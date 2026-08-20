@@ -1,0 +1,94 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="1080" viewBox="0 0 1920 1080">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#020814"/>
+      <stop offset="0.55" stop-color="#071526"/>
+      <stop offset="1" stop-color="#020711"/>
+    </linearGradient>
+    <linearGradient id="blueCell" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#123b68"/>
+      <stop offset="1" stop-color="#071a32"/>
+    </linearGradient>
+    <linearGradient id="orangeCell" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#743a08"/>
+      <stop offset="1" stop-color="#2d1604"/>
+    </linearGradient>
+    <pattern id="grid" width="64" height="64" patternUnits="userSpaceOnUse">
+      <path d="M64 0H0V64" fill="none" stroke="#16304a" stroke-width="1" opacity="0.32"/>
+    </pattern>
+    <filter id="blueGlow" x="-80%" y="-80%" width="260%" height="260%">
+      <feGaussianBlur stdDeviation="10" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="orangeGlow" x="-80%" y="-80%" width="260%" height="260%">
+      <feGaussianBlur stdDeviation="10" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="softGlow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="5" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <g id="blue-cell">
+      <rect width="130" height="130" rx="11" fill="url(#blueCell)" stroke="#2eb8ff" stroke-width="4"/>
+      <rect x="9" y="9" width="112" height="112" rx="6" fill="none" stroke="#8ad9ff" stroke-width="1.5" opacity="0.55"/>
+    </g>
+    <g id="orange-cell">
+      <rect width="130" height="130" rx="11" fill="url(#orangeCell)" stroke="#ff9d19" stroke-width="4"/>
+      <rect x="9" y="9" width="112" height="112" rx="6" fill="none" stroke="#ffd17d" stroke-width="1.5" opacity="0.62"/>
+    </g>
+  </defs>
+
+  <rect width="1920" height="1080" fill="url(#bg)"/>
+  <rect width="1920" height="1080" fill="url(#grid)"/>
+  <path d="M0 900 C480 790 1440 1030 1920 875" fill="none" stroke="#1166b0" stroke-width="2" opacity="0.25"/>
+
+  <text x="960" y="110" text-anchor="middle" fill="#f4f8ff" font-family="Helvetica Neue, Arial, sans-serif" font-size="56" font-weight="800" letter-spacing="1">ELEMENTWISE OPERATIONS FAIL WITHOUT BROADCASTING</text>
+
+  <line x1="960" y1="260" x2="960" y2="800" stroke="#2a4d70" stroke-width="2" opacity="0.6"/>
+
+  <!-- Left: [2,1] input + [2,1] bias (uniform value) -> accepted -->
+  <g filter="url(#blueGlow)">
+    <use href="#blue-cell" x="187" y="420"/><use href="#blue-cell" x="187" y="560"/>
+  </g>
+  <g fill="#f3f8ff" font-family="SFMono-Regular, Menlo, monospace" font-size="38" font-weight="700" text-anchor="middle">
+    <text x="252" y="499">4.0</text><text x="252" y="639">3.0</text>
+  </g>
+  <path d="M169 400H143V710H169 M335 400H361V710H335" fill="none" stroke="#9cb6d0" stroke-width="6"/>
+  <text x="252" y="750" text-anchor="middle" fill="#8fc2ec" font-family="SFMono-Regular, Menlo, monospace" font-size="29" font-weight="600" letter-spacing="0.5">input  [2,1]</text>
+
+  <text x="429" y="569" text-anchor="middle" fill="#f6fbff" font-family="Helvetica Neue, Arial, sans-serif" font-size="60" font-weight="400">+</text>
+
+  <g filter="url(#orangeGlow)">
+    <use href="#orange-cell" x="541" y="420"/><use href="#orange-cell" x="541" y="560"/>
+  </g>
+  <g fill="#fff4df" font-family="SFMono-Regular, Menlo, monospace" font-size="38" font-weight="700" text-anchor="middle">
+    <text x="606" y="499">0.5</text><text x="606" y="639">0.5</text>
+  </g>
+  <path d="M523 400H497V710H523 M689 400H715V710H689" fill="none" stroke="#9cb6d0" stroke-width="6"/>
+  <text x="606" y="750" text-anchor="middle" fill="#e0aa5c" font-family="SFMono-Regular, Menlo, monospace" font-size="29" font-weight="600" letter-spacing="0.5">bias  [2,1]</text>
+
+  <text x="791" y="580" text-anchor="middle" fill="#39d98a" font-family="SFMono-Regular, Menlo, monospace" font-size="70" font-weight="700" filter="url(#softGlow)">&#10003;</text>
+
+  <!-- Right: [2,1] input + scalar bias -> still rejected -->
+  <g filter="url(#blueGlow)">
+    <use href="#blue-cell" x="1191" y="420"/><use href="#blue-cell" x="1191" y="560"/>
+  </g>
+  <g fill="#f3f8ff" font-family="SFMono-Regular, Menlo, monospace" font-size="38" font-weight="700" text-anchor="middle">
+    <text x="1256" y="499">4.0</text><text x="1256" y="639">3.0</text>
+  </g>
+  <path d="M1173 400H1147V710H1173 M1339 400H1365V710H1339" fill="none" stroke="#9cb6d0" stroke-width="6"/>
+  <text x="1256" y="750" text-anchor="middle" fill="#8fc2ec" font-family="SFMono-Regular, Menlo, monospace" font-size="29" font-weight="600" letter-spacing="0.5">input  [2,1]</text>
+
+  <text x="1433" y="569" text-anchor="middle" fill="#f6fbff" font-family="Helvetica Neue, Arial, sans-serif" font-size="60" font-weight="400">+</text>
+
+  <g filter="url(#orangeGlow)">
+    <use href="#orange-cell" x="1501" y="490"/>
+  </g>
+  <g fill="#fff4df" font-family="SFMono-Regular, Menlo, monospace" font-size="38" font-weight="700" text-anchor="middle">
+    <text x="1566" y="569">0.5</text>
+  </g>
+  <text x="1566" y="750" text-anchor="middle" fill="#e0aa5c" font-family="SFMono-Regular, Menlo, monospace" font-size="29" font-weight="600" letter-spacing="0.5">bias  []</text>
+
+  <text x="1707" y="580" text-anchor="middle" fill="#ff5a5a" font-family="SFMono-Regular, Menlo, monospace" font-size="70" font-weight="700" filter="url(#softGlow)">&#215;</text>
+
+</svg>

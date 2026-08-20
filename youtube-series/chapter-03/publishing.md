@@ -322,7 +322,7 @@ contributions to one scalar. Together, those two operations are the dot product.
       thumbnail, description, captions, playlist, and end screen are
       present.
 - [ ] At 11:00 AM, confirm that Episode 3 is publicly playable.
-- [ ] Add the pinned comment.
+- [x] Add the pinned comment. Posted via API (comment ID UgznctrafQ6j5khouIJ4AaABAg, 2026-08-18); still needs manual pinning in Studio (API cannot pin).
 - [ ] Test every public link in the description and pinned comment.
 - [ ] Record the publication time and URL in `docs/distribution-timeline.md`.
 - [ ] At approximately 12:00 PM, publish the X announcement.
