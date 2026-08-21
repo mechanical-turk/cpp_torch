@@ -34,7 +34,7 @@ section { margin-top: 46px; }
 .platform-card svg { width: 100%; height: 48px; overflow: visible; }
 .platform-card polyline { fill: none; stroke: var(--blue); stroke-width: 3; vector-effect: non-scaling-stroke; }
 .platform-card small { display: block; margin-top: 8px; white-space: nowrap; }
-.funnel-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+.funnel-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
 .funnel-card { padding: 22px; }
 .metric-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
 .metric-grid div { padding: 14px; background: #090e16; border: 1px solid #182233; border-radius: 8px; }
@@ -57,4 +57,5 @@ a:hover { color: var(--blue); }
 
 @media (max-width: 1200px) {
   .platform-grid { grid-template-columns: repeat(3, 1fr); }
+  .funnel-grid { grid-template-columns: repeat(2, 1fr); }
 }

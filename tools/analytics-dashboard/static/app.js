@@ -54,6 +54,7 @@ function funnelCards(data) {
     item => item.media?.type === "video"
   );
   const instagram = latestContent(data.platforms.find(item => item.platform === "Instagram"));
+  const tiktok = latestContent(data.platforms.find(item => item.platform === "TikTok"));
   const xMedia = x?.media;
   const xStarts = xMedia?.non_public_metrics?.playback_0_count;
   const xComplete = xMedia?.non_public_metrics?.playback_100_count;
@@ -87,6 +88,16 @@ function funnelCards(data) {
         ["Interactions", instagram?.metrics?.total_interactions]
       ],
       note: "Reach is accounts; plays can include repeats"
+    },
+    {
+      title: "TikTok video",
+      metrics: [
+        ["Views", tiktok?.metrics?.views],
+        ["Likes", tiktok?.metrics?.likes],
+        ["Comments", tiktok?.metrics?.comments],
+        ["Shares", tiktok?.metrics?.shares]
+      ],
+      note: "Manually recorded — no working API access for this account yet"
     }
   ];
   document.querySelector("#funnel-grid").innerHTML = cards.map(card => `
@@ -116,6 +127,19 @@ function rowMetrics(platform, item) {
       consumption: media?.organic_metrics?.view_count == null ? "—" : `${number.format(media.organic_metrics.view_count)} video views`,
       engagement: `${number.format(item.metrics.engagements || 0)} engagements`,
       conversion: `${number.format(item.metrics.user_profile_clicks || 0)} profile clicks`
+    };
+  }
+  if (platform === "TikTok") {
+    const m = item.metrics;
+    return {
+      reach: m.views == null ? "— (manual, not yet recorded)" : `${number.format(m.views)} views`,
+      consumption: "—",
+      engagement: [
+        m.likes == null ? null : `${number.format(m.likes)} likes`,
+        m.comments == null ? null : `${number.format(m.comments)} comments`,
+        m.shares == null ? null : `${number.format(m.shares)} shares`
+      ].filter(Boolean).join(" · ") || "—",
+      conversion: "—"
     };
   }
   return {

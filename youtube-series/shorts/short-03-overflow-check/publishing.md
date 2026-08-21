@@ -2,19 +2,20 @@
 
 ## Release target
 
-- **TikTok:** published Thursday, August 20 at approximately 3:00 PM ET —
+- **TikTok:** published Thursday, August 20 at approximately 3:00 PM ET.
   learner chose to stagger platforms and start with TikTok, ahead of the
   originally planned same-batch release.
   https://www.tiktok.com/@mechaturka/video/7676185349994876190
-- **YouTube Short and Instagram:** still pending. Originally targeted for
-  Friday, August 21 (the standing Short B slot), but Episode 5's long-form
-  release has now also been moved to that same Friday — resolve the
-  sequencing between the two before publishing either Short 3 platform.
+- **YouTube Short:** uploaded, processed in HD, and scheduled for Saturday,
+  August 22 at 2:00 PM ET:
+  https://www.youtube.com/watch?v=3kdVmqAl-js
+- **Instagram and X:** publish natively Saturday, August 22 at approximately
+  2:00 PM ET. This keeps the Short clear of Episode 5's Friday YouTube and X
+  launch while avoiding a long delay after the TikTok release.
 - **Shorts playlist:** add to the existing **Deep Learning, All the Way Down
   | Shorts** playlist immediately after YouTube publication, after Short 2.
-- **X:** no native upload this cycle, by explicit choice for this release.
-  Revisit for the next Short rather than silently dropping X from the
-  standing four-platform rotation.
+- **X:** publish the native video in the same Saturday batch, then add the
+  standard playlist-and-source navigation reply.
 - **LinkedIn:** no standalone post.
 - **Reddit:** no standalone submission.
 
@@ -25,13 +26,13 @@ platforms. Do not delay publication merely to preserve a target minute.
 ## Final title
 
 ```text
-This Check Can Never Catch an Overflow
+This Check Can Never Catch a C++ Overflow
 ```
 
 ## YouTube description
 
 ```text
-This overflow check runs after the multiplication already happened — so it can never catch anything.
+This overflow check runs after the multiplication already happened, so it can never catch anything.
 
 unsigned char only holds 0 through 255. 20 * 20 = 400, which wraps to 144 when it's stored back. 144 is still bigger than 20, so a check that looks for a smaller result finds nothing wrong. By the time you check, the real answer is already gone.
 
@@ -46,7 +47,7 @@ https://www.youtube.com/playlist?list=PLZSg76FHvdTw
 Source code:
 https://github.com/mechanical-turk/deep-learning-all-the-way-down
 
-#cpp #deeplearning #shorts
+#cpp #overflow #computerscience
 ```
 
 ## Thumbnail
@@ -54,7 +55,7 @@ https://github.com/mechanical-turk/deep-learning-all-the-way-down
 [`thumbnail.png`](thumbnail.png) is a real frame from the finished export
 (the `no overflow` terminal reveal, ~13s in), with a bold "THIS CHECK LIES"
 headline composited into the empty space above the terminal. Unlike Short
-2's fully rendered graphic, this is a frame-plus-overlay approach — worth
+2's fully rendered graphic, this is a frame-plus-overlay approach. It is worth
 noting as a deliberate production difference, not an inconsistency, when
 comparing results.
 
@@ -96,7 +97,7 @@ systems, PyTorch internals, numerical computing
   after Short 2.
 - Do not add it to the long-form course playlist.
 - Upload `thumbnail.png` as the custom thumbnail.
-- Add Episode 2 as the **related video** in YouTube Studio — this is the
+- Add Episode 2 as the **related video** in YouTube Studio. This is the
   episode the overflow guard is drawn from.
 - Review automatic captions closely for `unsigned char`, `x < 20`, and the
   compiled terminal output (`no overflow`, `overflow`); these are exactly
@@ -107,14 +108,14 @@ systems, PyTorch internals, numerical computing
 
 ### Timing
 
-Publish natively as a Reel at approximately **3:00 PM ET**, same batch as
-TikTok.
+Publish natively as a Reel on **Saturday, August 22 at approximately 2:00 PM
+ET**, in the same batch as YouTube and X.
 
 ### What we're watching for this time
 
 Short 2's Instagram numbers are the strongest baseline the series has:
 10,399 views and 7,320 reach within a day, 85 interactions including 15
-saves and 9 shares, off a 6-follower account — clear evidence the
+saves and 9 shares, off a 6-follower account. This is clear evidence the
 front-loaded, declarative-hook structure ("This X can never Y," stated
 before it's explained) travels well here. This Short reuses that exact
 hook shape. It's also structurally different from Short 2 in one respect:
@@ -133,7 +134,7 @@ and TikTok cover.
 ```text
 This overflow check can never catch anything.
 
-unsigned char only holds 0-255. 20 * 20 = 400, which wraps to 144 — and 144 is still bigger than 20. The check that's supposed to catch the overflow finds nothing wrong, because by the time it runs, the real answer is already gone.
+unsigned char only holds 0-255. 20 * 20 = 400, which wraps to 144, and 144 is still bigger than 20. The check that's supposed to catch the overflow finds nothing wrong, because by the time it runs, the real answer is already gone.
 
 Full series in bio.
 ```
@@ -165,7 +166,7 @@ https://www.youtube.com/playlist?list=PLZSg76FHvdTw
 - Allow remix/use-audio: on.
 - Share to Feed: on, in addition to Reels.
 - Share to Stories: off by default.
-- Alt text: write manually — something like "C++ code demonstrating that
+- Alt text: write manually. For example, "C++ code demonstrating that
   checking for integer overflow after multiplying an unsigned char fails,
   because the wrapped result can still look larger than the original
   value."
@@ -176,7 +177,7 @@ https://www.youtube.com/playlist?list=PLZSg76FHvdTw
 - Native upload only, never a cross-post of the YouTube or TikTok file.
 - Link only through the bio and the pinned first comment.
 - At 24 hours, compare average watch time and completion rate directly
-  against Short 2's own checkpoints, not just raw view count — Short 2 is
+  against Short 2's own checkpoints, not just raw view count. Short 2 is
   now the series' best-performing baseline, so this is the first real test
   of whether that result repeats.
 
@@ -184,12 +185,13 @@ https://www.youtube.com/playlist?list=PLZSg76FHvdTw
 
 ### Timing
 
-Publish natively at approximately **3:00 PM ET**, same batch as Instagram.
+Published natively on **Thursday, August 20 at approximately 3:00 PM ET**:
+https://www.tiktok.com/@mechaturka/video/7676185349994876190
 
 ### Safe area
 
 Reuse the universal 9:16 export/safe-area setup confirmed working for
-Short 2 — keep the code, the wrapped value, and the fix clear of the
+Short 2. Keep the code, the wrapped value, and the fix clear of the
 right-edge and bottom UI regions. No platform-specific re-crop needed
 unless a new UI element is found to intrude.
 
@@ -198,7 +200,7 @@ unless a new UI element is found to intrude.
 ```text
 This overflow check can never catch anything (and it looks completely fine)
 
-unsigned char wraps at 255. 20 * 20 wraps to 144 — still bigger than 20, so the check says nothing's wrong. Full series in bio.
+unsigned char wraps at 255. 20 * 20 wraps to 144. It is still bigger than 20, so the check says nothing's wrong. Full series in bio.
 ```
 
 ### Hashtags
@@ -228,11 +230,38 @@ Use `thumbnail.png`, same asset as YouTube and Instagram.
 - Capture 24- and 72-hour checkpoints and record them in
   `docs/distribution-timeline.md`.
 
-## X decision
+## X post
 
-No native X post for this release. This is a deliberate skip for this
-cycle, not a change to the standing four-platform rotation — resume X
-uploads with the next Short unless a further decision changes that.
+### Timing
+
+Publish the video natively on **Saturday, August 22 at approximately 2:00 PM
+ET**, alongside the YouTube Short and Instagram Reel.
+
+### Main post
+
+```text
+this overflow check can never catch an overflow.
+
+20 * 20 is 400, but an unsigned char stores 144. since 144 is still greater than 20, the check says nothing went wrong.
+
+the bug is checking after the multiplication.
+```
+
+### Navigation reply
+
+```text
+The full tensor lesson where we build the correct guard:
+https://www.youtube.com/watch?v=8kzL5NdxGCo
+
+Complete playlist:
+https://www.youtube.com/playlist?list=PLZSg76FHvdTw
+
+Source code:
+https://github.com/mechanical-turk/deep-learning-all-the-way-down
+```
+
+Upload the original 1080x1920 master directly to X. Do not link to the
+YouTube Short in the main post.
 
 ## LinkedIn decision
 
@@ -260,7 +289,7 @@ Record snapshots in `docs/distribution-timeline.md` at approximately:
 - **72 hours:** the same metrics, plus an updated TikTok-vs-Instagram
   comparison now that TikTok has two data points.
 
-Treat this as the third data point in the Shorts format experiment — the
+Treat this as the third data point in the Shorts format experiment. It is the
 first real test of whether Short 2's declarative-hook, front-loaded
 structure generalizes to a longer, live-coded format, or whether it was
 partly specific to Short 2's shorter runtime.

@@ -604,4 +604,13 @@ next: a loss function -- how wrong is a prediction, and what do we do about it
 2. Before today, `linear + bias` only worked by manually copying `bias` into a full `[2,1]` tensor. Why does the general version delete that copy entirely instead of keeping it as a scalar-specific optimization?
 3. `broadcast_shape` and `effective_strides` both compute an offset to figure out how many leading axes are missing.  What would go wrong if we padded missing axes on the right instead of the left?
 
-End the episode after the questions.
+The questions are the final spoken content.
+
+---
+
+## 12:00-12:05 - End-screen tail
+
+After the final question has finished, cut to a clean branded frame with no
+question text and no narration. Hold it for approximately five seconds. This
+is the only region where YouTube's Subscribe and complete-series-playlist end
+screen elements should appear, so they never cover the retrieval questions.

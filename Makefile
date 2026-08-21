@@ -1,4 +1,4 @@
-.PHONY: youtube-auth youtube-reauthorize youtube-analytics-sync youtube-analytics-sync-full youtube-analytics-report youtube-channel-test x-auth x-test x-analytics-sync instagram-import-token instagram-test instagram-analytics-sync social-analytics-test analytics-dashboard dashboard-up dashboard-down
+.PHONY: youtube-auth youtube-reauthorize youtube-analytics-sync youtube-analytics-sync-full youtube-analytics-report youtube-channel-test x-auth x-test x-analytics-sync instagram-import-token instagram-test instagram-analytics-sync tiktok-auth tiktok-test tiktok-analytics-sync social-analytics-test analytics-dashboard dashboard-up dashboard-down
 
 DASHBOARD_PORT := 8765
 DASHBOARD_URL := http://127.0.0.1:$(DASHBOARD_PORT)/
@@ -40,6 +40,15 @@ instagram-test:
 
 instagram-analytics-sync:
 	UV_CACHE_DIR=build/uv-cache uv run --project tools/social-analytics social-analytics instagram-sync
+
+tiktok-auth:
+	UV_CACHE_DIR=build/uv-cache uv run --project tools/social-analytics social-analytics tiktok-auth
+
+tiktok-test:
+	UV_CACHE_DIR=build/uv-cache uv run --project tools/social-analytics social-analytics tiktok-test
+
+tiktok-analytics-sync:
+	UV_CACHE_DIR=build/uv-cache uv run --project tools/social-analytics social-analytics tiktok-sync
 
 social-analytics-test:
 	PYTHONPATH=tools/social-analytics/src python3 -m unittest discover -s tools/social-analytics/tests -v

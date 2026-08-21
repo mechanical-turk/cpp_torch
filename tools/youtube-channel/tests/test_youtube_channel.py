@@ -84,6 +84,48 @@ one, two
         self.assertEqual(package["title"], "Legacy title")
         self.assertEqual(package["description"], "Legacy description.")
 
+    def test_uses_platform_block_when_section_contains_notes(self) -> None:
+        document = """\
+# Publishing
+
+## Final title
+
+```text
+Episode title
+```
+
+Internal title note.
+
+## YouTube description
+
+```text
+Description body.
+```
+
+## Pinned comment
+
+Post this immediately, then pin it:
+
+```text
+Comment body.
+```
+
+Internal comment note.
+
+## Suggested tags
+
+```text
+one, two
+```
+"""
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "publishing.md"
+            path.write_text(document, encoding="utf-8")
+            package = publishing_package(path)
+
+        self.assertEqual(package["title"], "Episode title")
+        self.assertEqual(package["pinned_comment"], "Comment body.")
+
 
 class VideoSnippetTest(unittest.TestCase):
     def test_preserves_fields_required_by_videos_update(self) -> None:

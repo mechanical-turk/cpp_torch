@@ -487,7 +487,7 @@ def publishing_section(document: str, *headings: str) -> str:
         if not match:
             continue
         body = match.group(1).strip()
-        fenced = re.fullmatch(r"```(?:text)?\s*\n(.*?)\n```", body, re.DOTALL)
+        fenced = re.search(r"```(?:text)?\s*\n(.*?)\n```", body, re.DOTALL)
         return fenced.group(1).strip() if fenced else body
     expected = " or ".join(f"`{heading}`" for heading in headings)
     raise RuntimeError(f"Missing {expected} section in publishing package")
@@ -759,6 +759,65 @@ def command_thumbnail(args: argparse.Namespace) -> int:
     return 0
 
 
+def command_upload(args: argparse.Namespace) -> int:
+    video_path = Path(args.file).expanduser().resolve()
+    package_path = Path(args.package).resolve()
+    if not video_path.is_file():
+        raise RuntimeError(f"Video file does not exist: {video_path}")
+
+    publish_at = datetime.fromisoformat(args.publish_at.replace("Z", "+00:00"))
+    if publish_at.tzinfo is None:
+        raise ValueError("--publish-at must include a UTC offset")
+    publish_at = publish_at.astimezone(UTC)
+    if publish_at <= datetime.now(UTC):
+        raise ValueError("--publish-at must be in the future")
+
+    package = publishing_package(package_path)
+    snippet = {
+        "title": package["title"],
+        "description": package["description"],
+        "tags": package["tags"],
+        "categoryId": args.category_id,
+        "defaultLanguage": args.language,
+        "defaultAudioLanguage": args.language,
+    }
+    status = {
+        "privacyStatus": "private",
+        "publishAt": publish_at.isoformat().replace("+00:00", "Z"),
+        "selfDeclaredMadeForKids": False,
+        "embeddable": True,
+        "publicStatsViewable": True,
+    }
+
+    print(f"Video: {video_path}")
+    print(f"Title: {snippet['title']}")
+    print(f"Scheduled publication: {status['publishAt']}")
+    print(f"Category: {args.category_id}")
+    print(f"Tags: {len(package['tags'])}")
+    if not args.apply:
+        print("Dry run only. Re-run with `--apply` to upload and schedule it.")
+        return 0
+
+    services = build_services(authorize())
+    request = services.youtube.videos().insert(
+        part="snippet,status",
+        notifySubscribers=True,
+        body={"snippet": snippet, "status": status},
+        media_body=MediaFileUpload(str(video_path), resumable=True),
+    )
+    response: dict[str, Any] | None = None
+    while response is None:
+        upload_status, response = request.next_chunk()
+        if upload_status is not None:
+            print(f"Upload progress: {upload_status.progress() * 100:.1f}%")
+    video_id = response.get("id")
+    if not video_id:
+        raise RuntimeError("YouTube upload completed without returning a video ID")
+    print(f"Video uploaded and scheduled: {video_id}")
+    print(f"Studio: https://studio.youtube.com/video/{video_id}/edit")
+    return 0
+
+
 def parser() -> argparse.ArgumentParser:
     root = argparse.ArgumentParser(
         prog="youtube-channel",
@@ -822,6 +881,21 @@ def parser() -> argparse.ArgumentParser:
     thumbnail.add_argument("--file", required=True)
     thumbnail.add_argument("--apply", action="store_true")
     thumbnail.set_defaults(handler=command_thumbnail)
+
+    upload = commands.add_parser(
+        "upload", help="Upload and schedule a video from a publishing package"
+    )
+    upload.add_argument("--file", required=True)
+    upload.add_argument("--package", required=True)
+    upload.add_argument(
+        "--publish-at",
+        required=True,
+        help="RFC 3339 publication time with a UTC offset",
+    )
+    upload.add_argument("--category-id", default="28")
+    upload.add_argument("--language", default="en")
+    upload.add_argument("--apply", action="store_true")
+    upload.set_defaults(handler=command_upload)
     return root
 
 

@@ -4,7 +4,7 @@ import base64
 import hashlib
 import unittest
 
-from social_analytics import X_COLLECTION_START, base64url, pkce_pair
+from social_analytics import SCOPES, X_COLLECTION_START, base64url, pkce_pair
 
 
 class PkceTest(unittest.TestCase):
@@ -24,6 +24,13 @@ class PkceTest(unittest.TestCase):
 class CollectionBoundaryTest(unittest.TestCase):
     def test_x_collection_never_precedes_series_boundary(self) -> None:
         self.assertEqual(X_COLLECTION_START, "2026-08-13T13:10:00Z")
+
+
+class XAuthorizationScopeTest(unittest.TestCase):
+    def test_x_authorization_requests_reply_capability(self) -> None:
+        self.assertIn("tweet.read", SCOPES.split())
+        self.assertIn("tweet.write", SCOPES.split())
+        self.assertIn("offline.access", SCOPES.split())
 
 
 if __name__ == "__main__":

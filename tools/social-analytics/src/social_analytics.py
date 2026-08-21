@@ -25,7 +25,7 @@ X_PRIVATE_DIR = REPOSITORY_ROOT / "youtube-series" / "analytics" / "private" / "
 X_LATEST_PATH = X_PRIVATE_DIR / "latest.json"
 X_SNAPSHOTS_DIR = X_PRIVATE_DIR / "snapshots"
 REDIRECT_URI = "http://127.0.0.1:8765/callback"
-SCOPES = "tweet.read users.read offline.access"
+SCOPES = "tweet.read tweet.write users.read offline.access"
 X_COLLECTION_START = "2026-08-13T13:10:00Z"
 INSTAGRAM_CONFIG_DIR = Path.home() / ".config" / "dlatwd" / "instagram-analytics"
 INSTAGRAM_TOKEN_PATH = INSTAGRAM_CONFIG_DIR / "token.json"
@@ -37,6 +37,25 @@ INSTAGRAM_SNAPSHOTS_DIR = INSTAGRAM_PRIVATE_DIR / "snapshots"
 INSTAGRAM_REEL_INSIGHT_METRICS = (
     "views,reach,total_interactions,likes,comments,saved,shares,"
     "ig_reels_avg_watch_time,ig_reels_video_view_total_time"
+)
+TIKTOK_CONFIG_DIR = Path.home() / ".config" / "dlatwd" / "tiktok-analytics"
+TIKTOK_CLIENT_PATH = TIKTOK_CONFIG_DIR / "client.json"
+TIKTOK_TOKEN_PATH = TIKTOK_CONFIG_DIR / "token.json"
+TIKTOK_PENDING_AUTH_PATH = TIKTOK_CONFIG_DIR / "pending-auth.json"
+TIKTOK_PRIVATE_DIR = (
+    REPOSITORY_ROOT / "youtube-series" / "analytics" / "private" / "tiktok"
+)
+TIKTOK_LATEST_PATH = TIKTOK_PRIVATE_DIR / "latest.json"
+TIKTOK_SNAPSHOTS_DIR = TIKTOK_PRIVATE_DIR / "snapshots"
+# TikTok's app console may reject a loopback redirect URI outright (unlike X,
+# which allows it for public clients). Try this first; if TikTok's console
+# won't accept it, register a redirect URI you do control instead and use
+# `tiktok-auth --code` with the value TikTok appends to that URL.
+TIKTOK_REDIRECT_URI = "http://127.0.0.1:8766/callback"
+TIKTOK_SCOPES = "user.info.basic,video.list"
+TIKTOK_VIDEO_FIELDS = (
+    "id,create_time,share_url,video_description,duration,cover_image_url,"
+    "view_count,like_count,comment_count,share_count"
 )
 
 
@@ -236,6 +255,80 @@ def x_get(path: str, parameters: dict[str, str]) -> dict[str, Any]:
         raise RuntimeError(f"X request failed ({error.code}): {detail}") from error
 
 
+def x_post(path: str, body: dict[str, Any]) -> dict[str, Any]:
+    request = Request(
+        f"https://api.x.com{path}",
+        data=json.dumps(body).encode("utf-8"),
+        headers={
+            "Authorization": f"Bearer {access_token()}",
+            "Content-Type": "application/json",
+        },
+        method="POST",
+    )
+    try:
+        with urlopen(request, timeout=30) as response:
+            return json.load(response)
+    except HTTPError as error:
+        detail = error.read().decode("utf-8", errors="replace")
+        raise RuntimeError(f"X write failed ({error.code}): {detail}") from error
+
+
+def account_replies(parent_post_id: str) -> list[dict[str, Any]]:
+    me = x_get("/2/users/me", {"user.fields": "id,username"})["data"]
+    result = x_get(
+        f"/2/users/{me['id']}/tweets",
+        {
+            "start_time": X_COLLECTION_START,
+            "max_results": "100",
+            "tweet.fields": "id,text,created_at,conversation_id,referenced_tweets",
+        },
+    )
+    return [
+        post
+        for post in result.get("data", [])
+        if post.get("id") != parent_post_id
+        and post.get("conversation_id") == parent_post_id
+    ]
+
+
+def command_x_reply(args: argparse.Namespace) -> int:
+    parent_post_id = args.in_reply_to.strip()
+    if not parent_post_id.isdecimal():
+        raise RuntimeError("The parent X post ID must contain only digits")
+
+    text = Path(args.text_file).read_text(encoding="utf-8").strip()
+    if not text:
+        raise RuntimeError("The reply text file is empty")
+
+    print(f"Reply target: https://x.com/i/status/{parent_post_id}")
+    print()
+    print(text)
+    print()
+
+    if not args.apply:
+        print("Dry run only. Re-run with --apply to publish this reply.")
+        return 0
+
+    existing = account_replies(parent_post_id)
+    if existing:
+        print("Refusing to create another account-authored reply.")
+        for post in existing:
+            print(f"  https://x.com/i/status/{post['id']}")
+            print(f"  {post.get('text', '').strip()}")
+        return 2
+
+    result = x_post(
+        "/2/tweets",
+        {
+            "text": text,
+            "reply": {"in_reply_to_tweet_id": parent_post_id},
+        },
+    )["data"]
+    me = x_get("/2/users/me", {"user.fields": "username"})["data"]
+    print(f"Published: https://x.com/{me['username']}/status/{result['id']}")
+    return 0
+
+
 def command_x_sync(_args: argparse.Namespace) -> int:
     me = x_get(
         "/2/users/me",
@@ -393,6 +486,298 @@ def command_instagram_sync(_args: argparse.Namespace) -> int:
     return 0
 
 
+def tiktok_client() -> tuple[str, str]:
+    if TIKTOK_CLIENT_PATH.exists():
+        stored = json.loads(TIKTOK_CLIENT_PATH.read_text(encoding="utf-8"))
+        return stored["client_key"], stored["client_secret"]
+    client_key = input("TikTok Client Key: ").strip()
+    if not client_key:
+        raise RuntimeError("Client Key cannot be empty")
+    client_secret = getpass.getpass("TikTok Client Secret: ").strip()
+    if not client_secret:
+        raise RuntimeError("Client Secret cannot be empty")
+    write_private_json(
+        TIKTOK_CLIENT_PATH,
+        {"client_key": client_key, "client_secret": client_secret},
+    )
+    return client_key, client_secret
+
+
+class TikTokCallbackHandler(BaseHTTPRequestHandler):
+    result: dict[str, str] = {}
+    expected_state = ""
+
+    def do_GET(self) -> None:  # noqa: N802
+        query = parse_qs(urlparse(self.path).query)
+        if query.get("state", [""])[0] != self.expected_state:
+            self.send_response(400)
+            message = "Authorization failed: state mismatch."
+            type(self).result = {"error": message}
+        elif "error" in query:
+            self.send_response(400)
+            description = query.get("error_description", [""])[0]
+            message = f"Authorization denied: {query['error'][0]}"
+            if description:
+                message += f" ({description})"
+            type(self).result = {"error": message}
+        else:
+            type(self).result = {"code": query.get("code", [""])[0]}
+            self.send_response(200)
+            message = "TikTok authorization complete. You may close this tab."
+        self.send_header("Content-Type", "text/plain; charset=utf-8")
+        self.end_headers()
+        self.wfile.write(message.encode("utf-8"))
+        threading.Thread(target=self.server.shutdown, daemon=True).start()
+
+    def log_message(self, _format: str, *_args: object) -> None:
+        return
+
+
+def tiktok_exchange_code(
+    client_key: str, client_secret: str, code: str, verifier: str
+) -> dict[str, Any]:
+    body = urlencode(
+        {
+            "client_key": client_key,
+            "client_secret": client_secret,
+            "code": code,
+            "grant_type": "authorization_code",
+            "redirect_uri": TIKTOK_REDIRECT_URI,
+            "code_verifier": verifier,
+        }
+    ).encode("utf-8")
+    request = Request(
+        "https://open.tiktokapis.com/v2/oauth/token/",
+        data=body,
+        headers={
+            "Content-Type": "application/x-www-form-urlencoded",
+            "Cache-Control": "no-cache",
+        },
+        method="POST",
+    )
+    try:
+        with urlopen(request, timeout=30) as response:
+            result = json.load(response)
+    except HTTPError as error:
+        detail = error.read().decode("utf-8", errors="replace")
+        raise RuntimeError(
+            f"TikTok token exchange failed ({error.code}): {detail}"
+        ) from error
+    if "access_token" not in result:
+        raise RuntimeError(f"TikTok token exchange did not return a token: {result}")
+    result["acquired_at"] = int(time.time())
+    return result
+
+
+def command_tiktok_auth(args: argparse.Namespace) -> int:
+    client_key, client_secret = tiktok_client()
+
+    if args.code:
+        if not TIKTOK_PENDING_AUTH_PATH.exists():
+            raise RuntimeError(
+                "No pending TikTok authorization found; run `tiktok-auth` "
+                "(without --code) first to generate one"
+            )
+        pending = json.loads(TIKTOK_PENDING_AUTH_PATH.read_text(encoding="utf-8"))
+        token = tiktok_exchange_code(
+            client_key, client_secret, args.code, pending["verifier"]
+        )
+        write_private_json(TIKTOK_TOKEN_PATH, token)
+        TIKTOK_PENDING_AUTH_PATH.unlink(missing_ok=True)
+        print(f"Authorization stored securely at {TIKTOK_TOKEN_PATH}")
+        return 0
+
+    verifier, challenge = pkce_pair()
+    state = secrets.token_urlsafe(32)
+    write_private_json(TIKTOK_PENDING_AUTH_PATH, {"verifier": verifier, "state": state})
+    parameters = urlencode(
+        {
+            "client_key": client_key,
+            "response_type": "code",
+            "scope": TIKTOK_SCOPES,
+            "redirect_uri": TIKTOK_REDIRECT_URI,
+            "state": state,
+            "code_challenge": challenge,
+            "code_challenge_method": "S256",
+        }
+    )
+    url = f"https://www.tiktok.com/v2/auth/authorize/?{parameters}"
+    print("Opening TikTok authorization in your browser...")
+    print(url)
+    print()
+    print(
+        "If the browser redirects successfully to "
+        f"{TIKTOK_REDIRECT_URI}, this command will finish automatically."
+    )
+    print(
+        "If TikTok rejects that redirect URI at authorization time, "
+        "register a redirect URI you control in the TikTok developer "
+        "console instead, open the URL above manually, and once TikTok "
+        "redirects there, rerun this command with "
+        "`tiktok-auth --code <the code= value from that URL>`."
+    )
+
+    TikTokCallbackHandler.expected_state = state
+    TikTokCallbackHandler.result = {}
+    webbrowser.open(url)
+    server = HTTPServer(("127.0.0.1", 8766), TikTokCallbackHandler)
+    server.timeout = 300
+    server.handle_request()
+    code = TikTokCallbackHandler.result.get("code")
+    if not code:
+        error = TikTokCallbackHandler.result.get("error")
+        if error:
+            raise RuntimeError(error)
+        print(
+            "No callback received within 5 minutes. The pending "
+            f"authorization is saved at {TIKTOK_PENDING_AUTH_PATH} — "
+            "once you have a code, rerun with `tiktok-auth --code ...`."
+        )
+        return 1
+    token = tiktok_exchange_code(client_key, client_secret, code, verifier)
+    write_private_json(TIKTOK_TOKEN_PATH, token)
+    TIKTOK_PENDING_AUTH_PATH.unlink(missing_ok=True)
+    print(f"Authorization stored securely at {TIKTOK_TOKEN_PATH}")
+    return 0
+
+
+def tiktok_refresh_access_token(token: dict[str, Any]) -> dict[str, Any]:
+    client_key, client_secret = tiktok_client()
+    refresh_token = token.get("refresh_token")
+    if not refresh_token:
+        raise RuntimeError("TikTok token cannot refresh; run `make tiktok-auth` again")
+    body = urlencode(
+        {
+            "client_key": client_key,
+            "client_secret": client_secret,
+            "grant_type": "refresh_token",
+            "refresh_token": refresh_token,
+        }
+    ).encode("utf-8")
+    request = Request(
+        "https://open.tiktokapis.com/v2/oauth/token/",
+        data=body,
+        headers={
+            "Content-Type": "application/x-www-form-urlencoded",
+            "Cache-Control": "no-cache",
+        },
+        method="POST",
+    )
+    try:
+        with urlopen(request, timeout=30) as response:
+            result = json.load(response)
+    except HTTPError as error:
+        detail = error.read().decode("utf-8", errors="replace")
+        raise RuntimeError(
+            f"TikTok token refresh failed ({error.code}): {detail}"
+        ) from error
+    result["acquired_at"] = int(time.time())
+    if "refresh_token" not in result:
+        result["refresh_token"] = refresh_token
+    write_private_json(TIKTOK_TOKEN_PATH, result)
+    return result
+
+
+def tiktok_access_token() -> str:
+    if not TIKTOK_TOKEN_PATH.exists():
+        raise RuntimeError("TikTok is not authorized; run `make tiktok-auth` first")
+    token = json.loads(TIKTOK_TOKEN_PATH.read_text(encoding="utf-8"))
+    acquired_at = token.get("acquired_at")
+    expires_in = token.get("expires_in", 86400)
+    if acquired_at is None:
+        token["acquired_at"] = int(time.time())
+        write_private_json(TIKTOK_TOKEN_PATH, token)
+    elif time.time() >= acquired_at + expires_in - 300:
+        token = tiktok_refresh_access_token(token)
+    return token["access_token"]
+
+
+def tiktok_get(path: str, parameters: dict[str, str]) -> dict[str, Any]:
+    url = f"https://open.tiktokapis.com{path}?{urlencode(parameters)}"
+    request = Request(
+        url, headers={"Authorization": f"Bearer {tiktok_access_token()}"}
+    )
+    try:
+        with urlopen(request, timeout=30) as response:
+            return json.load(response)
+    except HTTPError as error:
+        detail = error.read().decode("utf-8", errors="replace")
+        raise RuntimeError(f"TikTok request failed ({error.code}): {detail}") from error
+
+
+def tiktok_post(
+    path: str, query: dict[str, str], body: dict[str, Any]
+) -> dict[str, Any]:
+    url = f"https://open.tiktokapis.com{path}?{urlencode(query)}"
+    request = Request(
+        url,
+        data=json.dumps(body).encode("utf-8"),
+        headers={
+            "Authorization": f"Bearer {tiktok_access_token()}",
+            "Content-Type": "application/json",
+        },
+        method="POST",
+    )
+    try:
+        with urlopen(request, timeout=30) as response:
+            return json.load(response)
+    except HTTPError as error:
+        detail = error.read().decode("utf-8", errors="replace")
+        raise RuntimeError(f"TikTok request failed ({error.code}): {detail}") from error
+
+
+def command_tiktok_test(_args: argparse.Namespace) -> int:
+    result = tiktok_get(
+        "/v2/user/info/",
+        {"fields": "open_id,display_name,follower_count,video_count,likes_count"},
+    )
+    data = result.get("data", {}).get("user", {})
+    if not data:
+        raise RuntimeError(f"Unexpected TikTok response: {result}")
+    print(f"Authorized TikTok account: {data.get('display_name')}")
+    print(json.dumps(data, indent=2))
+    return 0
+
+
+def command_tiktok_sync(_args: argparse.Namespace) -> int:
+    user = tiktok_get(
+        "/v2/user/info/",
+        {"fields": "open_id,display_name,follower_count,video_count,likes_count"},
+    ).get("data", {}).get("user", {})
+
+    videos: list[dict[str, Any]] = []
+    cursor = 0
+    while True:
+        page = tiktok_post(
+            "/v2/video/list/",
+            {"fields": TIKTOK_VIDEO_FIELDS},
+            {"max_count": 20, "cursor": cursor} if cursor else {"max_count": 20},
+        )
+        data = page.get("data", {})
+        videos.extend(data.get("videos", []))
+        if not data.get("has_more"):
+            break
+        cursor = data.get("cursor", 0)
+        if not cursor:
+            break
+
+    captured_at = int(time.time())
+    snapshot = {"captured_at": captured_at, "account": user, "videos": videos}
+    TIKTOK_SNAPSHOTS_DIR.mkdir(parents=True, exist_ok=True)
+    timestamp = time.strftime("%Y-%m-%dT%H-%M-%SZ", time.gmtime(captured_at))
+    write_private_json(TIKTOK_SNAPSHOTS_DIR / f"{timestamp}.json", snapshot)
+    write_private_json(TIKTOK_LATEST_PATH, snapshot)
+    print(f"Collected {len(videos)} TikTok videos for {user.get('display_name')}.")
+    for video in videos:
+        print(
+            f"  {video.get('share_url')} views={video.get('view_count')} "
+            f"likes={video.get('like_count')} comments={video.get('comment_count')} "
+            f"shares={video.get('share_count')}"
+        )
+    print(f"Latest snapshot: {TIKTOK_LATEST_PATH}")
+    return 0
+
+
 def parser() -> argparse.ArgumentParser:
     root = argparse.ArgumentParser(description="Local social analytics collector")
     commands = root.add_subparsers(required=True)
@@ -402,6 +787,21 @@ def parser() -> argparse.ArgumentParser:
     x_test.set_defaults(handler=command_x_test)
     x_sync = commands.add_parser("x-sync", help="Collect series-era owned X posts")
     x_sync.set_defaults(handler=command_x_sync)
+    x_reply = commands.add_parser(
+        "x-reply", help="Preview or publish a reply from a UTF-8 text file"
+    )
+    x_reply.add_argument(
+        "--in-reply-to", required=True, help="Numeric ID of the parent X post"
+    )
+    x_reply.add_argument(
+        "--text-file", required=True, help="Path to a UTF-8 file containing the reply"
+    )
+    x_reply.add_argument(
+        "--apply",
+        action="store_true",
+        help="Publish after checking for an existing account-authored reply",
+    )
+    x_reply.set_defaults(handler=command_x_reply)
     instagram_import = commands.add_parser(
         "instagram-import-token", help="Securely import an Instagram access token"
     )
@@ -414,6 +814,27 @@ def parser() -> argparse.ArgumentParser:
         "instagram-sync", help="Collect owned Instagram media and Reel insights"
     )
     instagram_sync.set_defaults(handler=command_instagram_sync)
+    tiktok_auth = commands.add_parser(
+        "tiktok-auth", help="Authorize owned-account TikTok analytics"
+    )
+    tiktok_auth.add_argument(
+        "--code",
+        default=None,
+        help=(
+            "Complete a pending authorization using a code manually copied "
+            "from a redirect TikTok sent to a URL other than the loopback "
+            "default (see `tiktok-auth` output for when this is needed)."
+        ),
+    )
+    tiktok_auth.set_defaults(handler=command_tiktok_auth)
+    tiktok_test = commands.add_parser(
+        "tiktok-test", help="Verify the authorized TikTok account"
+    )
+    tiktok_test.set_defaults(handler=command_tiktok_test)
+    tiktok_sync = commands.add_parser(
+        "tiktok-sync", help="Collect owned TikTok videos and their stats"
+    )
+    tiktok_sync.set_defaults(handler=command_tiktok_sync)
     return root
 
 

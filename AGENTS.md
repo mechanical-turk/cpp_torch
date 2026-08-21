@@ -91,6 +91,85 @@ needs to change.
 - Reconcile the ledger at every meaningful stopping point in video production
   or distribution work, even when the learner does not request an update.
 
+## Command: `engine-check`
+
+When the learner says `engine-check` or `run engine check`, perform a complete
+mechanical operations audit for the series. This is a standing command and must
+continue to work after sessions are wiped.
+
+Begin by reading `docs/distribution-timeline.md`,
+`youtube-series/production/posting-cadence.md`, every active episode or Short's
+`publishing.md`, and the latest relevant analytics report. Then reconcile what
+we said we would do against what is recorded as complete and, where authorized
+tooling exists, against the current platform state.
+
+At minimum, check every active release for:
+
+- YouTube publication or scheduling status, final title, description, tags,
+  thumbnail, playlist membership, and the intended publication time. Every
+  long-form episode must belong to the main series playlist, and every Short
+  must belong to the dedicated Shorts playlist. Add missing membership through
+  the channel tooling during the check rather than returning it as a learner
+  task;
+- whether the required first comment was posted, whether its retrieval answers
+  reproduce the episode's exact closing questions, and whether it was manually
+  pinned when the API cannot pin it;
+- the end screen on every long-form episode. It must contain both a Subscribe
+  element and a playlist element linking to the complete series playlist. Use
+  authenticated YouTube Studio browser automation to inspect and add missing
+  elements when available. The Data API cannot read or edit end screens, so if
+  Studio access is unavailable, report this as a specific manual blocker rather
+  than silently treating it as complete;
+- other Studio-only items, including related-video assignment, cards, reviewed
+  captions, and audience settings when they were part of the release package;
+- whether each long-form episode received its X announcement at the planned
+  interval and the standard playlist-and-GitHub navigation reply;
+- whether the corresponding LinkedIn announcement was published approximately
+  one to two days later, unless the package explicitly chose another timing;
+- whether each Short was published on every platform selected in its package,
+  including YouTube, X, Instagram, and TikTok, with its pinned comment or
+  platform-equivalent follow-up when planned;
+- whether planned Reddit, Telegram, Hacker News, community, newsletter, blog,
+  or other distribution actions were completed, deliberately deferred, or
+  explicitly cancelled rather than silently forgotten;
+- whether scheduled 24-hour, 72-hour, and other decision-relevant analytics
+  checkpoints were captured, and whether audience counts and data freshness
+  are current;
+- whether recording, editing, thumbnail, upload, release-gate, and next-episode
+  dependencies needed for the standing cadence are complete or at risk; and
+- whether any planned action is stale, overdue, duplicated, contradicted by
+  live state, or missing its timestamp or URL.
+
+Use the available APIs and local tools to verify and perform routine authorized,
+non-destructive operations directly. Isolate genuinely manual actions instead
+of assigning API-capable work to the learner. Never infer completion from a
+plan: mark an item `unknown` until the ledger or live evidence confirms it.
+
+Before posting any comment or reply, retrieve and inspect every existing
+account-authored comment on that item. Treat a comment as present when it
+already fulfills the intended function, even if wording, whitespace, or link
+order differs from `publishing.md`. Exact-string comparison is not sufficient
+evidence that a comment is missing. Never create a second account-authored
+comment automatically; if an existing comment is incomplete, report the
+difference and request an explicit edit or replacement decision.
+
+After every external write, report exactly what was created or changed and
+include a direct public link to the resulting post, comment, video, playlist,
+or other platform object. An object ID or generic video URL is not an adequate
+substitute when a direct comment or post URL can be constructed.
+
+After reconciling, update `docs/distribution-timeline.md` with newly verified
+events, current statuses, explicit deferrals or cancellations, and the next
+dependent actions. Return a compact engine-check report organized as:
+
+1. `Missing or overdue now`
+2. `Manual verification required`
+3. `Upcoming next`
+4. `Confirmed complete`
+
+Lead with action, omit internal tooling details, and do not bury a missed
+release obligation inside general strategy commentary.
+
 ## Primary directive: preserve distribution lessons
 
 Codex must preserve important lessons derived from platform analytics so they
@@ -151,6 +230,20 @@ experiments.
   contrast, target approximately 20-25 seconds when the idea permits it, and
   keep the CTA to at most two seconds. Recheck at 24 and 72 hours before
   declaring a conclusion.
+- The second Short provides the first strong follow-up experiment. On Instagram,
+  the 27-second unsigned-loop failure reached 9,757 accounts, averaged 15.87
+  seconds, and generated 111 interactions, versus 1,026 reach, 7.68 seconds,
+  and nine interactions for the 34-second tensor-shape Short. YouTube's
+  processed comparison also favors the second Short on average percentage
+  viewed (66.76% versus 59.61%) and subscriber conversion (one versus zero).
+  Treat this as evidence to repeat a concrete failure, immediately visible
+  code, one causal mechanism, and a 20-30 second runtime for the next two
+  experiments, not as proof that unsigned loops or any single topic always win.
+- Episode 3's processed retention extends the long-form opening diagnosis:
+  audience watch ratio fell from 53.1% near the first 1% of the video to 18.8%
+  near 2%, 9.4% near 3%, and 3.1% near 4%. Future episodes must expose the real
+  contradiction or completed calculation within the first twenty seconds and
+  begin meaningful code around thirty seconds when the subject permits it.
 - Treat navigation replies as infrastructure for high-intent readers, not as a
   reach mechanism. Low impressions do not make them useless when they provide
   direct paths to the playlist and repository.
@@ -162,6 +255,19 @@ experiments.
 - Before writing any new episode announcement, consult the latest dated report
   under `youtube-series/analytics/reports/` and explicitly apply or test the
   relevant lessons.
+- Before posting a YouTube link on X, inspect the video's live
+  `twitter:card` metadata. YouTube may emit either `summary_large_image` or
+  `player` on a per-video basis even when the custom thumbnail is the same
+  1280x720 format. X renders `player` as the compact thumbnail-and-text card;
+  changing between `youtube.com/watch` and `youtu.be`, or adding ordinary share
+  parameters, does not change YouTube's canonical card type. A separately
+  attached native image is not an equivalent fix because clicking it opens the
+  image rather than the episode. The durable solution is a branded preview URL
+  under our control that serves `summary_large_image` metadata to unfurlers and
+  routes human visitors to the YouTube episode. Until that infrastructure is in
+  place, consciously choose between YouTube's compact clickable player card
+  and a native-image post; do not describe the latter as preserving normal
+  card click-through behavior.
 - Keep the ledger focused on the learner's observable timeline and next actions:
   recordings, edits, scheduling, releases, social announcements, community
   posts, Shorts, and decision-relevant analytics checkpoints. Update it as soon
@@ -207,6 +313,9 @@ experiments.
   and add or reorder the video as specified.
 - Always run and inspect the package dry-run diff before applying changes. Never
   assume prose written for internal planning is exact platform-ready metadata.
+- A package dry run's `already posted` check is only an exact-text check. Before
+  posting, independently inspect all channel-authored comments and do not add a
+  duplicate when an existing comment already serves the package's purpose.
 - Never implement or execute deletion, channel banning, destructive comment
   moderation, or other irreversible YouTube actions under this standing
   authorization. Those require a separate explicit learner request.
@@ -214,6 +323,22 @@ experiments.
   the intended comment through the API when authorized, then record pinning,
   related-video assignment, end screens, cards, and other unsupported actions as
   manual or separately verified browser steps.
+
+## X account operations
+
+- The local X integration under `tools/social-analytics/` is authorized with
+  `tweet.read`, `tweet.write`, `users.read`, and `offline.access`. Use its
+  `x-reply` command for account-authored navigation replies rather than asking
+  the learner to post them manually when the reply is already authorized by a
+  finalized publishing package or an explicit request.
+- Always preview an X reply without `--apply` first. Before applying it, the
+  command must retrieve the account's live conversation state and refuse to
+  create another account-authored reply when one already exists. After a
+  successful write, report the direct public reply URL and record it in the
+  distribution timeline.
+- X posting access does not authorize deletion, direct messages, unsolicited
+  replies, or arbitrary new posts. Those require a separate explicit learner
+  request even when the app technically has broader permissions.
 
 ## Instagram analytics operations
 
@@ -228,9 +353,40 @@ experiments.
   publishing, messaging, comment-management, or Facebook Page permissions
   unless the learner explicitly authorizes a new capability.
 
+## TikTok analytics operations
+
+- Use `make tiktok-analytics-sync` as the canonical routine source for the
+  owned `@mechaturka` TikTok profile and video stats, once authorized (see
+  `tools/analytics-dashboard/README.md` for the one-time setup). Refresh it
+  before a TikTok distribution decision when current performance could
+  change the recommendation.
+- TikTok credentials (client key, client secret, and OAuth token) must
+  remain outside the repository under `~/.config/dlatwd/tiktok-analytics/`.
+  Raw snapshots remain private under the gitignored
+  `youtube-series/analytics/private/tiktok/` directory.
+- Until TikTok is authorized, or if authorization lapses, the analytics
+  dashboard and any TikTok reporting fall back to the hand-maintained
+  `youtube-series/analytics/private/manual-tiktok.json`. Treat that
+  fallback's numbers as `unknown` rather than zero when they are `null`,
+  and do not silently report them as current API data.
+- The TikTok integration is read-only in practice. Do not add posting,
+  comment-management, or additional scopes beyond `user.info.basic` and
+  `video.list` unless the learner explicitly authorizes a new capability.
+
 ## Video-series scripting
 
 When planning or writing a chapter for *Deep Learning, All the Way Down*:
+
+- Never use an em dash in any audience-facing copy. This prohibition applies
+  to scripts, narration, titles, descriptions, comments, social posts,
+  captions, visual text, and publishing packages. Rewrite the sentence with a
+  period, comma, colon, semicolon, or parentheses instead. Treat this as an
+  absolute series voice rule, not a stylistic preference.
+- Never use `#shorts` in a description, caption, social post, or metadata tag.
+  The format is already known to the platform, and the generic label adds no
+  useful subject information. Use a small set of topic-specific hashtags and
+  metadata tags that identify the language, technical concept, and intended
+  audience instead.
 
 - Maintain uncommitted video, Short, post, and content concepts in
   `youtube-series/content-ideas.md`. Keep this idea backlog separate from active
@@ -288,10 +444,33 @@ When planning or writing a chapter for *Deep Learning, All the Way Down*:
   pinned comment. The corresponding `publishing.md` must contain this answer
   key. Do not silently substitute, rewrite, or omit a question.
 - Place closing retrieval questions after the review and next-chapter teaser,
-  not between them. End on the questions so viewers leave with an active task.
+  not between them. Follow them only with the brief standard sign-off: “That
+  brings us to the end of this episode. Thanks for watching, and I will see you
+  next time.”
+- Every end-of-episode review must include a concise, itemized on-screen list
+  of the concepts and implementations covered in that episode. The spoken
+  recap should follow the same list so it can be displayed directly during
+  editing without requiring a separate summary.
+- Keep the entire ending tight: itemized recap, one concise next-episode
+  teaser, retrieval questions, the standard sign-off, then the clean end-screen
+  tail. Do not explain the lesson again, repeat the recap in prose, or add
+  another closing speech.
+- The next-episode teaser must also have a concise itemized on-screen list of
+  the concrete subjects or capabilities planned for that episode. Keep it to
+  approximately three items and make the spoken teaser match the list.
+- Reserve approximately five seconds of clean video after the sign-off. Every
+  retrieval question must finish and remain readable before this tail begins.
+  Use the dedicated tail for the Subscribe element and complete-series-playlist
+  element; never place those elements over the questions themselves. Record
+  this tail explicitly in every script and verify it in the final export before
+  release.
 - Keep closing retrieval to at most five questions and prefer approximately
   three. Select the questions that retrieve the chapter's central dependency
   chain rather than attempting exhaustive coverage.
+- Format every on-screen retrieval question for a narrow display. Insert
+  deliberate line breaks at natural phrase boundaries so no line becomes
+  visually cramped, while keeping each question easy to read aloud. Do not
+  rely on automatic word wrapping to choose the layout during recording.
 - Optimize the long-form chapter only for a natural, coherent 16:9 lesson. Do
   not constrain its composition, narration, or structure to make excerpts work
   as vertical Shorts.
@@ -302,7 +481,9 @@ When planning or writing a chapter for *Deep Learning, All the Way Down*:
   include the final title, YouTube description, pinned comment, chapter markers
   or an explicit note that they remain provisional, thumbnail reference, tags,
   an X announcement, a LinkedIn announcement, a Reddit decision and draft when
-  appropriate, and a separately produced Shorts plan.
+  appropriate, a separately produced Shorts plan, and a release check for the
+  five-second end-screen tail plus the Subscribe and complete-series-playlist
+  elements.
 - Every `publishing.md` package, including packages for native Shorts and other
   video formats, must contain a platform-ready pinned comment. Keep it concise
   outside the required retrieval answer key, make its links explicit, and

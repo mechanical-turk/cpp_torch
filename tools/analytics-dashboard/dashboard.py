@@ -135,10 +135,74 @@ def load_instagram() -> dict[str, Any]:
     }
 
 
+def load_tiktok() -> dict[str, Any]:
+    api_data = load_json(PRIVATE_ROOT / "tiktok" / "latest.json")
+    if api_data is not None:
+        account = api_data.get("account", {})
+        content = []
+        for item in api_data.get("videos", []):
+            content.append(
+                {
+                    "id": item.get("id"),
+                    "title": (item.get("video_description") or "Untitled").replace(
+                        "\n", " "
+                    ),
+                    "published_at": iso_from_epoch(item.get("create_time")),
+                    "url": item.get("share_url"),
+                    "metrics": {
+                        "views": item.get("view_count"),
+                        "likes": item.get("like_count"),
+                        "comments": item.get("comment_count"),
+                        "shares": item.get("share_count"),
+                    },
+                }
+            )
+        return {
+            "platform": "TikTok",
+            "handle": account.get("display_name", "@mechaturka"),
+            "followers": account.get("follower_count"),
+            "captured_at": iso_from_epoch(api_data.get("captured_at")),
+            "content": content,
+            "source": "api",
+        }
+
+    # Fall back to a hand-maintained snapshot until `make tiktok-auth` and
+    # `make tiktok-analytics-sync` have been run at least once.
+    audience = load_json(PRIVATE_ROOT / "manual-audience.json") or {}
+    account = audience.get("tiktok", {})
+    data = load_json(PRIVATE_ROOT / "manual-tiktok.json") or {}
+
+    content = []
+    for item in data.get("videos", []):
+        content.append(
+            {
+                "id": item.get("id"),
+                "title": item.get("title", "Untitled"),
+                "published_at": item.get("published_at"),
+                "url": item.get("url"),
+                "metrics": {
+                    "views": item.get("views"),
+                    "likes": item.get("likes"),
+                    "comments": item.get("comments"),
+                    "shares": item.get("shares"),
+                },
+            }
+        )
+
+    return {
+        "platform": "TikTok",
+        "handle": account.get("handle", "@mechaturka"),
+        "followers": account.get("followers"),
+        "captured_at": data.get("captured_at") or account.get("captured_at"),
+        "content": content,
+        "source": "manual",
+    }
+
+
 def load_manual_platforms() -> list[dict[str, Any]]:
     data = load_json(PRIVATE_ROOT / "manual-audience.json") or {}
     result = []
-    for name in ("TikTok", "LinkedIn"):
+    for name in ("LinkedIn",):
         entry = data.get(name.lower(), {})
         result.append(
             {
@@ -173,6 +237,7 @@ def load_audience_history() -> dict[str, list[dict[str, Any]]]:
     for platform, folder, extractor in (
         ("X", PRIVATE_ROOT / "x" / "snapshots", lambda d: d.get("account", {}).get("public_metrics", {}).get("followers_count")),
         ("Instagram", PRIVATE_ROOT / "instagram" / "snapshots", lambda d: d.get("account", {}).get("followers_count")),
+        ("TikTok", PRIVATE_ROOT / "tiktok" / "snapshots", lambda d: d.get("account", {}).get("follower_count")),
     ):
         for path in sorted(folder.glob("*.json")):
             data = load_json(path) or {}
@@ -186,15 +251,17 @@ def load_audience_history() -> dict[str, list[dict[str, Any]]]:
                 )
 
     manual = load_json(PRIVATE_ROOT / "manual-audience.json") or {}
-    for platform in ("TikTok", "LinkedIn"):
-        for point in manual.get(platform.lower(), {}).get("history", []):
-            history[platform].append(point)
+    if not history["TikTok"]:
+        for point in manual.get("tiktok", {}).get("history", []):
+            history["TikTok"].append(point)
+    for point in manual.get("linkedin", {}).get("history", []):
+        history["LinkedIn"].append(point)
 
     return history
 
 
 def dashboard_payload() -> dict[str, Any]:
-    platforms = [load_youtube(), load_x(), load_instagram(), *load_manual_platforms()]
+    platforms = [load_youtube(), load_x(), load_instagram(), load_tiktok(), *load_manual_platforms()]
     return {
         "generated_at": datetime.now(tz=timezone.utc).isoformat(),
         "platforms": platforms,
