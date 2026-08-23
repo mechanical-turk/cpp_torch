@@ -4,7 +4,14 @@ import base64
 import hashlib
 import unittest
 
-from social_analytics import SCOPES, X_COLLECTION_START, base64url, pkce_pair
+from social_analytics import (
+    SCOPES,
+    X_COLLECTION_START,
+    base64url,
+    command_x_audience_sync,
+    parser,
+    pkce_pair,
+)
 
 
 class PkceTest(unittest.TestCase):
@@ -31,6 +38,12 @@ class XAuthorizationScopeTest(unittest.TestCase):
         self.assertIn("tweet.read", SCOPES.split())
         self.assertIn("tweet.write", SCOPES.split())
         self.assertIn("offline.access", SCOPES.split())
+
+
+class XCommandTest(unittest.TestCase):
+    def test_audience_sync_is_distinct_from_tweet_sync(self) -> None:
+        args = parser().parse_args(["x-audience-sync"])
+        self.assertIs(args.handler, command_x_audience_sync)
 
 
 if __name__ == "__main__":

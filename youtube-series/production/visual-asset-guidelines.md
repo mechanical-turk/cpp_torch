@@ -58,6 +58,43 @@ Learning, All the Way Down*.
   first publication. If one interface obscures essential content, correct the
   universal composition and reuse the corrected export everywhere.
 
+## Platform-specific thumbnails and covers
+
+The universal `1080 x 1920` video master does not imply a universal thumbnail.
+Generate and inspect a separate cover composition for every platform surface
+that accepts one. Preserve the same concept and brand grammar, but reflow the
+objects and typography for the destination ratio. Never obtain one platform's
+cover by blindly resizing or cropping another platform's file.
+
+- **YouTube long-form:** `16:9`. Use `1280 x 720` at minimum for the current
+  workflow; use a larger `16:9` source when available.
+- **YouTube Shorts:** `9:16`. Default to `1080 x 1920`; a larger `9:16` source
+  may be used. Keep the headline and primary visual near the center because
+  YouTube can present vertical content differently across discovery surfaces.
+- **Instagram Reels:** compose to Instagram's recommended `420:654` (`1:1.55`)
+  cover ratio, but export a higher-resolution equivalent for crisp technical
+  graphics. The current default is `1080 x 1682`, not a literal `420 x 654`
+  raster. Instagram's desktop profile grid applies a centered `3:4` crop. On a
+  `1080 x 1682` cover, treat the middle `1080 x 1440` region as the grid-safe
+  area; approximately 121 pixels at both the top and bottom may disappear. All
+  headlines, complete diagrams, results, and brand marks must fit inside that
+  safe area. Do not reuse the YouTube Shorts `9:16` thumbnail unchanged. Inspect
+  the actual profile-grid crop in the upload preview before publishing. For the
+  current series treatment, do not place the creator's face on Instagram Reel
+  covers unless the learner explicitly asks to restore it; lead with the
+  technical visual instead.
+- **TikTok:** use the `9:16` master and deliberately select or embed a clean
+  cover frame. Inspect its profile-grid preview and keep the primary subject and
+  headline centered; do not assume the full frame will be visible everywhere.
+- **X native video:** do not assume a separately uploaded custom thumbnail is
+  available. Make the selected poster or opening frame legible in the actual X
+  composer preview.
+
+Every asset handoff must name both the platform and the intended surface in its
+filename, for example `thumbnail-youtube-shorts.png` and
+`cover-instagram-reel.png`. Before publication, verify the real composer or
+Studio preview rather than approving the source image in isolation.
+
 ## Alignment and typography
 
 - Peer headings in comparison columns use one identical font family, size,
@@ -92,3 +129,5 @@ Learning, All the Way Down*.
 7. Inspect the final file at its intended phone-size scale before recording.
 8. Confirm that the composition uses the vertical allowance deliberately and
    does not merely center a shorter legacy asset inside the larger canvas.
+9. Export each requested thumbnail or cover at its platform-specific aspect
+   ratio and inspect the destination preview for cropping before publication.

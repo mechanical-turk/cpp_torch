@@ -1,0 +1,2548 @@
+1
+00:00:00,080 --> 00:00:03,360
+Welcome back to deep learning all the
+
+2
+00:00:01,520 --> 00:00:04,799
+way down where we uncovered how deep
+
+3
+00:00:03,360 --> 00:00:08,160
+learning works by rebuilding its
+
+4
+00:00:04,799 --> 00:00:09,840
+foundations in modern C++.
+
+5
+00:00:08,160 --> 00:00:11,759
+Last time we built the smallest tensor
+
+6
+00:00:09,840 --> 00:00:13,040
+that could own flat storage, describe it
+
+7
+00:00:11,759 --> 00:00:16,160
+shape and support checked
+
+8
+00:00:13,040 --> 00:00:17,840
+multi-dimensional reads. And today we
+
+9
+00:00:16,160 --> 00:00:20,320
+will complete that basic data structure
+
+10
+00:00:17,840 --> 00:00:22,000
+by supporting scalers and empty tensors,
+
+11
+00:00:20,320 --> 00:00:23,680
+preventing shape overflow, enabling
+
+12
+00:00:22,000 --> 00:00:25,920
+check mutation, and implementing our
+
+13
+00:00:23,680 --> 00:00:27,519
+first reduction operation which is sum.
+
+14
+00:00:25,920 --> 00:00:28,960
+Before we change the implementation,
+
+15
+00:00:27,519 --> 00:00:30,960
+let's quickly answer the questions we
+
+16
+00:00:28,960 --> 00:00:32,239
+left at the end of chapter 1 because
+
+17
+00:00:30,960 --> 00:00:33,920
+each answer is going to give us
+
+18
+00:00:32,239 --> 00:00:35,440
+something we will rely on today.
+
+19
+00:00:33,920 --> 00:00:39,120
+Question one, what are the rank and
+
+20
+00:00:35,440 --> 00:00:42,320
+element count of shape 2 3 4. So rank is
+
+21
+00:00:39,120 --> 00:00:43,680
+the number of axes. So the rank is three
+
+22
+00:00:42,320 --> 00:00:46,559
+and then the element count is the
+
+23
+00:00:43,680 --> 00:00:50,239
+product of dimensions
+
+24
+00:00:46,559 --> 00:00:53,520
+which in this case is 2 * 3 * 4 which is
+
+25
+00:00:50,239 --> 00:00:56,719
+24. Question two, why do six values not
+
+26
+00:00:53,520 --> 00:00:58,399
+uniquely determine shape 2 three?
+
+27
+00:00:56,719 --> 00:01:00,800
+So element count tells us how many
+
+28
+00:00:58,399 --> 00:01:03,359
+values exist? It does not tell us how
+
+29
+00:01:00,800 --> 00:01:05,439
+the values are organized. And six values
+
+30
+00:01:03,359 --> 00:01:08,720
+are compatible with many different
+
+31
+00:01:05,439 --> 00:01:12,159
+organizations. So shape six is one. 2 3
+
+32
+00:01:08,720 --> 00:01:13,600
+is one. 32 is another one. 1 six is
+
+33
+00:01:12,159 --> 00:01:16,080
+another one. And in fact there are
+
+34
+00:01:13,600 --> 00:01:17,920
+infinitely many other shapes. And the
+
+35
+00:01:16,080 --> 00:01:19,920
+reason there are infinitely many is that
+
+36
+00:01:17,920 --> 00:01:23,040
+a dimension of size one does not change
+
+37
+00:01:19,920 --> 00:01:24,799
+the product. So we can begin with six
+
+38
+00:01:23,040 --> 00:01:31,360
+and then we can keep adding size one
+
+39
+00:01:24,799 --> 00:01:35,600
+dimensions such as 16 or 116 or
+
+40
+00:01:31,360 --> 00:01:38,079
+161 and so on. And all of these shapes
+
+41
+00:01:35,600 --> 00:01:41,439
+still describe six values but each has a
+
+42
+00:01:38,079 --> 00:01:44,479
+different rank and organization. So the
+
+43
+00:01:41,439 --> 00:01:46,560
+flat storage that backs the tensor alone
+
+44
+00:01:44,479 --> 00:01:49,040
+therefore cannot tell us which shape was
+
+45
+00:01:46,560 --> 00:01:51,759
+intended. Question three, what invariant
+
+46
+00:01:49,040 --> 00:01:53,920
+does the constructor establish?
+
+47
+00:01:51,759 --> 00:01:55,840
+The number of values implied by the
+
+48
+00:01:53,920 --> 00:01:58,640
+shape must equal the number of values in
+
+49
+00:01:55,840 --> 00:02:00,880
+storage and once construction succeeds
+
+50
+00:01:58,640 --> 00:02:03,119
+the tensor shape and storage cannot
+
+51
+00:02:00,880 --> 00:02:06,079
+contradict each other. Question four,
+
+52
+00:02:03,119 --> 00:02:08,640
+why does data return a const reference?
+
+53
+00:02:06,079 --> 00:02:11,440
+So returning a reference avoids copying
+
+54
+00:02:08,640 --> 00:02:13,680
+the vector and making it const prevents
+
+55
+00:02:11,440 --> 00:02:16,160
+the caller from resizing the storage
+
+56
+00:02:13,680 --> 00:02:17,840
+through this accessor and breaking the
+
+57
+00:02:16,160 --> 00:02:20,160
+relationship between shape and storage
+
+58
+00:02:17,840 --> 00:02:22,400
+which is our central invariant. Question
+
+59
+00:02:20,160 --> 00:02:25,200
+five for shape 2 three why does
+
+60
+00:02:22,400 --> 00:02:28,400
+coordinate one two map to flag position
+
+61
+00:02:25,200 --> 00:02:30,480
+5? So you will remember the calculation
+
+62
+00:02:28,400 --> 00:02:32,160
+that goes into the mapping of
+
+63
+00:02:30,480 --> 00:02:34,480
+coordinates starts with finding the
+
+64
+00:02:32,160 --> 00:02:37,599
+strides. So first we need to find the
+
+65
+00:02:34,480 --> 00:02:39,280
+strides 2 three the last dimension which
+
+66
+00:02:37,599 --> 00:02:41,280
+is the column dimension is going to
+
+67
+00:02:39,280 --> 00:02:43,599
+begin with stride one and then the next
+
+68
+00:02:41,280 --> 00:02:45,360
+one is going to just multiply the last
+
+69
+00:02:43,599 --> 00:02:47,519
+one with the last one's dimension. So in
+
+70
+00:02:45,360 --> 00:02:51,680
+this case it's going to be 31. So that's
+
+71
+00:02:47,519 --> 00:02:54,239
+our strides and then the lat index is
+
+72
+00:02:51,680 --> 00:02:58,000
+essentially the dotproduct
+
+73
+00:02:54,239 --> 00:03:01,440
+of strides and index.
+
+74
+00:02:58,000 --> 00:03:04,000
+In this case, it's going to be 3 * 1 + 1
+
+75
+00:03:01,440 --> 00:03:06,480
+* 2 = 5. And that's the end of the
+
+76
+00:03:04,000 --> 00:03:08,159
+questions. Now, you will notice that
+
+77
+00:03:06,480 --> 00:03:10,080
+every answer pretty much depended on the
+
+78
+00:03:08,159 --> 00:03:12,159
+relationship between shape and element
+
+79
+00:03:10,080 --> 00:03:14,000
+count. And in this episode, we're going
+
+80
+00:03:12,159 --> 00:03:16,000
+to begin by extending that relationship
+
+81
+00:03:14,000 --> 00:03:18,879
+to shapes chapter one could not
+
+82
+00:03:16,000 --> 00:03:20,640
+represent. And to help with that, we
+
+83
+00:03:18,879 --> 00:03:22,640
+need to take a look at a few of these
+
+84
+00:03:20,640 --> 00:03:24,400
+more special and interesting shapes.
+
+85
+00:03:22,640 --> 00:03:27,360
+Let's start with the first one. The
+
+86
+00:03:24,400 --> 00:03:30,720
+empty array shape contains no axes. So
+
+87
+00:03:27,360 --> 00:03:35,040
+its rank is zero but it still represents
+
+88
+00:03:30,720 --> 00:03:36,879
+one value which is a scalar. There are
+
+89
+00:03:35,040 --> 00:03:40,000
+no coordinates to choose because there
+
+90
+00:03:36,879 --> 00:03:44,080
+is only one possible value. Shape one
+
+91
+00:03:40,000 --> 00:03:46,640
+has one axis and therefore has rank one
+
+92
+00:03:44,080 --> 00:03:49,440
+and that axis has one valid coordinate
+
+93
+00:03:46,640 --> 00:03:52,319
+which is zero. It is not a scalar even
+
+94
+00:03:49,440 --> 00:03:54,720
+though it contains a single element.
+
+95
+00:03:52,319 --> 00:03:57,280
+Instead it is a rank one vector
+
+96
+00:03:54,720 --> 00:04:00,080
+containing a single value. So this
+
+97
+00:03:57,280 --> 00:04:03,519
+represents a singleton vector. Shape
+
+98
+00:04:00,080 --> 00:04:06,159
+zero also has one axis but that axis has
+
+99
+00:04:03,519 --> 00:04:08,640
+no valid coordinates which means it's
+
+100
+00:04:06,159 --> 00:04:10,239
+rank one but its number of elements is
+
+101
+00:04:08,640 --> 00:04:13,040
+zero.
+
+102
+00:04:10,239 --> 00:04:16,720
+So this is a rank one empty vector
+
+103
+00:04:13,040 --> 00:04:20,079
+containing no values. And finally shape
+
+104
+00:04:16,720 --> 00:04:23,440
+50 has two dimensions. So it is of rank
+
+105
+00:04:20,079 --> 00:04:26,000
+two but their product is zero. So this
+
+106
+00:04:23,440 --> 00:04:29,199
+still has zero elements
+
+107
+00:04:26,000 --> 00:04:32,639
+meaning this represents an empty matrix.
+
+108
+00:04:29,199 --> 00:04:35,680
+So the main takeaway here is that rank
+
+109
+00:04:32,639 --> 00:04:38,240
+answers how many axes exist and then
+
+110
+00:04:35,680 --> 00:04:39,840
+element count or nl answers how many
+
+111
+00:04:38,240 --> 00:04:43,840
+values exist. And these are
+
+112
+00:04:39,840 --> 00:04:47,120
+fundamentally different questions. And
+
+113
+00:04:43,840 --> 00:04:49,360
+if we take a look at our code
+
+114
+00:04:47,120 --> 00:04:51,840
+so far, we're treating the zero
+
+115
+00:04:49,360 --> 00:04:56,160
+dimension and the scaler as hard-coded
+
+116
+00:04:51,840 --> 00:04:57,759
+exceptions. But we should not do this.
+
+117
+00:04:56,160 --> 00:04:59,199
+And to get to the correct
+
+118
+00:04:57,759 --> 00:05:01,680
+implementation, we don't need to change
+
+119
+00:04:59,199 --> 00:05:03,440
+that much because our existing element
+
+120
+00:05:01,680 --> 00:05:06,080
+count loop is already very close to
+
+121
+00:05:03,440 --> 00:05:08,000
+describing all of them. So let's take a
+
+122
+00:05:06,080 --> 00:05:09,919
+quick look and let's see what actually
+
+123
+00:05:08,000 --> 00:05:12,960
+needs to change. So let's begin by
+
+124
+00:05:09,919 --> 00:05:15,039
+removing our hard-coded scaler check.
+
+125
+00:05:12,960 --> 00:05:16,560
+Let's also remove our dimension zero
+
+126
+00:05:15,039 --> 00:05:19,039
+check
+
+127
+00:05:16,560 --> 00:05:23,039
+and let's take a look at the code. So
+
+128
+00:05:19,039 --> 00:05:26,400
+the product begins at one. Now when a
+
+129
+00:05:23,039 --> 00:05:29,120
+scaler is attempted to initialize the
+
+130
+00:05:26,400 --> 00:05:31,759
+shape is going to be the empty array and
+
+131
+00:05:29,120 --> 00:05:34,720
+in that case the loop has no dimensions
+
+132
+00:05:31,759 --> 00:05:38,000
+to visit. So it just will not perform
+
+133
+00:05:34,720 --> 00:05:39,919
+any multiplication and that will mean
+
+134
+00:05:38,000 --> 00:05:41,919
+that the expected elements will remain
+
+135
+00:05:39,919 --> 00:05:44,080
+at one
+
+136
+00:05:41,919 --> 00:05:46,160
+which is exactly what we want for the
+
+137
+00:05:44,080 --> 00:05:48,240
+scaler. So this is actually the correct
+
+138
+00:05:46,160 --> 00:05:51,600
+behavior. So the most important takeaway
+
+139
+00:05:48,240 --> 00:05:53,680
+here is a missing dimension and a zero
+
+140
+00:05:51,600 --> 00:05:56,479
+size dimension are not the same thing
+
+141
+00:05:53,680 --> 00:06:00,080
+because with no dimensions the product
+
+142
+00:05:56,479 --> 00:06:02,880
+remains one and represents a scaler.
+
+143
+00:06:00,080 --> 00:06:04,960
+with a zero dimension, the product
+
+144
+00:06:02,880 --> 00:06:08,720
+becomes zero and represents an empty
+
+145
+00:06:04,960 --> 00:06:11,440
+tensor. So instead of checking whether
+
+146
+00:06:08,720 --> 00:06:14,479
+there was an attempt to construct any
+
+147
+00:06:11,440 --> 00:06:16,800
+scaler, let's just check if a scaler was
+
+148
+00:06:14,479 --> 00:06:20,400
+attempted to get constructed with the
+
+149
+00:06:16,800 --> 00:06:22,319
+wrong number of elements. So we're
+
+150
+00:06:20,400 --> 00:06:25,360
+actually very close here. What we're
+
+151
+00:06:22,319 --> 00:06:27,600
+getting here is we're passing an empty
+
+152
+00:06:25,360 --> 00:06:29,199
+shape. That means this is scalar. But we
+
+153
+00:06:27,600 --> 00:06:31,199
+cannot pass empty data because we need
+
+154
+00:06:29,199 --> 00:06:34,080
+at least one element. So we can actually
+
+155
+00:06:31,199 --> 00:06:35,919
+just change this
+
+156
+00:06:34,080 --> 00:06:38,960
+into saying that the number of elements
+
+157
+00:06:35,919 --> 00:06:41,520
+are not matching. So we can just copy
+
+158
+00:06:38,960 --> 00:06:43,280
+this and use it directly. And
+
+159
+00:06:41,520 --> 00:06:45,680
+additionally let's check whether our
+
+160
+00:06:43,280 --> 00:06:48,160
+assumptions over a scaler actually
+
+161
+00:06:45,680 --> 00:06:50,960
+holds. So let's actually initialize a
+
+162
+00:06:48,160 --> 00:06:54,080
+scaler here. We're going to pass in an
+
+163
+00:06:50,960 --> 00:06:56,800
+empty vector and let's pass element
+
+164
+00:06:54,080 --> 00:07:00,240
+five, a single element.
+
+165
+00:06:56,800 --> 00:07:03,919
+And then let's assert that our scalers
+
+166
+00:07:00,240 --> 00:07:05,520
+rank is zero. Our scalers number of
+
+167
+00:07:03,919 --> 00:07:08,240
+elements
+
+168
+00:07:05,520 --> 00:07:10,560
+is one. And then our scalar shape is
+
+169
+00:07:08,240 --> 00:07:13,840
+actually the empty vector. And now
+
+170
+00:07:10,560 --> 00:07:17,120
+onwards to test six. So this line is
+
+171
+00:07:13,840 --> 00:07:18,880
+correct because if the shape is 1 Z,
+
+172
+00:07:17,120 --> 00:07:21,520
+there are no elements. This is an empty
+
+173
+00:07:18,880 --> 00:07:23,360
+matrix. So it should no longer throw. So
+
+174
+00:07:21,520 --> 00:07:25,919
+let's just pull this out here. And let's
+
+175
+00:07:23,360 --> 00:07:28,160
+say tensor
+
+176
+00:07:25,919 --> 00:07:30,000
+empty matrix.
+
+177
+00:07:28,160 --> 00:07:31,840
+Let's remove all of these. And let's run
+
+178
+00:07:30,000 --> 00:07:34,960
+a similar set of tests here. So we can
+
+179
+00:07:31,840 --> 00:07:37,919
+say empty matrix.rank is equal to two.
+
+180
+00:07:34,960 --> 00:07:40,800
+And then empty matrix number of elements
+
+181
+00:07:37,919 --> 00:07:44,800
+is equal to zero. And then let's assert
+
+182
+00:07:40,800 --> 00:07:47,440
+that the shape of our empty matrix is
+
+183
+00:07:44,800 --> 00:07:50,080
+equal to
+
+184
+00:07:47,440 --> 00:07:52,080
+1 zero. Now let's run our test. Good. So
+
+185
+00:07:50,080 --> 00:07:54,479
+we're back to normal now. Scalers and
+
+186
+00:07:52,080 --> 00:07:56,720
+empty tensors now work. And the
+
+187
+00:07:54,479 --> 00:07:59,360
+assertions confirm that our element
+
+188
+00:07:56,720 --> 00:08:01,360
+count rule handles both correctly. But
+
+189
+00:07:59,360 --> 00:08:02,960
+while reading the constructor, we passed
+
+190
+00:08:01,360 --> 00:08:05,680
+over a warning that has been sitting in
+
+191
+00:08:02,960 --> 00:08:08,319
+the code since chapter 1, which is right
+
+192
+00:08:05,680 --> 00:08:10,560
+here, the overflow. We actually left the
+
+193
+00:08:08,319 --> 00:08:12,639
+same warning in another place too. So
+
+194
+00:08:10,560 --> 00:08:14,720
+here in the constructor the
+
+195
+00:08:12,639 --> 00:08:17,039
+multiplications over the dimensions
+
+196
+00:08:14,720 --> 00:08:20,960
+validate the tensor
+
+197
+00:08:17,039 --> 00:08:23,680
+and in the at function we multiply dries
+
+198
+00:08:20,960 --> 00:08:27,280
+to locate the element and both
+
+199
+00:08:23,680 --> 00:08:29,360
+calculations use standard size t. And
+
+200
+00:08:27,280 --> 00:08:31,280
+before we add more behavior we need to
+
+201
+00:08:29,360 --> 00:08:33,760
+prove that neither calculation can
+
+202
+00:08:31,280 --> 00:08:37,519
+silently wrap around. So let's go back
+
+203
+00:08:33,760 --> 00:08:40,000
+up to the constructor here. size t is an
+
+204
+00:08:37,519 --> 00:08:43,680
+unsigned integer and it has a finite
+
+205
+00:08:40,000 --> 00:08:47,839
+maximum value. So unsigned arithmetic
+
+206
+00:08:43,680 --> 00:08:50,480
+wraps modulo is representable range and
+
+207
+00:08:47,839 --> 00:08:52,880
+if a shape product exceeds that range it
+
+208
+00:08:50,480 --> 00:08:55,440
+can wrap to a much smaller number and
+
+209
+00:08:52,880 --> 00:08:57,839
+this is worse than merely reporting the
+
+210
+00:08:55,440 --> 00:09:00,080
+wrong element count because the wrapped
+
+211
+00:08:57,839 --> 00:09:02,399
+result participates in our constructor
+
+212
+00:09:00,080 --> 00:09:04,560
+invariant and it could make an invalid
+
+213
+00:09:02,399 --> 00:09:07,519
+shape appear to agree with the storage.
+
+214
+00:09:04,560 --> 00:09:09,440
+So this is clearly very dangerous and we
+
+215
+00:09:07,519 --> 00:09:10,880
+have to deal with it. And there is
+
+216
+00:09:09,440 --> 00:09:13,040
+something else that's working against
+
+217
+00:09:10,880 --> 00:09:15,360
+Unclear which is that we cannot detect
+
+218
+00:09:13,040 --> 00:09:17,760
+this after the fact. Once it wraps it's
+
+219
+00:09:15,360 --> 00:09:21,279
+done. It doesn't throw by itself. So we
+
+220
+00:09:17,760 --> 00:09:23,279
+have to pre-check that it will not wrap
+
+221
+00:09:21,279 --> 00:09:26,000
+and what we need to do is somewhat
+
+222
+00:09:23,279 --> 00:09:28,000
+equivalent to the following where we
+
+223
+00:09:26,000 --> 00:09:30,240
+need to check if the current expected
+
+224
+00:09:28,000 --> 00:09:32,959
+elements times dimension is greater than
+
+225
+00:09:30,240 --> 00:09:34,880
+to the maximum size t which is something
+
+226
+00:09:32,959 --> 00:09:37,760
+we can obtain through standard numeric
+
+227
+00:09:34,880 --> 00:09:40,720
+limits. But again this thing is never
+
+228
+00:09:37,760 --> 00:09:43,519
+going to be actually true because as
+
+229
+00:09:40,720 --> 00:09:46,320
+soon as it is technically true it wraps
+
+230
+00:09:43,519 --> 00:09:49,839
+around. So we need to do something
+
+231
+00:09:46,320 --> 00:09:51,839
+equivalent which we can obtain by
+
+232
+00:09:49,839 --> 00:09:56,399
+pushing this term to the other side of
+
+233
+00:09:51,839 --> 00:09:58,640
+the inequality by dividing it.
+
+234
+00:09:56,399 --> 00:10:02,240
+So this is equivalent. But now there is
+
+235
+00:09:58,640 --> 00:10:05,279
+another gotcha because we just allow the
+
+236
+00:10:02,240 --> 00:10:07,200
+dimension to be equal to zero. So this
+
+237
+00:10:05,279 --> 00:10:08,880
+will divide by zero if we're not
+
+238
+00:10:07,200 --> 00:10:12,080
+careful. So we got to handle that before
+
+239
+00:10:08,880 --> 00:10:15,440
+we even run any of these checks. And if
+
+240
+00:10:12,080 --> 00:10:17,760
+the dimension is ever zero,
+
+241
+00:10:15,440 --> 00:10:19,920
+then all we need to do is to set the
+
+242
+00:10:17,760 --> 00:10:23,360
+expected elements to zero and then break
+
+243
+00:10:19,920 --> 00:10:25,839
+out of the loop. So now division by zero
+
+244
+00:10:23,360 --> 00:10:29,040
+is no longer a problem. And finally, we
+
+245
+00:10:25,839 --> 00:10:31,440
+can actually throw here.
+
+246
+00:10:29,040 --> 00:10:36,000
+When we detect this, we can just say
+
+247
+00:10:31,440 --> 00:10:38,320
+throw standard overflow error
+
+248
+00:10:36,000 --> 00:10:40,480
+count overflows
+
+249
+00:10:38,320 --> 00:10:43,040
+t. And with that we have handled this
+
+250
+00:10:40,480 --> 00:10:45,680
+overflow to-do. But now we have another
+
+251
+00:10:43,040 --> 00:10:47,279
+problem and this is a bit of a pedantic
+
+252
+00:10:45,680 --> 00:10:49,440
+edge case but we should handle it
+
+253
+00:10:47,279 --> 00:10:51,440
+nevertheless.
+
+254
+00:10:49,440 --> 00:10:53,839
+So I'm just going to leave a marker here
+
+255
+00:10:51,440 --> 00:10:55,040
+because it's a bit involved and we will
+
+256
+00:10:53,839 --> 00:10:56,880
+need to write some tests to cover the
+
+257
+00:10:55,040 --> 00:11:00,640
+happy path first but we need to get back
+
+258
+00:10:56,880 --> 00:11:02,720
+to it and that is being overly strict
+
+259
+00:11:00,640 --> 00:11:05,920
+with
+
+260
+00:11:02,720 --> 00:11:08,240
+standard size t max.
+
+261
+00:11:05,920 --> 00:11:10,640
+it will make sense once we get back to
+
+262
+00:11:08,240 --> 00:11:13,680
+this.
+
+263
+00:11:10,640 --> 00:11:17,200
+So let's write a quick test to see if we
+
+264
+00:11:13,680 --> 00:11:19,120
+indeed cover the overflow error. I'm
+
+265
+00:11:17,200 --> 00:11:21,360
+going to copy this template again and
+
+266
+00:11:19,120 --> 00:11:23,200
+this time we should try and initialize
+
+267
+00:11:21,360 --> 00:11:25,600
+the tensor with a dimension that
+
+268
+00:11:23,200 --> 00:11:27,760
+includes our size tmax. So let's say
+
+269
+00:11:25,600 --> 00:11:31,040
+that's one dimension and then let's say
+
+270
+00:11:27,760 --> 00:11:32,800
+this is a matrix and second dimensions
+
+271
+00:11:31,040 --> 00:11:34,399
+and the data still doesn't matter. So
+
+272
+00:11:32,800 --> 00:11:36,959
+I'm just going to ignore it. And now
+
+273
+00:11:34,399 --> 00:11:39,279
+this should throw our overflow error in
+
+274
+00:11:36,959 --> 00:11:41,279
+tensor element count overflow size t
+
+275
+00:11:39,279 --> 00:11:44,000
+compile and run. Now let's write one
+
+276
+00:11:41,279 --> 00:11:45,839
+more test. This time let's combine a
+
+277
+00:11:44,000 --> 00:11:47,360
+zero dimension with a sist max
+
+278
+00:11:45,839 --> 00:11:51,279
+dimension. And this is where we're going
+
+279
+00:11:47,360 --> 00:11:52,800
+to see some interesting stuff. So s12
+
+280
+00:11:51,279 --> 00:11:54,399
+max
+
+281
+00:11:52,800 --> 00:11:56,640
+this is the first dimension and then
+
+282
+00:11:54,399 --> 00:12:00,079
+let's say the second dimension is zero
+
+283
+00:11:56,640 --> 00:12:02,320
+and theta is actually empty. So what do
+
+284
+00:12:00,079 --> 00:12:05,040
+we expect this to do? We actually expect
+
+285
+00:12:02,320 --> 00:12:08,000
+this to have
+
+286
+00:12:05,040 --> 00:12:10,639
+rank two size zero. So let's assert
+
+287
+00:12:08,000 --> 00:12:12,800
+those. Great. And now we're ready to
+
+288
+00:12:10,639 --> 00:12:16,639
+actually see the problem. I hinted up
+
+289
+00:12:12,800 --> 00:12:20,320
+top. So let's do test 13. And then let's
+
+290
+00:12:16,639 --> 00:12:22,720
+start let's initialize a 3D matrix where
+
+291
+00:12:20,320 --> 00:12:25,040
+the first dimension is dax. Let's say
+
+292
+00:12:22,720 --> 00:12:27,040
+the second dimension is I don't know two
+
+293
+00:12:25,040 --> 00:12:31,040
+and then the third one is zero. Now
+
+294
+00:12:27,040 --> 00:12:32,959
+because there is a zero dimension here,
+
+295
+00:12:31,040 --> 00:12:36,320
+we expect the number of elements to be
+
+296
+00:12:32,959 --> 00:12:38,000
+zero and the rank is just three. So
+
+297
+00:12:36,320 --> 00:12:40,000
+let's write that down. But this is not
+
+298
+00:12:38,000 --> 00:12:44,480
+going to work because we're getting a
+
+299
+00:12:40,000 --> 00:12:46,000
+wrong overly strict overflow check.
+
+300
+00:12:44,480 --> 00:12:47,440
+So none of these assertions are actually
+
+301
+00:12:46,000 --> 00:12:50,800
+running. What's happening is the
+
+302
+00:12:47,440 --> 00:12:53,920
+constructor in here is immediately
+
+303
+00:12:50,800 --> 00:12:56,720
+throwing and it technically does not
+
+304
+00:12:53,920 --> 00:12:59,519
+need to throw because this is at the end
+
+305
+00:12:56,720 --> 00:13:02,320
+of the day an empty tensor and each
+
+306
+00:12:59,519 --> 00:13:05,040
+individual dimension can go up to
+
+307
+00:13:02,320 --> 00:13:06,959
+standard size T-max. But none of the
+
+308
+00:13:05,040 --> 00:13:09,519
+intermediate products actually matter
+
+309
+00:13:06,959 --> 00:13:13,120
+because they have no bearing on the
+
+310
+00:13:09,519 --> 00:13:14,880
+tensor behavior during runtime. So we
+
+311
+00:13:13,120 --> 00:13:17,920
+just need to relax the way we're
+
+312
+00:13:14,880 --> 00:13:21,120
+checking this overflow
+
+313
+00:13:17,920 --> 00:13:23,680
+and we can accomplish that by separating
+
+314
+00:13:21,120 --> 00:13:26,639
+these various checks we're running. So
+
+315
+00:13:23,680 --> 00:13:30,160
+the first thing we need to do is to
+
+316
+00:13:26,639 --> 00:13:32,959
+detect if there was any zero at all.
+
+317
+00:13:30,160 --> 00:13:35,360
+So let's initialize the flag to false
+
+318
+00:13:32,959 --> 00:13:37,600
+and then
+
+319
+00:13:35,360 --> 00:13:41,200
+let's do this where we iterate over our
+
+320
+00:13:37,600 --> 00:13:43,600
+shape and if
+
+321
+00:13:41,200 --> 00:13:45,839
+find any dimension to be equal to zero
+
+322
+00:13:43,600 --> 00:13:47,839
+then we can say has zero equal to true
+
+323
+00:13:45,839 --> 00:13:49,360
+and then we can break and I suppose we
+
+324
+00:13:47,839 --> 00:13:51,440
+could set the expected elements to zero
+
+325
+00:13:49,360 --> 00:13:55,120
+here as well and at that point we no
+
+326
+00:13:51,440 --> 00:13:57,440
+longer need to run this here and we can
+
+327
+00:13:55,120 --> 00:14:00,560
+run the second loop on the condition
+
+328
+00:13:57,440 --> 00:14:03,360
+that we have no zero algorithms and we
+
+329
+00:14:00,560 --> 00:14:05,199
+could squeeze in a micro optimization
+
+330
+00:14:03,360 --> 00:14:06,720
+here
+
+331
+00:14:05,199 --> 00:14:09,440
+by
+
+332
+00:14:06,720 --> 00:14:11,279
+not initializing expected elements. So
+
+333
+00:14:09,440 --> 00:14:13,760
+here we would set it to zero and then
+
+334
+00:14:11,279 --> 00:14:16,800
+here we would set it to one. Now let's
+
+335
+00:14:13,760 --> 00:14:18,880
+go back down to our test and uncomment
+
+336
+00:14:16,800 --> 00:14:21,680
+our assertions and we're back in
+
+337
+00:14:18,880 --> 00:14:24,000
+business. So with that we have taken
+
+338
+00:14:21,680 --> 00:14:26,240
+care of this to-do item as well. So that
+
+339
+00:14:24,000 --> 00:14:28,560
+took care of the first overflow problem.
+
+340
+00:14:26,240 --> 00:14:30,959
+Now let's take a look at the other one
+
+341
+00:14:28,560 --> 00:14:33,199
+right here. There are a few of them
+
+342
+00:14:30,959 --> 00:14:35,600
+here.
+
+343
+00:14:33,199 --> 00:14:37,600
+Now it is tempting to add another
+
+344
+00:14:35,600 --> 00:14:40,959
+overflow check to every multiplication
+
+345
+00:14:37,600 --> 00:14:44,800
+and addition here. But the constructor
+
+346
+00:14:40,959 --> 00:14:48,160
+has already given us a stronger fact.
+
+347
+00:14:44,800 --> 00:14:51,040
+Basically for every non-MPT tensor the
+
+348
+00:14:48,160 --> 00:14:53,120
+product of the complete shape fits in
+
+349
+00:14:51,040 --> 00:14:55,360
+standard size t and equals the size of
+
+350
+00:14:53,120 --> 00:14:59,199
+storage.
+
+351
+00:14:55,360 --> 00:15:01,600
+And if every coordinate within idx is
+
+352
+00:14:59,199 --> 00:15:03,199
+also within its dimension then each
+
+353
+00:15:01,600 --> 00:15:05,519
+stride is at most the complete element
+
+354
+00:15:03,199 --> 00:15:08,000
+count and the final flat index is at
+
+355
+00:15:05,519 --> 00:15:10,160
+most number of elements minus one. So
+
+356
+00:15:08,000 --> 00:15:13,199
+under those two invariants the indexing
+
+357
+00:15:10,160 --> 00:15:16,160
+arithmetic cannot overflow.
+
+358
+00:15:13,199 --> 00:15:18,959
+The issue though is that our current
+
+359
+00:15:16,160 --> 00:15:21,440
+loop validates one coordinate and
+
+360
+00:15:18,959 --> 00:15:24,399
+immediately performs arithmetic before
+
+361
+00:15:21,440 --> 00:15:26,560
+validating the remaining coordinates.
+
+362
+00:15:24,399 --> 00:15:28,720
+So for an empty shape with enormous
+
+363
+00:15:26,560 --> 00:15:30,720
+dimensions, the suffix stride
+
+364
+00:15:28,720 --> 00:15:32,639
+multiplication could actually overflow
+
+365
+00:15:30,720 --> 00:15:35,040
+before the loop reaches the zero size
+
+366
+00:15:32,639 --> 00:15:37,199
+axis and rejects the index. And the way
+
+367
+00:15:35,040 --> 00:15:39,279
+we deal with that problem is very
+
+368
+00:15:37,199 --> 00:15:42,959
+similar to how we dealt with it up top,
+
+369
+00:15:39,279 --> 00:15:46,399
+which is pulling the separate concerns
+
+370
+00:15:42,959 --> 00:15:49,759
+into separate loops. So we are going to
+
+371
+00:15:46,399 --> 00:15:52,800
+add a precondition loop here that deals
+
+372
+00:15:49,759 --> 00:15:55,199
+with the dimension checks. So this one
+
+373
+00:15:52,800 --> 00:15:57,040
+does not need to calculate the strides.
+
+374
+00:15:55,199 --> 00:15:58,560
+So it actually does not need to do the
+
+375
+00:15:57,040 --> 00:16:00,560
+reverse iteration. So I'm just going to
+
+376
+00:15:58,560 --> 00:16:03,199
+write a very simple loop here and then
+
+377
+00:16:00,560 --> 00:16:04,720
+I'm going to move this
+
+378
+00:16:03,199 --> 00:16:07,199
+here
+
+379
+00:16:04,720 --> 00:16:09,040
+and then I'm just going to use access
+
+380
+00:16:07,199 --> 00:16:10,639
+directly. Now let's tidy this up a
+
+381
+00:16:09,040 --> 00:16:12,880
+little bit and we can actually remove
+
+382
+00:16:10,639 --> 00:16:14,959
+the overflow
+
+383
+00:16:12,880 --> 00:16:18,160
+and then let's run our test again. Let's
+
+384
+00:16:14,959 --> 00:16:21,040
+go back to the app function to go over
+
+385
+00:16:18,160 --> 00:16:24,480
+what just happened.
+
+386
+00:16:21,040 --> 00:16:27,600
+So at this point if the tensor has a
+
+387
+00:16:24,480 --> 00:16:30,240
+zero size axis no coordinate can pass
+
+388
+00:16:27,600 --> 00:16:32,959
+the first loop. So no flattening
+
+389
+00:16:30,240 --> 00:16:35,519
+arithmetic can occur. And if every
+
+390
+00:16:32,959 --> 00:16:38,160
+coordinate passes which means we're
+
+391
+00:16:35,519 --> 00:16:41,440
+executing here. Then the tensor must be
+
+392
+00:16:38,160 --> 00:16:42,959
+non empty. And by that point we know
+
+393
+00:16:41,440 --> 00:16:46,000
+that it's complete shape product was
+
+394
+00:16:42,959 --> 00:16:49,600
+checked by the constructor anyway. And a
+
+395
+00:16:46,000 --> 00:16:52,320
+valid flat index we know must remain
+
+396
+00:16:49,600 --> 00:16:56,160
+inside that product.
+
+397
+00:16:52,320 --> 00:16:58,560
+And we did not make indexing safe by
+
+398
+00:16:56,160 --> 00:17:00,720
+adding a bunch of overflow checks in
+
+399
+00:16:58,560 --> 00:17:03,680
+this part of the code. All of the
+
+400
+00:17:00,720 --> 00:17:07,199
+validation that was necessary happened
+
+401
+00:17:03,680 --> 00:17:10,400
+beginning in the constructor and B in
+
+402
+00:17:07,199 --> 00:17:12,559
+here by validating the coordinates
+
+403
+00:17:10,400 --> 00:17:16,000
+before calculation. And then we just
+
+404
+00:17:12,559 --> 00:17:18,079
+rely on our established invariance. So
+
+405
+00:17:16,000 --> 00:17:20,959
+at this point we do not need to worry
+
+406
+00:17:18,079 --> 00:17:24,079
+about overflows. And I just realized I
+
+407
+00:17:20,959 --> 00:17:26,079
+had an error here. I forgot to put 3D
+
+408
+00:17:24,079 --> 00:17:28,319
+here. Let's recompile and rerun our
+
+409
+00:17:26,079 --> 00:17:31,360
+tests.
+
+410
+00:17:28,319 --> 00:17:33,600
+So now we are ready to advance to the
+
+411
+00:17:31,360 --> 00:17:35,600
+next stage. We are going to add a very
+
+412
+00:17:33,600 --> 00:17:39,200
+simple extension,
+
+413
+00:17:35,600 --> 00:17:43,280
+a very simple metadata function.
+
+414
+00:17:39,200 --> 00:17:47,440
+We now need to expose a read on the
+
+415
+00:17:43,280 --> 00:17:50,640
+dimension. So I'm going to create
+
+416
+00:17:47,440 --> 00:17:53,679
+standard size t dimension
+
+417
+00:17:50,640 --> 00:17:56,240
+size t accessis. Let's add our node
+
+418
+00:17:53,679 --> 00:17:58,400
+discard. This is basically there but we
+
+419
+00:17:56,240 --> 00:18:00,320
+still need to check for
+
+420
+00:17:58,400 --> 00:18:02,320
+an out of range error. So we're just
+
+421
+00:18:00,320 --> 00:18:05,440
+going to run if access is greater than
+
+422
+00:18:02,320 --> 00:18:09,280
+or equal to rank. We're going to throw
+
+423
+00:18:05,440 --> 00:18:12,960
+standard out of range tensor axis is
+
+424
+00:18:09,280 --> 00:18:15,679
+outside its rank. Cool. Now let's add a
+
+425
+00:18:12,960 --> 00:18:18,400
+test. Let's say tensor
+
+426
+00:18:15,679 --> 00:18:22,080
+m test tensor.
+
+427
+00:18:18,400 --> 00:18:24,400
+And let's initialize it with 203.
+
+428
+00:18:22,080 --> 00:18:27,840
+So an empty tensor. So the data can be
+
+429
+00:18:24,400 --> 00:18:32,480
+zero or empty. And then let's assert
+
+430
+00:18:27,840 --> 00:18:35,360
+that dim test answers dimension zero is
+
+431
+00:18:32,480 --> 00:18:39,760
+equal to two. and then
+
+432
+00:18:35,360 --> 00:18:42,880
+zero three. Let's run it.
+
+433
+00:18:39,760 --> 00:18:44,960
+Great. And then let's also run a
+
+434
+00:18:42,880 --> 00:18:47,039
+rejection. And then let's make sure that
+
+435
+00:18:44,960 --> 00:18:51,440
+was indeed. All right. So the next step
+
+436
+00:18:47,039 --> 00:18:53,280
+is extending our tensors capabilities in
+
+437
+00:18:51,440 --> 00:18:54,880
+a very meaningful way which is
+
+438
+00:18:53,280 --> 00:18:57,360
+mutations.
+
+439
+00:18:54,880 --> 00:18:59,440
+So at the end of the day, these tensors
+
+440
+00:18:57,360 --> 00:19:02,960
+are going to be used in deep learning
+
+441
+00:18:59,440 --> 00:19:04,960
+neural network training cycles and they
+
+442
+00:19:02,960 --> 00:19:06,559
+need to be able to change their values.
+
+443
+00:19:04,960 --> 00:19:08,240
+But our current implementation is
+
+444
+00:19:06,559 --> 00:19:11,120
+completely immutable and we cannot have
+
+445
+00:19:08,240 --> 00:19:12,960
+that. So we need to be able to actually
+
+446
+00:19:11,120 --> 00:19:16,880
+mutate these values. So I'm going to
+
+447
+00:19:12,960 --> 00:19:20,160
+write a little test here
+
+448
+00:19:16,880 --> 00:19:24,640
+and let's just initialize
+
+449
+00:19:20,160 --> 00:19:31,919
+a mutation tensor. Let's say shape 2
+
+450
+00:19:24,640 --> 00:19:35,919
+three data 0 1 2 3 4 5 and we want to be
+
+451
+00:19:31,919 --> 00:19:40,720
+able to do things like mutation tensor
+
+452
+00:19:35,919 --> 00:19:43,440
+at 0 0 is equal to 5 for example. We
+
+453
+00:19:40,720 --> 00:19:45,440
+would want to be able to overwrite the
+
+454
+00:19:43,440 --> 00:19:47,280
+value you see here from 0 to 5. But
+
+455
+00:19:45,440 --> 00:19:49,600
+right now we cannot and we're going to
+
+456
+00:19:47,280 --> 00:19:52,720
+immediately fix that right now. So let's
+
+457
+00:19:49,600 --> 00:19:55,760
+go back up to our at function. Now this
+
+458
+00:19:52,720 --> 00:19:59,280
+one is saying
+
+459
+00:19:55,760 --> 00:20:02,480
+return a new double
+
+460
+00:19:59,280 --> 00:20:05,840
+as a const function. And that's what we
+
+461
+00:20:02,480 --> 00:20:07,360
+wanted until now. But what we need to do
+
+462
+00:20:05,840 --> 00:20:10,240
+instead
+
+463
+00:20:07,360 --> 00:20:12,880
+is to return a reference to a double in
+
+464
+00:20:10,240 --> 00:20:15,360
+a non-const setting. And as you can
+
+465
+00:20:12,880 --> 00:20:19,280
+imagine, the
+
+466
+00:20:15,360 --> 00:20:22,240
+main business logic that goes in here is
+
+467
+00:20:19,280 --> 00:20:24,640
+going to be basically onetoone with the
+
+468
+00:20:22,240 --> 00:20:28,400
+kind that goes in here.
+
+469
+00:20:24,640 --> 00:20:30,880
+So we should actually separate it into a
+
+470
+00:20:28,400 --> 00:20:34,960
+small helper function. So now we should
+
+471
+00:20:30,880 --> 00:20:36,960
+take basically all of this and remove it
+
+472
+00:20:34,960 --> 00:20:42,280
+so that we can extract it into this
+
+473
+00:20:36,960 --> 00:20:42,280
+reusable function called flat index.
+
+474
+00:20:46,320 --> 00:20:50,280
+It's going to take the same input
+
+475
+00:20:54,480 --> 00:20:59,760
+and it's going to directly return the PL
+
+476
+00:20:56,880 --> 00:21:01,760
+index.
+
+477
+00:20:59,760 --> 00:21:04,760
+And now we can just directly use it
+
+478
+00:21:01,760 --> 00:21:04,760
+here.
+
+479
+00:21:12,720 --> 00:21:17,039
+Make sure we mark it as const. And
+
+480
+00:21:15,200 --> 00:21:21,440
+basically we can just do the same thing
+
+481
+00:21:17,039 --> 00:21:24,559
+here. Now we're just returning
+
+482
+00:21:21,440 --> 00:21:27,120
+a mutable reference to our storage which
+
+483
+00:21:24,559 --> 00:21:31,200
+means we can run our assertions again.
+
+484
+00:21:27,120 --> 00:21:33,919
+So at first we thought
+
+485
+00:21:31,200 --> 00:21:36,640
+it contained zero and then after the
+
+486
+00:21:33,919 --> 00:21:38,559
+assertion we want it to contain five.
+
+487
+00:21:36,640 --> 00:21:40,480
+Cool. Now let's scroll back up to our
+
+488
+00:21:38,559 --> 00:21:43,360
+function and unpack a few important
+
+489
+00:21:40,480 --> 00:21:46,320
+things. The first one being that we just
+
+490
+00:21:43,360 --> 00:21:47,840
+wrote our first overload. So let's talk
+
+491
+00:21:46,320 --> 00:21:50,400
+about what overloads are and how they
+
+492
+00:21:47,840 --> 00:21:52,320
+work. Basically in C++ function
+
+493
+00:21:50,400 --> 00:21:55,440
+overloading means defining multiple
+
+494
+00:21:52,320 --> 00:21:57,840
+functions with the same name but
+
+495
+00:21:55,440 --> 00:22:01,919
+different parameter lists or for member
+
+496
+00:21:57,840 --> 00:22:04,400
+functions different con qualifications
+
+497
+00:22:01,919 --> 00:22:06,320
+and when we call that name the compiler
+
+498
+00:22:04,400 --> 00:22:08,159
+examines the arguments and the object
+
+499
+00:22:06,320 --> 00:22:11,120
+involved and then it selects the
+
+500
+00:22:08,159 --> 00:22:14,400
+matching version and overloads cannot
+
+501
+00:22:11,120 --> 00:22:16,080
+defer only by return type.
+
+502
+00:22:14,400 --> 00:22:18,480
+In our case, these functions differ
+
+503
+00:22:16,080 --> 00:22:21,520
+because one member function is const
+
+504
+00:22:18,480 --> 00:22:24,799
+while the other is not. So when we call
+
+505
+00:22:21,520 --> 00:22:26,400
+at on a const tensor,
+
+506
+00:22:24,799 --> 00:22:29,039
+the const overload is going to be
+
+507
+00:22:26,400 --> 00:22:31,600
+selected. And then when we call it on
+
+508
+00:22:29,039 --> 00:22:33,600
+immutable tensor, the mutable overload
+
+509
+00:22:31,600 --> 00:22:35,280
+is going to be selected. So with that
+
+510
+00:22:33,600 --> 00:22:37,120
+out of the way, let's take a look at
+
+511
+00:22:35,280 --> 00:22:39,520
+something important that we skipped,
+
+512
+00:22:37,120 --> 00:22:43,360
+which was obtaining values from scalers.
+
+513
+00:22:39,520 --> 00:22:45,840
+So let's write a test 16 here and let's
+
+514
+00:22:43,360 --> 00:22:48,480
+initialize a scalar and because it's a
+
+515
+00:22:45,840 --> 00:22:50,640
+scalar it needs to be initialized with
+
+516
+00:22:48,480 --> 00:22:53,760
+an empty vector and then the value can
+
+517
+00:22:50,640 --> 00:22:56,080
+be just one value let's say 10. So how
+
+518
+00:22:53,760 --> 00:22:58,960
+would we address this? If we wanted to
+
+519
+00:22:56,080 --> 00:23:02,159
+write an assertion
+
+520
+00:22:58,960 --> 00:23:06,400
+to say that the value inside is equal to
+
+521
+00:23:02,159 --> 00:23:12,000
+10, how would we obtain it?
+
+522
+00:23:06,400 --> 00:23:14,159
+Well, first we need to pass a vector
+
+523
+00:23:12,000 --> 00:23:17,039
+and then we need to determine what that
+
+524
+00:23:14,159 --> 00:23:20,080
+vector should be. And in this case, we
+
+525
+00:23:17,039 --> 00:23:22,799
+are actually done because a scaler has
+
+526
+00:23:20,080 --> 00:23:24,480
+no dimensions. So the way you index it
+
+527
+00:23:22,799 --> 00:23:27,360
+cannot have any dimensions. So this is
+
+528
+00:23:24,480 --> 00:23:30,000
+the only way you can index
+
+529
+00:23:27,360 --> 00:23:32,720
+a scaler. Let's run the test. Now let's
+
+530
+00:23:30,000 --> 00:23:35,120
+go and implement our first reduction.
+
+531
+00:23:32,720 --> 00:23:36,960
+What's a reduction? A reduction is
+
+532
+00:23:35,120 --> 00:23:39,120
+something that takes many things and
+
+533
+00:23:36,960 --> 00:23:42,559
+reduces them into one. You may have
+
+534
+00:23:39,120 --> 00:23:44,400
+heard it from map reduce for example. In
+
+535
+00:23:42,559 --> 00:23:47,679
+our case, our first reduction is going
+
+536
+00:23:44,400 --> 00:23:49,280
+to be the sum function.
+
+537
+00:23:47,679 --> 00:23:52,240
+So we're just going to return a double
+
+538
+00:23:49,280 --> 00:23:54,480
+here. We can initialize our accumulator
+
+539
+00:23:52,240 --> 00:23:56,480
+at zero
+
+540
+00:23:54,480 --> 00:24:01,440
+and then we can iterate through all of
+
+541
+00:23:56,480 --> 00:24:03,360
+our values in the data vector and we can
+
+542
+00:24:01,440 --> 00:24:05,520
+just increment. One important thing to
+
+543
+00:24:03,360 --> 00:24:07,679
+notice here is that when there are no
+
+544
+00:24:05,520 --> 00:24:09,200
+values, we will not enter this loop. And
+
+545
+00:24:07,679 --> 00:24:11,840
+that would only happen if we're working
+
+546
+00:24:09,200 --> 00:24:14,559
+with an empty tensor such as an empty
+
+547
+00:24:11,840 --> 00:24:16,720
+vector, an empty matrix, an empty 3D
+
+548
+00:24:14,559 --> 00:24:18,880
+tensor. As long as there is zero
+
+549
+00:24:16,720 --> 00:24:21,600
+dimension, we're going to have empty
+
+550
+00:24:18,880 --> 00:24:24,799
+data. And in that case, it is actually
+
+551
+00:24:21,600 --> 00:24:27,600
+legitimate to just return zero because
+
+552
+00:24:24,799 --> 00:24:29,919
+sum of nothing is zero. Now, let's
+
+553
+00:24:27,600 --> 00:24:32,240
+address a few API hygiene issues. The
+
+554
+00:24:29,919 --> 00:24:33,760
+first one is that we can actually mark
+
+555
+00:24:32,240 --> 00:24:35,279
+this as cost because we're not modifying
+
+556
+00:24:33,760 --> 00:24:37,600
+anything.
+
+557
+00:24:35,279 --> 00:24:39,200
+And because this is a zero side effect
+
+558
+00:24:37,600 --> 00:24:41,679
+function that is meant to just return
+
+559
+00:24:39,200 --> 00:24:44,400
+something, we should actually mark it as
+
+560
+00:24:41,679 --> 00:24:47,039
+no discard.
+
+561
+00:24:44,400 --> 00:24:48,960
+And additionally, we can mark this as no
+
+562
+00:24:47,039 --> 00:24:50,720
+except as well because we're not doing
+
+563
+00:24:48,960 --> 00:24:53,600
+anything crazy here. We're just adding
+
+564
+00:24:50,720 --> 00:24:55,360
+to a double. So we can be certain that
+
+565
+00:24:53,600 --> 00:24:56,480
+nothing here is going to throw. Now
+
+566
+00:24:55,360 --> 00:24:59,360
+let's take a look at something a little
+
+567
+00:24:56,480 --> 00:25:01,360
+bit more interesting. So you will recall
+
+568
+00:24:59,360 --> 00:25:03,919
+that in the earlier parts of this
+
+569
+00:25:01,360 --> 00:25:06,400
+chapter we protected our shape
+
+570
+00:25:03,919 --> 00:25:08,960
+arithmetic from integer overflow but
+
+571
+00:25:06,400 --> 00:25:12,559
+we're not doing any protection here.
+
+572
+00:25:08,960 --> 00:25:14,720
+Why? The reason is that integer
+
+573
+00:25:12,559 --> 00:25:18,320
+arithmetic is fundamentally different
+
+574
+00:25:14,720 --> 00:25:20,400
+from floatingoint arithmetic. So here
+
+575
+00:25:18,320 --> 00:25:24,480
+we're using a double and all these
+
+576
+00:25:20,400 --> 00:25:28,480
+additions are floatingoint additions and
+
+577
+00:25:24,480 --> 00:25:32,400
+basically for extremely large values
+
+578
+00:25:28,480 --> 00:25:34,480
+as result grows further and further
+
+579
+00:25:32,400 --> 00:25:37,840
+the only thing that can happen to it can
+
+580
+00:25:34,480 --> 00:25:39,919
+become infinity but it is not going to
+
+581
+00:25:37,840 --> 00:25:42,159
+wrap around or do any weird stuff like
+
+582
+00:25:39,919 --> 00:25:43,760
+integers did. So we actually don't need
+
+583
+00:25:42,159 --> 00:25:45,520
+to worry about any of that right now.
+
+584
+00:25:43,760 --> 00:25:47,440
+We're totally safe. Let's take a look at
+
+585
+00:25:45,520 --> 00:25:50,159
+one more problem here which is the
+
+586
+00:25:47,440 --> 00:25:53,039
+return type. So here we have said we're
+
+587
+00:25:50,159 --> 00:25:55,919
+returning a double in the future. The
+
+588
+00:25:53,039 --> 00:25:58,240
+sum operation we'll need to return a
+
+589
+00:25:55,919 --> 00:26:00,320
+tensor because we will want all of our
+
+590
+00:25:58,240 --> 00:26:01,840
+operations to be composable. We don't
+
+591
+00:26:00,320 --> 00:26:03,919
+need to worry about that right now. So I
+
+592
+00:26:01,840 --> 00:26:06,000
+will just leave a little call out here.
+
+593
+00:26:03,919 --> 00:26:09,279
+And now we can write some tests. Let's
+
+594
+00:26:06,000 --> 00:26:11,679
+assert that let's say we have a 2x3 and
+
+595
+00:26:09,279 --> 00:26:15,200
+let's say it sum
+
+596
+00:26:11,679 --> 00:26:19,440
+must be equal to
+
+597
+00:26:15,200 --> 00:26:22,080
+1 + 6 is 7 * 3 is 21.
+
+598
+00:26:19,440 --> 00:26:24,240
+So this is one and then let's do now
+
+599
+00:26:22,080 --> 00:26:29,600
+let's do a singleton array. Next let's
+
+600
+00:26:24,240 --> 00:26:33,679
+do an empty array. And finally let's do
+
+601
+00:26:29,600 --> 00:26:35,760
+an empty 3D tensor with nonzero
+
+602
+00:26:33,679 --> 00:26:38,640
+dimensions. Let's take it for a spin.
+
+603
+00:26:35,760 --> 00:26:42,400
+Great. And with that, we are done with
+
+604
+00:26:38,640 --> 00:26:45,760
+episode two. So, let's do a quick recap.
+
+605
+00:26:42,400 --> 00:26:48,400
+Our tensor can now represent scalers.
+
+606
+00:26:45,760 --> 00:26:52,799
+It can represent singleton
+
+607
+00:26:48,400 --> 00:26:54,720
+vectors and empty tensors.
+
+608
+00:26:52,799 --> 00:26:56,960
+We protected element counting from
+
+609
+00:26:54,720 --> 00:26:59,679
+unsigned overflow. We added check
+
+610
+00:26:56,960 --> 00:27:01,120
+dimension queries. And we also supported
+
+611
+00:26:59,679 --> 00:27:03,600
+both con reads and mutable rights
+
+612
+00:27:01,120 --> 00:27:06,799
+through overloads. We also implemented
+
+613
+00:27:03,600 --> 00:27:09,200
+our first reduction by summing every
+
+614
+00:27:06,799 --> 00:27:10,880
+stored value
+
+615
+00:27:09,200 --> 00:27:13,039
+and we took care of the empty case as
+
+616
+00:27:10,880 --> 00:27:15,120
+well through the additive identity. And
+
+617
+00:27:13,039 --> 00:27:18,480
+at this point we have a deliberately
+
+618
+00:27:15,120 --> 00:27:21,440
+small tensor implementation. It stores
+
+619
+00:27:18,480 --> 00:27:24,000
+only doubles. It owns only continuous
+
+620
+00:27:21,440 --> 00:27:28,400
+memory and it cannot combine with
+
+621
+00:27:24,000 --> 00:27:31,200
+another tensor right now. And those are
+
+622
+00:27:28,400 --> 00:27:34,080
+serious limitations. And now we have
+
+623
+00:27:31,200 --> 00:27:36,159
+reasons to redesign our tensor which is
+
+624
+00:27:34,080 --> 00:27:40,000
+what we're going to do in episode 3. So
+
+625
+00:27:36,159 --> 00:27:41,840
+we will begin with element wise
+
+626
+00:27:40,000 --> 00:27:43,600
+arithmetic and then we will combine
+
+627
+00:27:41,840 --> 00:27:47,120
+multiplication with reduction to build
+
+628
+00:27:43,600 --> 00:27:50,159
+dot product and then by the end we are
+
+629
+00:27:47,120 --> 00:27:54,480
+going to combine all of these pieces to
+
+630
+00:27:50,159 --> 00:27:57,039
+express a proper complete linear
+
+631
+00:27:54,480 --> 00:27:59,200
+prediction. So that brings us to the end
+
+632
+00:27:57,039 --> 00:28:00,960
+of episode two.
+
+633
+00:27:59,200 --> 00:28:03,120
+Just like last time, I am going to leave
+
+634
+00:28:00,960 --> 00:28:05,679
+you guys with a few questions here which
+
+635
+00:28:03,120 --> 00:28:08,000
+we will answer immediately in the next
+
+636
+00:28:05,679 --> 00:28:11,679
+episode. But until then, thanks for
+
+637
+00:28:08,000 --> 00:28:11,679
+watching and I will see you next time.
+

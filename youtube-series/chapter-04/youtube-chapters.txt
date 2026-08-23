@@ -1,0 +1,12 @@
+00:00 Introduction
+00:48 Represent a batch of inputs
+01:35 See why dot product fails
+02:04 Build matrix multiplication
+04:02 Output is a dot product
+05:54 Accumulate the output values
+06:23 Map matrix coords to storage
+07:39 Test matrix multiplication
+09:14 Remove index allocations
+10:12 Show bias shape mismatch
+11:06 Manually expand the bias
+12:25 Recap

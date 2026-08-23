@@ -6,22 +6,22 @@ Completing Our Tensor in C++: Scalars, Mutations & Reductions | Deep Learning, A
 
 ## Description
 
-In Episode 2 of *Deep Learning, All the Way Down*, we complete the foundational
+In Episode 2 of Deep Learning, All the Way Down, we complete the foundational
 tensor data structure we began in Episode 1.
 
 We give scalar and empty tensors precise semantics, make shape and indexing
 arithmetic overflow-safe, add checked mutation without exposing the underlying
-storage, and implement `sum()` as our first reduction.
+storage, and implement sum() as our first reduction.
 
 Along the way, we examine several C++ ideas that matter when numerical code must
 remain correct at its boundaries:
 
-- The difference between shape `[]`, `[1]`, and `[0]`
-- Why a zero-dimensional tensor contains one scalar value
-- How unsigned integer overflow can violate representation invariants
-- Const and mutable member-function overloads
-- Returning references without surrendering ownership of storage
-- Why the sum of an empty tensor is zero
+• The difference between shape [], [1], and [0]
+• Why a zero-dimensional tensor contains one scalar value
+• How unsigned integer overflow can violate representation invariants
+• Const and mutable member-function overloads
+• Returning references without surrendering ownership of storage
+• Why the sum of an empty tensor is zero
 
 The entire implementation remains in one C++23 file, using only the standard
 library, ordinary assertions, and exceptions.

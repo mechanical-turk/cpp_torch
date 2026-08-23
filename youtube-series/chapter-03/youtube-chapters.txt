@@ -1,0 +1,10 @@
+00:00 Introduction
+00:54 Last chapter's answers
+04:54 Define elementwise ops
+06:35 Implement tensor addition
+11:48 Test the addition operator
+13:38 Generalize with lambdas
+18:28 Keep reductions in Tensor
+20:08 Build the dot product
+27:40 Express a linear prediction
+32:45 Recap

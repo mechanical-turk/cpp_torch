@@ -6,10 +6,14 @@ from pathlib import Path
 
 from youtube_channel import (
     analytics_start_date,
+    description_with_chapters,
     desired_video_snippet,
     publishing_package,
+    plain_youtube_description,
     report_rows,
+    select_caption_track,
     series_videos,
+    validate_chapters,
 )
 
 
@@ -126,6 +130,44 @@ one, two
         self.assertEqual(package["title"], "Episode title")
         self.assertEqual(package["pinned_comment"], "Comment body.")
 
+    def test_preserves_code_fence_inside_plain_description(self) -> None:
+        document = """\
+# Publishing
+
+## Final title
+
+Episode title
+
+## YouTube description
+
+The calculation is:
+
+```text
+prediction = weights.dot(features) + bias
+```
+
+Source code: https://example.com
+
+## Pinned comment
+
+```text
+Comment body.
+```
+
+## Suggested tags
+
+```text
+one, two
+```
+"""
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "publishing.md"
+            path.write_text(document, encoding="utf-8")
+            package = publishing_package(path)
+
+        self.assertIn("prediction = weights.dot(features) + bias", package["description"])
+        self.assertIn("Source code: https://example.com", package["description"])
+
 
 class VideoSnippetTest(unittest.TestCase):
     def test_preserves_fields_required_by_videos_update(self) -> None:
@@ -151,6 +193,132 @@ class VideoSnippetTest(unittest.TestCase):
         self.assertEqual(desired["categoryId"], "28")
         self.assertEqual(desired["defaultLanguage"], "en")
         self.assertEqual(desired["defaultAudioLanguage"], "en-US")
+
+    def test_preserves_live_chapters_during_package_updates(self) -> None:
+        current = {
+            "title": "Old",
+            "description": (
+                "Old description\n\nChapters:\n"
+                "0:00 Intro\n1:00 Code\n2:00 Review"
+            ),
+            "tags": [],
+            "categoryId": "28",
+        }
+        package = {
+            "title": "New",
+            "description": "New description",
+            "tags": [],
+        }
+
+        desired = desired_video_snippet(current, package)
+
+        self.assertEqual(
+            desired["description"],
+            "New description\n\nChapters:\n0:00 Intro\n1:00 Code\n2:00 Review",
+        )
+
+    def test_normalizes_package_description_before_update(self) -> None:
+        current = {
+            "title": "Old",
+            "description": "Old",
+            "tags": [],
+            "categoryId": "28",
+        }
+        package = {
+            "title": "New",
+            "description": "In *the series*, call `sum()`.\n\n- One result",
+            "tags": [],
+        }
+
+        desired = desired_video_snippet(current, package)
+
+        self.assertEqual(
+            desired["description"],
+            "In the series, call sum().\n\n• One result",
+        )
+
+
+class VideoChapterTest(unittest.TestCase):
+    def test_validates_and_normalizes_chapters(self) -> None:
+        document = "0:00 Intro\n2:37 Tensors\n5:44 Recap\n"
+
+        self.assertEqual(validate_chapters(document), document.rstrip())
+
+    def test_rejects_short_or_nonzero_first_chapter(self) -> None:
+        with self.assertRaises(ValueError):
+            validate_chapters("0:01 Intro\n0:20 Tensors\n0:40 Recap")
+        with self.assertRaises(ValueError):
+            validate_chapters("0:00 Intro\n0:09 Tensors\n0:40 Recap")
+
+    def test_rejects_chapter_titles_that_are_too_long_for_the_player(self) -> None:
+        with self.assertRaises(ValueError):
+            validate_chapters(
+                "0:00 Introduction\n"
+                "0:20 Compute the broadcast output shape\n"
+                "0:40 Recap"
+            )
+
+    def test_requires_recap_as_the_final_chapter(self) -> None:
+        with self.assertRaises(ValueError):
+            validate_chapters("0:00 Introduction\n0:20 Code\n0:40 Review")
+
+    def test_replaces_an_existing_chapter_block(self) -> None:
+        current = "Description\n\nChapters:\n0:00 Old\n1:00 Old section"
+        chapters = "0:00 Intro\n2:00 New section\n4:00 Recap"
+
+        self.assertEqual(
+            description_with_chapters(current, chapters),
+            "Description\n\nChapters:\n" + chapters,
+        )
+
+
+class CaptionTrackTest(unittest.TestCase):
+    def test_prefers_serving_automatic_track_in_requested_language(self) -> None:
+        tracks = [
+            {
+                "id": "manual",
+                "snippet": {
+                    "language": "en",
+                    "status": "serving",
+                    "trackKind": "standard",
+                },
+            },
+            {
+                "id": "automatic",
+                "snippet": {
+                    "language": "en",
+                    "status": "serving",
+                    "trackKind": "asr",
+                },
+            },
+        ]
+
+        self.assertEqual(select_caption_track(tracks, language="en")["id"], "automatic")
+
+
+class PlainYouTubeDescriptionTest(unittest.TestCase):
+    def test_removes_presentation_markdown_without_changing_code_operators(self) -> None:
+        description = """\
+In *Deep Learning*, call `sum()`.
+
+```text
+prediction = left * right + bias
+```
+
+* First item
+- Second item
+
+complexity = rows * inner * columns * batches
+"""
+
+        self.assertEqual(
+            plain_youtube_description(description),
+            "In Deep Learning, call sum().\n\n"
+            "prediction = left * right + bias\n\n"
+            "• First item\n"
+            "• Second item\n\n"
+            "complexity = rows * inner * columns * batches",
+        )
 
 
 class SeriesBoundaryTest(unittest.TestCase):

@@ -477,7 +477,9 @@ def command_report(_: argparse.Namespace) -> int:
     return 0
 
 
-def publishing_section(document: str, *headings: str) -> str:
+def publishing_section(
+    document: str, *headings: str, prefer_fenced: bool = False
+) -> str:
     for heading in headings:
         pattern = re.compile(
             rf"^## {re.escape(heading)}\s*$\n(.*?)(?=^## |\Z)",
@@ -488,7 +490,9 @@ def publishing_section(document: str, *headings: str) -> str:
             continue
         body = match.group(1).strip()
         fenced = re.search(r"```(?:text)?\s*\n(.*?)\n```", body, re.DOTALL)
-        return fenced.group(1).strip() if fenced else body
+        if fenced and (prefer_fenced or body.startswith("```")):
+            return fenced.group(1).strip()
+        return body
     expected = " or ".join(f"`{heading}`" for heading in headings)
     raise RuntimeError(f"Missing {expected} section in publishing package")
 
@@ -508,7 +512,9 @@ def publishing_package(path: Path) -> dict[str, Any]:
             document, "YouTube description", "Description"
         ),
         "tags": tags,
-        "pinned_comment": publishing_section(document, "Pinned comment"),
+        "pinned_comment": publishing_section(
+            document, "Pinned comment", prefer_fenced=True
+        ),
     }
 
 
@@ -520,6 +526,176 @@ def owned_video(youtube: Any, video_id: str) -> dict[str, Any]:
     if len(items) != 1:
         raise RuntimeError(f"Video `{video_id}` was not found")
     return items[0]
+
+
+def select_caption_track(
+    tracks: list[dict[str, Any]], *, language: str
+) -> dict[str, Any]:
+    candidates = [
+        track
+        for track in tracks
+        if track.get("snippet", {}).get("language") == language
+        and track.get("snippet", {}).get("status") == "serving"
+    ]
+    if not candidates:
+        raise RuntimeError(f"No serving `{language}` caption track was found")
+
+    candidates.sort(
+        key=lambda track: track.get("snippet", {}).get("trackKind") != "asr"
+    )
+    return candidates[0]
+
+
+def command_captions_download(args: argparse.Namespace) -> int:
+    output = Path(args.output).expanduser().resolve()
+    if output.exists() and not args.force:
+        print(f"Caption file already exists: {output}")
+        print("Pass --force to download it again.")
+        return 0
+
+    services = build_services(authorize())
+    response = execute(
+        services.youtube.captions().list(
+            part="id,snippet",
+            videoId=args.video_id,
+        )
+    )
+    track = select_caption_track(response.get("items", []), language=args.language)
+    payload = services.youtube.captions().download(
+        id=track["id"],
+        tfmt=args.format,
+    ).execute()
+    if not isinstance(payload, bytes):
+        raise RuntimeError("YouTube returned a non-binary caption payload")
+
+    output.parent.mkdir(parents=True, exist_ok=True)
+    output.write_bytes(payload)
+    snippet = track["snippet"]
+    print(
+        f"Downloaded {snippet.get('language')} {snippet.get('trackKind')} captions "
+        f"for {args.video_id} to {output}"
+    )
+    return 0
+
+
+CHAPTER_LINE = re.compile(r"^(\d{1,2}):(\d{2})(?::(\d{2}))?\s+\S.*$")
+MAX_CHAPTER_TITLE_CHARACTERS = 28
+MAX_CHAPTER_TITLE_WORDS = 5
+
+
+def validate_chapters(document: str) -> str:
+    lines = [line.strip() for line in document.splitlines() if line.strip()]
+    if len(lines) < 3:
+        raise ValueError("YouTube chapters require at least three timestamps")
+
+    elapsed_seconds: list[int] = []
+    for line in lines:
+        match = CHAPTER_LINE.fullmatch(line)
+        if not match:
+            raise ValueError(f"Invalid chapter line: {line}")
+        first, second, third = match.groups()
+        title = line[match.end(3) + 1 :] if third is not None else line[match.end(2) + 1 :]
+        if len(title) > MAX_CHAPTER_TITLE_CHARACTERS:
+            raise ValueError(
+                "YouTube chapter titles must contain at most "
+                f"{MAX_CHAPTER_TITLE_CHARACTERS} characters: {title}"
+            )
+        if len(title.split()) > MAX_CHAPTER_TITLE_WORDS:
+            raise ValueError(
+                "YouTube chapter titles must contain at most "
+                f"{MAX_CHAPTER_TITLE_WORDS} words: {title}"
+            )
+        if third is None:
+            minutes, seconds = int(first), int(second)
+            elapsed = minutes * 60 + seconds
+        else:
+            hours, minutes, seconds = int(first), int(second), int(third)
+            if minutes >= 60:
+                raise ValueError(f"Invalid chapter minute field: {line}")
+            elapsed = hours * 3600 + minutes * 60 + seconds
+        if seconds >= 60:
+            raise ValueError(f"Invalid chapter second field: {line}")
+        elapsed_seconds.append(elapsed)
+
+    if elapsed_seconds[0] != 0:
+        raise ValueError("The first YouTube chapter must begin at 0:00")
+    final_title = lines[-1].split(maxsplit=1)[1]
+    if final_title != "Recap":
+        raise ValueError("The final YouTube chapter must be named `Recap`")
+    if any(
+        later - earlier < 10
+        for earlier, later in zip(elapsed_seconds, elapsed_seconds[1:])
+    ):
+        raise ValueError("Every YouTube chapter must be at least 10 seconds long")
+    return "\n".join(lines)
+
+
+def description_with_chapters(description: str, chapters: str) -> str:
+    marker = "\n\nChapters:\n"
+    base = description.split(marker, maxsplit=1)[0].rstrip()
+    return f"{base}{marker}{chapters}"
+
+
+def plain_youtube_description(description: str) -> str:
+    lines: list[str] = []
+    for line in description.splitlines():
+        if re.fullmatch(r"```[A-Za-z0-9_-]*", line.strip()):
+            continue
+        line = re.sub(r"^\s*[-*]\s+", "• ", line)
+        line = re.sub(r"\*\*(\S(?:[^*]*\S)?)\*\*", r"\1", line)
+        line = re.sub(r"(?<!\*)\*(\S(?:[^*]*\S)?)\*(?!\*)", r"\1", line)
+        line = re.sub(r"__([^_]+)__", r"\1", line)
+        line = re.sub(r"`([^`]+)`", r"\1", line)
+        line = re.sub(r"\[([^]]+)]\((https?://[^)]+)\)", r"\1: \2", line)
+        lines.append(line.rstrip())
+    return "\n".join(lines).strip()
+
+
+def command_video_description_plain(args: argparse.Namespace) -> int:
+    services = build_services(authorize())
+    video = owned_video(services.youtube, args.video_id)
+    current = video["snippet"]
+    desired_description = plain_youtube_description(current.get("description", ""))
+    render_diff("Description", current.get("description", ""), desired_description)
+    if not args.apply:
+        print("\nDry run only. Re-run with `--apply` to remove Markdown styling.")
+        return 0
+
+    desired = dict(current)
+    desired["description"] = desired_description
+    execute(
+        services.youtube.videos().update(
+            part="snippet",
+            body={"id": args.video_id, "snippet": desired},
+        )
+    )
+    print(f"Description updated: https://www.youtube.com/watch?v={args.video_id}")
+    return 0
+
+
+def command_video_chapters(args: argparse.Namespace) -> int:
+    chapters = validate_chapters(Path(args.file).read_text(encoding="utf-8"))
+    services = build_services(authorize())
+    video = owned_video(services.youtube, args.video_id)
+    current = video["snippet"]
+    desired_description = description_with_chapters(
+        current.get("description", ""), chapters
+    )
+    render_diff("Description", current.get("description", ""), desired_description)
+    if not args.apply:
+        print("\nDry run only. Re-run with `--apply` to add these chapters.")
+        return 0
+
+    desired = dict(current)
+    desired["description"] = desired_description
+    execute(
+        services.youtube.videos().update(
+            part="snippet",
+            body={"id": args.video_id, "snippet": desired},
+        )
+    )
+    print(f"Chapters updated: https://www.youtube.com/watch?v={args.video_id}")
+    return 0
 
 
 def render_diff(label: str, current: str, desired: str) -> None:
@@ -542,9 +718,17 @@ def render_diff(label: str, current: str, desired: str) -> None:
 def desired_video_snippet(
     current: dict[str, Any], package: dict[str, Any]
 ) -> dict[str, Any]:
+    description = plain_youtube_description(package["description"])
+    chapter_marker = "\n\nChapters:\n"
+    if (
+        chapter_marker in current.get("description", "")
+        and chapter_marker not in description
+    ):
+        chapters = current["description"].split(chapter_marker, maxsplit=1)[1]
+        description = description_with_chapters(description, chapters)
     snippet = {
         "title": package["title"],
-        "description": package["description"],
+        "description": description,
         "tags": package["tags"],
         "categoryId": current["categoryId"],
     }
@@ -857,6 +1041,38 @@ def parser() -> argparse.ArgumentParser:
     package.add_argument("--package", required=True)
     package.add_argument("--apply", action="store_true")
     package.set_defaults(handler=command_package)
+
+    captions_download = commands.add_parser(
+        "captions-download",
+        help="Download a serving caption track for an owned video",
+    )
+    captions_download.add_argument("--video-id", required=True)
+    captions_download.add_argument("--output", required=True)
+    captions_download.add_argument("--language", default="en")
+    captions_download.add_argument(
+        "--format",
+        choices=("sbv", "scc", "srt", "ttml", "vtt"),
+        default="srt",
+    )
+    captions_download.add_argument("--force", action="store_true")
+    captions_download.set_defaults(handler=command_captions_download)
+
+    video_chapters = commands.add_parser(
+        "video-chapters",
+        help="Diff or add a validated Chapters block to a video description",
+    )
+    video_chapters.add_argument("--video-id", required=True)
+    video_chapters.add_argument("--file", required=True)
+    video_chapters.add_argument("--apply", action="store_true")
+    video_chapters.set_defaults(handler=command_video_chapters)
+
+    video_description_plain = commands.add_parser(
+        "video-description-plain",
+        help="Diff or remove presentation Markdown from a video description",
+    )
+    video_description_plain.add_argument("--video-id", required=True)
+    video_description_plain.add_argument("--apply", action="store_true")
+    video_description_plain.set_defaults(handler=command_video_description_plain)
 
     playlist_ensure = commands.add_parser(
         "playlist-ensure", help="Create a public playlist if it does not exist"

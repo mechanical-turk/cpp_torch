@@ -1,0 +1,13 @@
+00:00 Introduction
+00:59 Align tensor ranks
+02:21 Broadcasting compatibility
+03:39 Right-align tensor shapes
+04:44 Calculate row-major strides
+08:07 Compute broadcast shape
+13:52 Reuse with zero strides
+15:00 Calculate effective strides
+18:52 Rewrite elementwise ops
+20:44 Map coords to flat storage
+21:47 Advance coordinates
+24:00 Test and fix broadcasting
+25:28 Recap

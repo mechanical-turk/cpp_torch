@@ -16,29 +16,27 @@ Building a Linear Prediction from Scratch in C++ | Deep Learning, All the Way Do
 
 ## YouTube description
 
-In Episode 3 of *Deep Learning, All the Way Down*, our C++ tensor stops being
+In Episode 3 of Deep Learning, All the Way Down, our C++ tensor stops being
 only a container and begins participating in numerical computation.
 
 We implement equal-shape tensor addition, subtraction, and multiplication,
 separate shared traversal from the arithmetic performed at each element, make
 reductions return scalar tensors, and build dot product by composing
-elementwise multiplication with `sum()`.
+elementwise multiplication with sum().
 
 Finally, we use those operations to express a complete linear prediction:
 
-```text
 prediction = weights.dot(features) + bias
-```
 
 Along the way, we examine:
 
-- The precise contract behind equal-shape elementwise operations
-- Why operators return new tensors without modifying their operands
-- How one traversal helper can support several arithmetic operations
-- Why a full reduction produces a rank-zero tensor
-- How dot product combines multiplication and reduction
-- The difference between forward computation and learning
-- A deliberate intermediate allocation that we will benchmark and optimize later
+• The precise contract behind equal-shape elementwise operations
+• Why operators return new tensors without modifying their operands
+• How one traversal helper can support several arithmetic operations
+• Why a full reduction produces a rank-zero tensor
+• How dot product combines multiplication and reduction
+• The difference between forward computation and learning
+• A deliberate intermediate allocation that we will benchmark and optimize later
 
 The implementation remains in one C++23 file and uses only the standard
 library, assertions, and exceptions.

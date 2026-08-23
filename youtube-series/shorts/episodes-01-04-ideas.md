@@ -32,18 +32,19 @@ left, but it gives us a clear next experiment:
   unsigned-underflow failure. This is an experiment based on that signal, not a
   proven content rule.
 
-### 2. PyTorch Calls This Linear, but Mathematically It Is Affine
+### 2. Two Wrong Predictions That Add Up to Zero
 
-- **Source:** Episodes 3 and 4
-- **Opening line:** "PyTorch calls this a linear layer. Mathematically, the
-  bias means it usually is not linear."
-- **Story:** A truly linear function must send zero to zero. Show `Wx` doing
-  that, then add `b` and show `W0 + b = b`.
-- **Payoff:** `Wx + b` is affine unless the bias is zero, even though deep
-  learning libraries conventionally call the module linear.
-- **Visual:** Run a zero vector through `Wx` and `Wx + b`; let the first land on
-  zero and the second land on the bias.
-- **Target:** 20-24 seconds.
+- **Status:** Recommended for Short 4.
+- **Source:** Episode 6
+- **Opening line:** "These two predictions are both wrong, but their errors add
+  up to zero."
+- **Story:** Show residuals `+1` and `-1`, add them to get zero, then square
+  them so both mistakes remain visible.
+- **Payoff:** Opposite errors cancel when summed. Squaring them turns both into
+  positive contributions, which is why mean squared error starts with squares.
+- **Visual:** Reveal two prediction-target pairs, then `+1 + (-1) = 0`, followed
+  by `1^2 + (-1)^2 = 2`.
+- **Target:** 18-22 seconds with no CTA.
 
 ### 3. Why a Dot Product Returns One Number
 

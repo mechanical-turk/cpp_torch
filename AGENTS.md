@@ -97,6 +97,12 @@ When the learner says `engine-check` or `run engine check`, perform a complete
 mechanical operations audit for the series. This is a standing command and must
 continue to work after sessions are wiped.
 
+Before forming or sharing any engine-check opinion, run the default dashboard
+refresh with `make analytics-sync` and inspect the resulting snapshots. The
+default refresh must collect only X account and follower metrics, never tweet
+metadata. Pull tweet-level X analytics only when the learner explicitly asks
+for tweet or X-post performance data, using `make x-post-analytics-sync`.
+
 Begin by reading `docs/distribution-timeline.md`,
 `youtube-series/production/posting-cadence.md`, every active episode or Short's
 `publishing.md`, and the latest relevant analytics report. Then reconcile what
@@ -111,9 +117,8 @@ At minimum, check every active release for:
   must belong to the dedicated Shorts playlist. Add missing membership through
   the channel tooling during the check rather than returning it as a learner
   task;
-- whether the required first comment was posted, whether its retrieval answers
-  reproduce the episode's exact closing questions, and whether it was manually
-  pinned when the API cannot pin it;
+- whether the required first comment was posted and whether its retrieval
+  answers reproduce the episode's exact closing questions;
 - the end screen on every long-form episode. It must contain both a Subscribe
   element and a playlist element linking to the complete series playlist. Use
   authenticated YouTube Studio browser automation to inspect and add missing
@@ -122,12 +127,24 @@ At minimum, check every active release for:
   than silently treating it as complete;
 - other Studio-only items, including related-video assignment, cards, reviewed
   captions, and audience settings when they were part of the release package;
+- whether every public long-form description contains valid YouTube chapters
+  derived from the recorded video's captions. The first chapter must begin at
+  `0:00`, there must be at least three chapters, timestamps must increase, and
+  every chapter must last at least ten seconds. Generate and apply a missing
+  chapter list through the local YouTube tooling rather than assigning it to the
+  learner;
+- whether every public YouTube description is clean plain text. YouTube does
+  not render Markdown styling, so literal emphasis asterisks, backticks, fenced
+  code blocks, underscore emphasis, and Markdown links must never appear in the
+  platform-ready copy. Normalize presentation Markdown through the local
+  YouTube tooling while preserving ordinary C++ operators, formulas, bare URLs,
+  Unicode bullets, hashtags, and the live chapter block;
 - whether each long-form episode received its X announcement at the planned
   interval and the standard playlist-and-GitHub navigation reply;
 - whether the corresponding LinkedIn announcement was published approximately
   one to two days later, unless the package explicitly chose another timing;
 - whether each Short was published on every platform selected in its package,
-  including YouTube, X, Instagram, and TikTok, with its pinned comment or
+  including YouTube, X, Instagram, and TikTok, with its first comment or
   platform-equivalent follow-up when planned;
 - whether planned Reddit, Telegram, Hacker News, community, newsletter, blog,
   or other distribution actions were completed, deliberately deferred, or
@@ -292,6 +309,11 @@ experiments.
   of collapsing unlike views into a misleading universal score; show data
   freshness and unavailable metrics; separate reach, consumption, engagement,
   conversion, and audience growth; and keep raw private snapshots gitignored.
+- Routine dashboard and engine-check refreshes must use `make analytics-sync`.
+  On X, this collects only the current follower count and profile metadata.
+  Tweet-level metadata consumes API credits and must never be part of a default
+  refresh; collect it only after an explicit learner request with
+  `make x-post-analytics-sync`.
 
 ## YouTube channel operations
 
@@ -323,6 +345,37 @@ experiments.
   the intended comment through the API when authorized, then record pinning,
   related-video assignment, end screens, cards, and other unsupported actions as
   manual or separately verified browser steps.
+- Write every platform-ready YouTube description as plain text. YouTube does
+  not render Markdown emphasis, inline code, fenced code blocks, or Markdown
+  links. Use ordinary unadorned prose, bare code and formulas, Unicode `•`
+  bullets, and bare URLs. Markdown may still structure the internal
+  `publishing.md` document around the exact description block, but none of its
+  presentation syntax may leak into the description itself. Before applying a
+  publishing package, normalize the description with the local channel tool and
+  inspect its dry-run diff. Preserve legitimate operators such as `*` in C++ or
+  mathematical expressions.
+- After a long-form video's automatic captions become available, download and
+  preserve its English caption track beside the episode script. Use the caption
+  timestamps as the authority for what happened in the recording and the script
+  headings as the authority for the intended conceptual structure. Derive a
+  concise `youtube-chapters.txt`, inspect the metadata dry-run, and add the
+  validated chapter block to the live description. Cache caption downloads and
+  do not repeatedly fetch an unchanged track because caption API requests carry
+  substantial quota cost. If automatic captions are not yet available, record
+  the chapter task as pending and retry it during the next engine check. Any
+  later metadata or publishing-package update must preserve the live chapter
+  block unless the learner explicitly replaces it. Name the `00:00` chapter
+  `Introduction` consistently across episodes. Format every sub-hour timestamp
+  as zero-padded `MM:SS`, including `00:00`, so the description presents a
+  visually consistent timestamp column. Keep every chapter title short enough
+  to remain fully visible in YouTube's narrow player chapter label: at most 28
+  characters and at most five words. YouTube truncation is based on proportional
+  visual width and available device space rather than a published hard character
+  limit, so these are conservative house limits, not a platform guarantee. Put
+  the defining action or noun first, remove filler such as `the`, and inspect
+  the real player after publication.
+  Name the final chapter `Recap`. Do not use `Review and next steps`, `Closing`,
+  or another variant for the last chapter label.
 
 ## X account operations
 
@@ -352,6 +405,13 @@ experiments.
 - The current Instagram Login integration is read-only in practice. Do not add
   publishing, messaging, comment-management, or Facebook Page permissions
   unless the learner explicitly authorizes a new capability.
+- Do not place raw external URLs in Instagram Reel captions or first comments.
+  They are generally not clickable, add friction, and can resemble repetitive
+  promotional spam without providing a useful navigation path. Use the
+  profile's Links field or a Story link sticker for external navigation. An
+  Instagram first comment should add technical value, answer a likely question,
+  or invite a genuine response; when navigation is relevant, use a short
+  `full series in bio` reference instead of pasting URLs.
 
 ## TikTok analytics operations
 
@@ -479,7 +539,8 @@ When planning or writing a chapter for *Deep Learning, All the Way Down*:
   be treated as an extraction target inside the chapter script.
 - Every episode must have a `publishing.md` package before release. It must
   include the final title, YouTube description, pinned comment, chapter markers
-  or an explicit note that they remain provisional, thumbnail reference, tags,
+  or an explicit note that they remain provisional, platform-specific
+  thumbnail and cover references, tags,
   an X announcement, a LinkedIn announcement, a Reddit decision and draft when
   appropriate, a separately produced Shorts plan, and a release check for the
   five-second end-screen tail plus the Subscribe and complete-series-playlist
@@ -540,6 +601,20 @@ sample exists.
 
 - Follow `youtube-series/production/visual-asset-guidelines.md` for generated
   diagrams and OBS overlays.
+- Treat the video master and the platform cover files as different assets. One
+  `1080 x 1920` master may be reused across Shorts, Reels, and TikTok, but its
+  thumbnail must not be reused blindly across platforms. Generate YouTube
+  long-form thumbnails at `16:9`, YouTube Shorts thumbnails at `9:16`, and
+  Instagram Reel covers at Instagram's recommended `420:654` (`1:1.55`) ratio,
+  using a high-resolution equivalent such as `1080 x 1682` rather than a small
+  literal `420 x 654` raster. Keep every essential element inside Instagram's
+  centered `3:4` profile-grid safe area, which is `1080 x 1440` inside the
+  current cover and can remove approximately 121 pixels from both the top and
+  bottom. For TikTok and X, verify the selected cover or poster frame in the
+  real composer. Recompose for each ratio and inspect the destination crop
+  before publishing. Instagram Reel covers currently use the technical visual
+  without the learner's face unless the learner explicitly changes that
+  direction.
 - Equivalent repeated objects must be literal duplicates with identical
   dimensions and styling, not separately generated approximations.
 - Lower-screen OBS overlays default to opaque, edge-to-edge rectangles with

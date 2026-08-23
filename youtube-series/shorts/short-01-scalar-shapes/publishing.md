@@ -33,7 +33,7 @@ https://www.youtube.com/playlist?list=PLZSg76FHvdTw
 Source code:
 https://github.com/mechanical-turk/deep-learning-all-the-way-down
 
-#cpp #deeplearning #shorts
+#cpp #deeplearning #machinelearning
 ```
 
 ## Thumbnail

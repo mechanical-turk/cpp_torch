@@ -46,6 +46,20 @@ make youtube-channel-test
 
 ## Cross-platform dashboard
 
+Refresh the dashboard's default data first:
+
+```sh
+make analytics-sync
+```
+
+This routine refresh collects only X profile and follower metrics. It does not
+request tweet-level metadata. Pull X post analytics only when explicitly
+needed:
+
+```sh
+make x-post-analytics-sync
+```
+
 Open the read-only local dashboard over the latest YouTube, X, and Instagram
 snapshots:
 

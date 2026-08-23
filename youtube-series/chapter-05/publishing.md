@@ -192,21 +192,17 @@ Publish Saturday, August 22 between 9:00 and 10:30 AM ET.
 ### Copy
 
 ```text
-Broadcasting is what lets one tensor participate in a larger computation without first being copied into the larger shape.
+Adding one bias to every row of a batch should not require copying that bias into a larger tensor first.
 
-In Episode 5 of Deep Learning, All the Way Down, I implement that rule in our from-scratch C++ tensor.
+In Episode 5, we implement tensor broadcasting from scratch in C++.
 
-We align shapes from the right, let size-one axes stretch, and assign a stride of zero wherever an operand needs to reuse the same value. That removes the manual bias-copy workaround from the previous episode and also lets us subtract one per-feature offset from every observation in a batch.
+To make that work, we align the operand shapes from the right, decide whether their dimensions are compatible, and compute how each operand should move while we traverse the output.
 
-The episode covers:
+If an operand needs to reuse the same value along an axis, we give that axis a stride of zero. Its physical index stays in place as the output coordinate advances, so there is no need to allocate an expanded copy.
 
-• deciding whether two tensor shapes are broadcast-compatible
-• computing row-major strides for N-dimensional tensors
-• why broadcast axes use a stride of zero
-• mapping output coordinates back into each operand
-• sharing the same traversal across addition, subtraction, and multiplication
+With that in place, the same elementwise implementation can broadcast addition, subtraction, and multiplication.
 
-The complete implementation remains one C++23 file using only the standard library.
+The code remains in one C++23 file using only the standard library.
 
 Watch Episode 5:
 https://www.youtube.com/watch?v=70mVVGNc0Ik

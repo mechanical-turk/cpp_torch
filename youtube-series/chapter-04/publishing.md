@@ -14,28 +14,28 @@ captions, metadata, and playback checks are complete.
 
 ## Final title
 
-Building Matrix Multiplication in C++: Predicting a Whole Batch at Once | Deep Learning, All the Way Down #4
+Building Matrix Multiplication in C++ | Deep Learning, All the Way Down #4
 
 ## YouTube description
 
-In Episode 4 of *Deep Learning, All the Way Down*, our C++ tensor stops
+In Episode 4 of Deep Learning, All the Way Down, our C++ tensor stops
 predicting one observation at a time and starts predicting a whole batch at
 once.
 
 We implement matrix multiplication as a reference kernel, batch a linear
-prediction across multiple observations in a single `matmul()` call, then
+prediction across multiple observations in a single matmul() call, then
 expose the one piece that still isn't clean: making the bias line up requires
 copying it, and that copy is wasteful.
 
 Along the way, we examine:
 
-- Why `dot()` correctly rejects two rank-two tensors
-- How `[m,k] @ [k,n] = [m,n]` determines the shape of a matrix product
-- Why the two inner dimensions must agree, and why that shared dimension
+• Why dot() correctly rejects two rank-two tensors
+• How [m,k] @ [k,n] = [m,n] determines the shape of a matrix product
+• Why the two inner dimensions must agree, and why that shared dimension
   disappears from the output
-- Replacing checked, general-purpose indexing with direct row-major math once
+• Replacing checked, general-purpose indexing with direct row-major math once
   the loop bounds already guarantee it's safe
-- Why copying one repeated bias value into a full column is correct but
+• Why copying one repeated bias value into a full column is correct but
   wasteful, and why that waste is exactly the problem broadcasting exists to
   solve
 

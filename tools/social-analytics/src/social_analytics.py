@@ -24,6 +24,8 @@ REPOSITORY_ROOT = Path(__file__).resolve().parents[3]
 X_PRIVATE_DIR = REPOSITORY_ROOT / "youtube-series" / "analytics" / "private" / "x"
 X_LATEST_PATH = X_PRIVATE_DIR / "latest.json"
 X_SNAPSHOTS_DIR = X_PRIVATE_DIR / "snapshots"
+X_AUDIENCE_LATEST_PATH = X_PRIVATE_DIR / "audience-latest.json"
+X_AUDIENCE_SNAPSHOTS_DIR = X_PRIVATE_DIR / "audience-snapshots"
 REDIRECT_URI = "http://127.0.0.1:8765/callback"
 SCOPES = "tweet.read tweet.write users.read offline.access"
 X_COLLECTION_START = "2026-08-13T13:10:00Z"
@@ -191,6 +193,23 @@ def command_x_test(_args: argparse.Namespace) -> int:
         raise RuntimeError(f"X identity check failed ({error.code}): {detail}") from error
     print(f"Authorized X account: @{result['username']} ({result['name']})")
     print(json.dumps(result.get("public_metrics", {}), indent=2))
+    return 0
+
+
+def command_x_audience_sync(_args: argparse.Namespace) -> int:
+    """Collect only owned-account profile and follower metrics from X."""
+    account = x_get(
+        "/2/users/me",
+        {"user.fields": "id,name,username,description,url,public_metrics"},
+    )["data"]
+    captured_at = int(time.time())
+    snapshot = {"captured_at": captured_at, "account": account}
+    X_AUDIENCE_SNAPSHOTS_DIR.mkdir(parents=True, exist_ok=True)
+    timestamp = time.strftime("%Y-%m-%dT%H-%M-%SZ", time.gmtime(captured_at))
+    write_private_json(X_AUDIENCE_SNAPSHOTS_DIR / f"{timestamp}.json", snapshot)
+    write_private_json(X_AUDIENCE_LATEST_PATH, snapshot)
+    followers = account.get("public_metrics", {}).get("followers_count")
+    print(f"Collected X follower count for @{account['username']}: {followers}")
     return 0
 
 
@@ -374,6 +393,10 @@ def command_x_sync(_args: argparse.Namespace) -> int:
     snapshot_path = X_SNAPSHOTS_DIR / f"{timestamp}.json"
     write_private_json(snapshot_path, snapshot)
     write_private_json(X_LATEST_PATH, snapshot)
+    write_private_json(
+        X_AUDIENCE_LATEST_PATH,
+        {"captured_at": captured_at, "account": me},
+    )
     print(f"Collected {len(posts)} X posts since the series launch.")
     print(f"Latest snapshot: {X_LATEST_PATH}")
     return 0
@@ -785,7 +808,13 @@ def parser() -> argparse.ArgumentParser:
     x_auth.set_defaults(handler=command_x_auth)
     x_test = commands.add_parser("x-test", help="Verify the authorized X account")
     x_test.set_defaults(handler=command_x_test)
-    x_sync = commands.add_parser("x-sync", help="Collect series-era owned X posts")
+    x_audience_sync = commands.add_parser(
+        "x-audience-sync", help="Collect only X profile and follower metrics"
+    )
+    x_audience_sync.set_defaults(handler=command_x_audience_sync)
+    x_sync = commands.add_parser(
+        "x-sync", help="Explicitly collect series-era X posts and their metrics"
+    )
     x_sync.set_defaults(handler=command_x_sync)
     x_reply = commands.add_parser(
         "x-reply", help="Preview or publish a reply from a UTF-8 text file"

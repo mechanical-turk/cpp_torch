@@ -9,9 +9,10 @@
 - **YouTube Short:** uploaded, processed in HD, and scheduled for Saturday,
   August 22 at 2:00 PM ET:
   https://www.youtube.com/watch?v=3kdVmqAl-js
-- **Instagram and X:** publish natively Saturday, August 22 at approximately
-  2:00 PM ET. This keeps the Short clear of Episode 5's Friday YouTube and X
-  launch while avoiding a long delay after the TikTok release.
+- **Instagram:** published natively Saturday, August 22 at 3:22:47 PM ET:
+  https://www.instagram.com/reel/DcWpzmrCIbn/
+- **X:** publication remains unconfirmed. Publish natively after the Instagram
+  rollout, then add the standard playlist-and-source navigation reply.
 - **Shorts playlist:** add to the existing **Deep Learning, All the Way Down
   | Shorts** playlist immediately after YouTube publication, after Short 2.
 - **X:** publish the native video in the same Saturday batch, then add the
@@ -50,7 +51,7 @@ https://github.com/mechanical-turk/deep-learning-all-the-way-down
 #cpp #overflow #computerscience
 ```
 
-## Thumbnail
+## YouTube Shorts thumbnail
 
 [`thumbnail.png`](thumbnail.png) is a real frame from the finished export
 (the `no overflow` terminal reveal, ~13s in), with a bold "THIS CHECK LIES"
@@ -108,8 +109,8 @@ systems, PyTorch internals, numerical computing
 
 ### Timing
 
-Publish natively as a Reel on **Saturday, August 22 at approximately 2:00 PM
-ET**, in the same batch as YouTube and X.
+Published natively as a Reel on **Saturday, August 22 at 3:22:47 PM ET**:
+https://www.instagram.com/reel/DcWpzmrCIbn/
 
 ### What we're watching for this time
 
@@ -126,8 +127,13 @@ generalizes to a live-coding format, not just a short, pure-reveal one.
 
 ### Cover image
 
-Use `thumbnail.png` as the Reel cover, same asset as the YouTube thumbnail
-and TikTok cover.
+Do not reuse the `9:16` YouTube Shorts thumbnail unchanged. Create
+`cover-instagram-reel.png` as a dedicated high-resolution `1080 x 1682`
+composition using Instagram's recommended `420:654` (`1:1.55`) cover ratio.
+Use the same technical visual and brand treatment without the creator's face.
+Keep the complete headline, diagram, result, and C++ mark inside the centered
+`1080 x 1440` profile-grid safe area, then verify the crop in the real upload
+preview before publishing.
 
 ### Caption
 
@@ -150,14 +156,16 @@ evidence yet that a larger tag block changes reach at this account size.
 
 ### First comment
 
-Post and pin immediately after publishing:
+Post and pin immediately after publishing. Do not paste external URLs into the
+Instagram comment:
 
 ```text
-The exact guard this is built from:
-https://www.youtube.com/watch?v=8kzL5NdxGCo
+The bug is checking after the multiplication.
 
-Complete series:
-https://www.youtube.com/playlist?list=PLZSg76FHvdTw
+After handling b == 0, the safe version checks whether a > max / b before
+computing a * b.
+
+Full series in bio.
 ```
 
 ### Settings
@@ -175,7 +183,8 @@ https://www.youtube.com/playlist?list=PLZSg76FHvdTw
 ### Instagram strategy
 
 - Native upload only, never a cross-post of the YouTube or TikTok file.
-- Link only through the bio and the pinned first comment.
+- Navigate externally only through the profile link or a Story link sticker.
+  Keep the pinned first comment native and useful rather than pasting a raw URL.
 - At 24 hours, compare average watch time and completion rate directly
   against Short 2's own checkpoints, not just raw view count. Short 2 is
   now the series' best-performing baseline, so this is the first real test

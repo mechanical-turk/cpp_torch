@@ -82,12 +82,17 @@ def load_youtube() -> dict[str, Any]:
 
 
 def load_x() -> dict[str, Any]:
-    data = load_json(PRIVATE_ROOT / "x" / "latest.json") or {}
-    account = data.get("account", {})
+    post_data = load_json(PRIVATE_ROOT / "x" / "latest.json") or {}
+    audience_data = (
+        load_json(PRIVATE_ROOT / "x" / "audience-latest.json") or post_data
+    )
+    account = audience_data.get("account", {})
     metrics = account.get("public_metrics", {})
-    media_by_key = {item.get("media_key"): item for item in data.get("media", [])}
+    media_by_key = {
+        item.get("media_key"): item for item in post_data.get("media", [])
+    }
     posts = []
-    for post in data.get("posts", []):
+    for post in post_data.get("posts", []):
         media_keys = post.get("attachments", {}).get("media_keys", [])
         media = media_by_key.get(media_keys[0]) if media_keys else None
         posts.append(
@@ -105,7 +110,7 @@ def load_x() -> dict[str, Any]:
         "platform": "X",
         "handle": f"@{account.get('username', 'mechaturka')}",
         "followers": metrics.get("followers_count"),
-        "captured_at": iso_from_epoch(data.get("captured_at")),
+        "captured_at": iso_from_epoch(audience_data.get("captured_at")),
         "content": posts,
     }
 
@@ -234,8 +239,28 @@ def load_audience_history() -> dict[str, list[dict[str, Any]]]:
                 {"captured_at": data.get("collected_at"), "followers": int(count)}
             )
 
+    # Preserve the older follower history embedded in explicit post snapshots,
+    # then append the new lightweight audience-only snapshots.
+    seen_x_points: set[tuple[str | None, Any]] = set()
+    for folder in (
+        PRIVATE_ROOT / "x" / "snapshots",
+        PRIVATE_ROOT / "x" / "audience-snapshots",
+    ):
+        for path in sorted(folder.glob("*.json")):
+            data = load_json(path) or {}
+            count = (
+                data.get("account", {})
+                .get("public_metrics", {})
+                .get("followers_count")
+            )
+            point = (iso_from_epoch(data.get("captured_at")), count)
+            if count is not None and point not in seen_x_points:
+                history["X"].append(
+                    {"captured_at": point[0], "followers": point[1]}
+                )
+                seen_x_points.add(point)
+
     for platform, folder, extractor in (
-        ("X", PRIVATE_ROOT / "x" / "snapshots", lambda d: d.get("account", {}).get("public_metrics", {}).get("followers_count")),
         ("Instagram", PRIVATE_ROOT / "instagram" / "snapshots", lambda d: d.get("account", {}).get("followers_count")),
         ("TikTok", PRIVATE_ROOT / "tiktok" / "snapshots", lambda d: d.get("account", {}).get("follower_count")),
     ):

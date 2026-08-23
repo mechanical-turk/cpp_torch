@@ -1,4 +1,4 @@
-.PHONY: youtube-auth youtube-reauthorize youtube-analytics-sync youtube-analytics-sync-full youtube-analytics-report youtube-channel-test x-auth x-test x-analytics-sync instagram-import-token instagram-test instagram-analytics-sync tiktok-auth tiktok-test tiktok-analytics-sync social-analytics-test analytics-dashboard dashboard-up dashboard-down
+.PHONY: analytics-sync youtube-auth youtube-reauthorize youtube-analytics-sync youtube-analytics-sync-full youtube-analytics-report youtube-captions-download youtube-video-chapters youtube-video-description-plain youtube-channel-test x-auth x-test x-audience-sync x-post-analytics-sync x-analytics-sync instagram-import-token instagram-test instagram-analytics-sync tiktok-auth tiktok-test tiktok-analytics-sync social-analytics-test analytics-dashboard dashboard-up dashboard-down
 
 DASHBOARD_PORT := 8765
 DASHBOARD_URL := http://127.0.0.1:$(DASHBOARD_PORT)/
@@ -20,6 +20,20 @@ youtube-analytics-sync-full:
 youtube-analytics-report:
 	UV_CACHE_DIR=build/uv-cache uv run --project tools/youtube-channel youtube-channel report
 
+youtube-captions-download:
+	@test -n "$(VIDEO_ID)" || (echo "VIDEO_ID is required" && exit 2)
+	@test -n "$(OUTPUT)" || (echo "OUTPUT is required" && exit 2)
+	UV_CACHE_DIR=build/uv-cache uv run --project tools/youtube-channel youtube-channel captions-download --video-id "$(VIDEO_ID)" --output "$(OUTPUT)"
+
+youtube-video-chapters:
+	@test -n "$(VIDEO_ID)" || (echo "VIDEO_ID is required" && exit 2)
+	@test -n "$(CHAPTERS)" || (echo "CHAPTERS is required" && exit 2)
+	UV_CACHE_DIR=build/uv-cache uv run --project tools/youtube-channel youtube-channel video-chapters --video-id "$(VIDEO_ID)" --file "$(CHAPTERS)" $(if $(APPLY),--apply,)
+
+youtube-video-description-plain:
+	@test -n "$(VIDEO_ID)" || (echo "VIDEO_ID is required" && exit 2)
+	UV_CACHE_DIR=build/uv-cache uv run --project tools/youtube-channel youtube-channel video-description-plain --video-id "$(VIDEO_ID)" $(if $(APPLY),--apply,)
+
 youtube-channel-test:
 	PYTHONPATH=tools/youtube-channel/src tools/youtube-channel/.venv/bin/python -m unittest discover -s tools/youtube-channel/tests -v
 
@@ -29,8 +43,18 @@ x-auth:
 x-test:
 	UV_CACHE_DIR=build/uv-cache uv run --project tools/social-analytics social-analytics x-test
 
-x-analytics-sync:
+x-audience-sync:
+	UV_CACHE_DIR=build/uv-cache uv run --project tools/social-analytics social-analytics x-audience-sync
+
+# Tweet-level X metadata can consume API credits. Run this only when explicitly
+# requested; it is deliberately excluded from the default dashboard refresh.
+x-post-analytics-sync:
 	UV_CACHE_DIR=build/uv-cache uv run --project tools/social-analytics social-analytics x-sync
+
+x-analytics-sync:
+	@echo "Use 'make x-audience-sync' for the routine follower refresh."
+	@echo "Use 'make x-post-analytics-sync' only when tweet analytics were explicitly requested."
+	@exit 2
 
 instagram-import-token:
 	UV_CACHE_DIR=build/uv-cache uv run --project tools/social-analytics social-analytics instagram-import-token
@@ -52,6 +76,15 @@ tiktok-analytics-sync:
 
 social-analytics-test:
 	PYTHONPATH=tools/social-analytics/src python3 -m unittest discover -s tools/social-analytics/tests -v
+
+# Default dashboard refresh. X is follower-only by design; this target never
+# requests tweet-level X metadata.
+analytics-sync: youtube-analytics-sync x-audience-sync instagram-analytics-sync
+	@if [ -f "$$HOME/.config/dlatwd/tiktok-analytics/token.json" ]; then \
+		$(MAKE) tiktok-analytics-sync; \
+	else \
+		echo "TikTok sync skipped: authorization is not configured."; \
+	fi
 
 analytics-dashboard:
 	python3 tools/analytics-dashboard/dashboard.py

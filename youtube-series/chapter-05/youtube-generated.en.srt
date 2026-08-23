@@ -1,0 +1,2436 @@
+1
+00:00:00,080 --> 00:00:04,080
+Welcome back to deep learning all the
+
+2
+00:00:01,600 --> 00:00:06,400
+way down. Right now, every element wise
+
+3
+00:00:04,080 --> 00:00:08,800
+operation in our tensor expects both
+
+4
+00:00:06,400 --> 00:00:12,559
+sides to have exactly the same shape. So
+
+5
+00:00:08,800 --> 00:00:14,400
+a 2x1 input plus a 2x1 bias works fine.
+
+6
+00:00:12,559 --> 00:00:16,240
+Though that's just a hack we added to
+
+7
+00:00:14,400 --> 00:00:18,800
+manually scale the scaler up to the
+
+8
+00:00:16,240 --> 00:00:20,800
+correct shape. If we don't do the hack
+
+9
+00:00:18,800 --> 00:00:23,920
+and just work with the bias in its
+
+10
+00:00:20,800 --> 00:00:26,320
+original scaler form, the addition fails
+
+11
+00:00:23,920 --> 00:00:28,080
+even though it shouldn't. And there is
+
+12
+00:00:26,320 --> 00:00:30,320
+virtually no reason why our library
+
+13
+00:00:28,080 --> 00:00:32,559
+shouldn't deduce that our intention is
+
+14
+00:00:30,320 --> 00:00:35,200
+to treat the scaler as if it were a 2x1
+
+15
+00:00:32,559 --> 00:00:37,920
+vector here. So today we're going to fix
+
+16
+00:00:35,200 --> 00:00:40,079
+that by implementing broadcasting in our
+
+17
+00:00:37,920 --> 00:00:42,640
+element wise binary function. When the
+
+18
+00:00:40,079 --> 00:00:45,200
+shapes don't match exactly our current
+
+19
+00:00:42,640 --> 00:00:48,079
+check just rejects them. And to fix that
+
+20
+00:00:45,200 --> 00:00:50,559
+we need to answer two questions. First
+
+21
+00:00:48,079 --> 00:00:54,079
+of all when are two shapes actually
+
+22
+00:00:50,559 --> 00:00:56,800
+compatible? And second, when they are
+
+23
+00:00:54,079 --> 00:00:58,879
+compatible, how do we align them such
+
+24
+00:00:56,800 --> 00:01:01,760
+that we can make them work together? So
+
+25
+00:00:58,879 --> 00:01:04,239
+let's go back to our 3x1 example. We
+
+26
+00:01:01,760 --> 00:01:06,479
+have the 3x1 input vector x here and a
+
+27
+00:01:04,239 --> 00:01:08,320
+bias. And when we do element wise
+
+28
+00:01:06,479 --> 00:01:10,640
+addition, we just want the bias to show
+
+29
+00:01:08,320 --> 00:01:12,479
+up in every single element. But when we
+
+30
+00:01:10,640 --> 00:01:15,760
+compare the shapes before we can attempt
+
+31
+00:01:12,479 --> 00:01:17,520
+to match them, we realize that let alone
+
+32
+00:01:15,760 --> 00:01:20,320
+the shape the ranks don't match because
+
+33
+00:01:17,520 --> 00:01:22,799
+X is a rank one tensor whereas B is a
+
+34
+00:01:20,320 --> 00:01:25,119
+rank zero tensor. So we must first match
+
+35
+00:01:22,799 --> 00:01:26,960
+their ranks. And the good news here is
+
+36
+00:01:25,119 --> 00:01:29,920
+we have a very useful trick up our
+
+37
+00:01:26,960 --> 00:01:32,560
+sleeve which is the singleton dimension.
+
+38
+00:01:29,920 --> 00:01:35,040
+Basically, I can take any shape and I
+
+39
+00:01:32,560 --> 00:01:36,960
+can keep prefixing it with ones and that
+
+40
+00:01:35,040 --> 00:01:40,079
+would allow me to keep elevating it to
+
+41
+00:01:36,960 --> 00:01:42,960
+higher and higher dimensions and I would
+
+42
+00:01:40,079 --> 00:01:45,680
+not need to change the underlying data
+
+43
+00:01:42,960 --> 00:01:48,880
+because at the end of the day this shape
+
+44
+00:01:45,680 --> 00:01:51,439
+still has nl one. It still has a single
+
+45
+00:01:48,880 --> 00:01:53,680
+element and the way you address it is
+
+46
+00:01:51,439 --> 00:01:56,399
+slightly different than if you would
+
+47
+00:01:53,680 --> 00:01:59,759
+address a lower dimension counterpart.
+
+48
+00:01:56,399 --> 00:02:02,799
+But the addressing logic underneath
+
+49
+00:01:59,759 --> 00:02:05,520
+changes so little and in such a way that
+
+50
+00:02:02,799 --> 00:02:08,479
+lends itself so useful to element wise
+
+51
+00:02:05,520 --> 00:02:10,560
+operations that this is an extremely
+
+52
+00:02:08,479 --> 00:02:13,680
+powerful technique with basically no
+
+53
+00:02:10,560 --> 00:02:17,200
+cost. And just like that we have
+
+54
+00:02:13,680 --> 00:02:19,760
+elevated our scalar rank zero tensor
+
+55
+00:02:17,200 --> 00:02:21,680
+into a rank one tensor. So now the ranks
+
+56
+00:02:19,760 --> 00:02:24,640
+actually match. So now we need to match
+
+57
+00:02:21,680 --> 00:02:27,360
+the shapes. And basically at this point
+
+58
+00:02:24,640 --> 00:02:29,920
+when the algorithm looks at these shapes
+
+59
+00:02:27,360 --> 00:02:32,560
+it can see that for this one particular
+
+60
+00:02:29,920 --> 00:02:36,239
+dimension there is one of B and then
+
+61
+00:02:32,560 --> 00:02:38,160
+there are three of X. So it can actually
+
+62
+00:02:36,239 --> 00:02:42,000
+just deduce just by looking at these
+
+63
+00:02:38,160 --> 00:02:45,519
+align dimensions that B has to be copied
+
+64
+00:02:42,000 --> 00:02:48,080
+three times for each element. So with
+
+65
+00:02:45,519 --> 00:02:50,560
+that we will have our output shape and
+
+66
+00:02:48,080 --> 00:02:53,200
+that's going to be exactly three. But
+
+67
+00:02:50,560 --> 00:02:56,000
+now suppose we had two other answers.
+
+68
+00:02:53,200 --> 00:02:58,080
+Let's say we had x again three and then
+
+69
+00:02:56,000 --> 00:03:00,480
+y at two. But now you need to think
+
+70
+00:02:58,080 --> 00:03:03,840
+about how you would broadcast y onto x
+
+71
+00:03:00,480 --> 00:03:06,879
+since y is clearly the smaller one. And
+
+72
+00:03:03,840 --> 00:03:09,519
+you just can't. There is no reasonable
+
+73
+00:03:06,879 --> 00:03:12,319
+way to copy two things onto three
+
+74
+00:03:09,519 --> 00:03:14,400
+things. So we're actually seeing the
+
+75
+00:03:12,319 --> 00:03:16,080
+power of the dimension one here, the
+
+76
+00:03:14,400 --> 00:03:18,319
+singleton dimension. Because when
+
+77
+00:03:16,080 --> 00:03:20,319
+there's a singleton dimension, your
+
+78
+00:03:18,319 --> 00:03:23,360
+constraint is completely determined by
+
+79
+00:03:20,319 --> 00:03:25,360
+the align dimension of the counterparty.
+
+80
+00:03:23,360 --> 00:03:28,640
+But when you have two and three, there's
+
+81
+00:03:25,360 --> 00:03:32,480
+just nothing you can do. So this is one
+
+82
+00:03:28,640 --> 00:03:35,360
+rule. When you align the ranks, at least
+
+83
+00:03:32,480 --> 00:03:37,440
+one of them should be one or the
+
+84
+00:03:35,360 --> 00:03:39,840
+dimensions should match. So this just
+
+85
+00:03:37,440 --> 00:03:41,599
+doesn't work. Now let's do something a
+
+86
+00:03:39,840 --> 00:03:45,360
+little bit more interesting. Suppose we
+
+87
+00:03:41,599 --> 00:03:48,159
+had X at 2 3 4. So it's the rank three
+
+88
+00:03:45,360 --> 00:03:50,560
+answer and the dimensions are 2 3 4 and
+
+89
+00:03:48,159 --> 00:03:54,000
+then let's say we had y and the
+
+90
+00:03:50,560 --> 00:03:55,760
+dimensions were 1 4. Since y is clearly
+
+91
+00:03:54,000 --> 00:03:59,360
+the smaller one, we need to find a way
+
+92
+00:03:55,760 --> 00:04:02,640
+to broadcast it onto x. And the way we
+
+93
+00:03:59,360 --> 00:04:05,280
+would adjust y is of course by first
+
+94
+00:04:02,640 --> 00:04:07,519
+prefixing it with a singleton dimension
+
+95
+00:04:05,280 --> 00:04:10,319
+to elevate it to the rank of x. And
+
+96
+00:04:07,519 --> 00:04:12,640
+let's put x here to make the next step a
+
+97
+00:04:10,319 --> 00:04:14,879
+little bit easier. So at this point we
+
+98
+00:04:12,640 --> 00:04:17,040
+need to walk from the right to the left.
+
+99
+00:04:14,879 --> 00:04:20,160
+These two dimensions match. So we don't
+
+100
+00:04:17,040 --> 00:04:22,720
+need to do anything. And then here we
+
+101
+00:04:20,160 --> 00:04:24,800
+have one and then three. That's a
+
+102
+00:04:22,720 --> 00:04:27,440
+perfectly valid case because we can just
+
+103
+00:04:24,800 --> 00:04:30,160
+triple Y and then we will match X's
+
+104
+00:04:27,440 --> 00:04:32,960
+shape. And then here same idea just
+
+105
+00:04:30,160 --> 00:04:35,840
+double. So the output shape is going to
+
+106
+00:04:32,960 --> 00:04:37,600
+be 2 3 4. All right. So that was a lot
+
+107
+00:04:35,840 --> 00:04:40,400
+of context but let's just delete all of
+
+108
+00:04:37,600 --> 00:04:42,160
+this and let's get to work. We actually
+
+109
+00:04:40,400 --> 00:04:44,639
+need to make use of a technique we
+
+110
+00:04:42,160 --> 00:04:47,840
+learned on an earlier episode as a sub
+
+111
+00:04:44,639 --> 00:04:50,320
+routine here which is the strides.
+
+112
+00:04:47,840 --> 00:04:53,440
+If you recall from an earlier episode,
+
+113
+00:04:50,320 --> 00:04:55,360
+we made use of strides in our flat index
+
+114
+00:04:53,440 --> 00:04:58,080
+function. And strides were useful
+
+115
+00:04:55,360 --> 00:05:00,240
+because they allowed us to understand
+
+116
+00:04:58,080 --> 00:05:02,000
+how many elements we would cover by
+
+117
+00:05:00,240 --> 00:05:03,680
+taking a single step in any given
+
+118
+00:05:02,000 --> 00:05:06,160
+dimension. And that was a very helpful
+
+119
+00:05:03,680 --> 00:05:08,720
+sub routine in calculating the
+
+120
+00:05:06,160 --> 00:05:11,759
+coordinate mapping between actual tensor
+
+121
+00:05:08,720 --> 00:05:14,639
+indices onto our flat index. So let's
+
+122
+00:05:11,759 --> 00:05:16,639
+just create a helper function that just
+
+123
+00:05:14,639 --> 00:05:19,520
+calculates the strides for us. We're
+
+124
+00:05:16,639 --> 00:05:23,280
+going to begin with no discard as usual
+
+125
+00:05:19,520 --> 00:05:25,199
+and we're going to return size t and we
+
+126
+00:05:23,280 --> 00:05:27,680
+are going to mark it as const as per
+
+127
+00:05:25,199 --> 00:05:30,880
+usual. Next, we will initialize our
+
+128
+00:05:27,680 --> 00:05:33,600
+output vector. And then we will set our
+
+129
+00:05:30,880 --> 00:05:35,360
+initial stride to one. And then we're
+
+130
+00:05:33,600 --> 00:05:37,280
+going to do something very similar to
+
+131
+00:05:35,360 --> 00:05:38,880
+what we were doing here. But this time,
+
+132
+00:05:37,280 --> 00:05:41,919
+I'm going to write the loop a little bit
+
+133
+00:05:38,880 --> 00:05:43,520
+differently to make use of a slightly
+
+134
+00:05:41,919 --> 00:05:45,520
+more interesting and a little bit more
+
+135
+00:05:43,520 --> 00:05:47,280
+advanced technique. And to show you the
+
+136
+00:05:45,520 --> 00:05:49,840
+contrast, let's just begin by copying
+
+137
+00:05:47,280 --> 00:05:52,320
+this and placing it here. And I'm going
+
+138
+00:05:49,840 --> 00:05:54,880
+to scroll up. Let's remove this line.
+
+139
+00:05:52,320 --> 00:05:57,280
+And at this point, we're technically
+
+140
+00:05:54,880 --> 00:06:00,720
+done. If we just return result, this
+
+141
+00:05:57,280 --> 00:06:03,440
+function calculates the brides.
+
+142
+00:06:00,720 --> 00:06:05,919
+But there's a neat trick here. So if you
+
+143
+00:06:03,440 --> 00:06:09,759
+recall from an earlier episode, we built
+
+144
+00:06:05,919 --> 00:06:11,919
+our loop this way because we are using
+
+145
+00:06:09,759 --> 00:06:15,360
+an unsigned integer here as we're doing
+
+146
+00:06:11,919 --> 00:06:17,680
+our loop. And we cannot do greater than
+
+147
+00:06:15,360 --> 00:06:20,560
+or equal to here because unsigned
+
+148
+00:06:17,680 --> 00:06:22,479
+integers can never be negative. And to
+
+149
+00:06:20,560 --> 00:06:25,919
+avoid an infinite loop or doing
+
+150
+00:06:22,479 --> 00:06:27,840
+overflows, we came up with this hack,
+
+151
+00:06:25,919 --> 00:06:30,000
+this little trick. But there is a
+
+152
+00:06:27,840 --> 00:06:33,199
+slightly better way of doing this, which
+
+153
+00:06:30,000 --> 00:06:34,960
+is removing this. And then instead of
+
+154
+00:06:33,199 --> 00:06:37,600
+pre-incrementing, we're going to
+
+155
+00:06:34,960 --> 00:06:40,160
+increment after. And then we're going to
+
+156
+00:06:37,600 --> 00:06:42,800
+put the condition like so. And we don't
+
+157
+00:06:40,160 --> 00:06:45,360
+need to do this current access math. We
+
+158
+00:06:42,800 --> 00:06:48,639
+can just use access directly. And of
+
+159
+00:06:45,360 --> 00:06:51,600
+course we should remember to place the
+
+160
+00:06:48,639 --> 00:06:54,800
+stride into the result. And the idea
+
+161
+00:06:51,600 --> 00:06:58,000
+here is so this is called a postfix
+
+162
+00:06:54,800 --> 00:07:00,160
+decrement. And this whole thing is not
+
+163
+00:06:58,000 --> 00:07:03,280
+just a statement. Meaning we are not
+
+164
+00:07:00,160 --> 00:07:05,360
+just decrementing the axis. This is an
+
+165
+00:07:03,280 --> 00:07:07,039
+expression. So not only does it do
+
+166
+00:07:05,360 --> 00:07:08,639
+something, it also returns something
+
+167
+00:07:07,039 --> 00:07:10,960
+technically
+
+168
+00:07:08,639 --> 00:07:13,440
+such that this expression resolves to a
+
+169
+00:07:10,960 --> 00:07:16,400
+number that can be fed into the larger
+
+170
+00:07:13,440 --> 00:07:19,520
+expression here which is our main
+
+171
+00:07:16,400 --> 00:07:22,880
+termination condition. And when you have
+
+172
+00:07:19,520 --> 00:07:25,199
+your decrement as postfix, what happens
+
+173
+00:07:22,880 --> 00:07:27,680
+is the expression resolves to the old
+
+174
+00:07:25,199 --> 00:07:30,240
+value predicament. Whereas if you put it
+
+175
+00:07:27,680 --> 00:07:34,000
+here prior the prefix decrement, then it
+
+176
+00:07:30,240 --> 00:07:36,000
+first decrements then resolves. So we
+
+177
+00:07:34,000 --> 00:07:38,000
+prefer the postfix decrement here. And
+
+178
+00:07:36,000 --> 00:07:40,960
+the reason we prefer the postwix
+
+179
+00:07:38,000 --> 00:07:43,280
+decrement is because as soon as access
+
+180
+00:07:40,960 --> 00:07:45,199
+hits zero even though you end up
+
+181
+00:07:43,280 --> 00:07:47,360
+decrementing and wrapping around because
+
+182
+00:07:45,199 --> 00:07:48,960
+it is at the end of the day an unsigned
+
+183
+00:07:47,360 --> 00:07:51,520
+integer
+
+184
+00:07:48,960 --> 00:07:54,720
+the value you're resolving with is the
+
+185
+00:07:51,520 --> 00:07:57,039
+value prior to the decrement. So this
+
+186
+00:07:54,720 --> 00:07:58,720
+allows you to save an extra instruction
+
+187
+00:07:57,039 --> 00:08:00,960
+from this. You don't need to do this
+
+188
+00:07:58,720 --> 00:08:02,080
+little hack. It looks a little bit more
+
+189
+00:08:00,960 --> 00:08:04,960
+confusing, a little bit more
+
+190
+00:08:02,080 --> 00:08:07,360
+intimidating, but this is a more proper,
+
+191
+00:08:04,960 --> 00:08:09,919
+more structured way of doing this. Okay,
+
+192
+00:08:07,360 --> 00:08:12,000
+now let's go back to broadcasting. The
+
+193
+00:08:09,919 --> 00:08:14,400
+next thing we need to take care of is
+
+194
+00:08:12,000 --> 00:08:16,720
+another helper function, which is going
+
+195
+00:08:14,400 --> 00:08:18,960
+to help us determine the final broadcast
+
+196
+00:08:16,720 --> 00:08:21,199
+shape based on the input arguments to
+
+197
+00:08:18,960 --> 00:08:23,199
+it. As per usual, this is going to be a
+
+198
+00:08:21,199 --> 00:08:27,360
+no discard. And then it's going to
+
+199
+00:08:23,199 --> 00:08:30,319
+return standard vector size T and we are
+
+200
+00:08:27,360 --> 00:08:32,399
+going to name it broadcast shape. But
+
+201
+00:08:30,319 --> 00:08:34,640
+this time instead of marking it as
+
+202
+00:08:32,399 --> 00:08:38,719
+const, we are going to mark it as
+
+203
+00:08:34,640 --> 00:08:40,959
+static. Why? Because this is going to be
+
+204
+00:08:38,719 --> 00:08:43,279
+basically a pure function. It is going
+
+205
+00:08:40,959 --> 00:08:45,040
+to take two arguments left and right
+
+206
+00:08:43,279 --> 00:08:46,880
+operand or rather the shapes of the left
+
+207
+00:08:45,040 --> 00:08:49,760
+and right operand.
+
+208
+00:08:46,880 --> 00:08:51,680
+And we are still placing it in the
+
+209
+00:08:49,760 --> 00:08:54,160
+tensor class because it is still part of
+
+210
+00:08:51,680 --> 00:08:57,040
+its responsibility even though there is
+
+211
+00:08:54,160 --> 00:08:59,200
+no notion of this this case. So let's
+
+212
+00:08:57,040 --> 00:09:02,320
+pass in the parameters
+
+213
+00:08:59,200 --> 00:09:05,519
+first the left operand shape and then
+
+214
+00:09:02,320 --> 00:09:08,720
+the right operand shape. And similar to
+
+215
+00:09:05,519 --> 00:09:10,399
+our original dry run example, the first
+
+216
+00:09:08,720 --> 00:09:13,200
+thing we're going to do is to check the
+
+217
+00:09:10,399 --> 00:09:16,080
+rank. Basically
+
+218
+00:09:13,200 --> 00:09:18,399
+in any broadcasting scenario you have
+
+219
+00:09:16,080 --> 00:09:20,880
+one potentially larger tensor and then
+
+220
+00:09:18,399 --> 00:09:23,279
+one potentially smaller tensor and we
+
+221
+00:09:20,880 --> 00:09:25,680
+are broadcasting the smaller one onto
+
+222
+00:09:23,279 --> 00:09:28,240
+the larger one. So first we need to
+
+223
+00:09:25,680 --> 00:09:31,120
+figure out what is the rank of the
+
+224
+00:09:28,240 --> 00:09:33,760
+output tensor and the answer is it is
+
+225
+00:09:31,120 --> 00:09:37,279
+the rank of the larger one. So let's
+
+226
+00:09:33,760 --> 00:09:40,480
+just write that now. Const size t rank
+
+227
+00:09:37,279 --> 00:09:42,560
+equals the max of left that size or
+
+228
+00:09:40,480 --> 00:09:45,040
+right size. Now we need to find out
+
+229
+00:09:42,560 --> 00:09:48,080
+exactly how to fill this broadcast
+
+230
+00:09:45,040 --> 00:09:50,320
+shape. So let's write the loop from left
+
+231
+00:09:48,080 --> 00:09:53,279
+to right. And we know that both of these
+
+232
+00:09:50,320 --> 00:09:55,839
+shapes are basically at most have rank
+
+233
+00:09:53,279 --> 00:09:58,800
+equal to rank. But we don't know whether
+
+234
+00:09:55,839 --> 00:10:02,240
+any of them is going to be smaller than
+
+235
+00:09:58,800 --> 00:10:04,080
+rank. So let's pull a little helper
+
+236
+00:10:02,240 --> 00:10:06,240
+variable here that's going to help us
+
+237
+00:10:04,080 --> 00:10:08,399
+with those types of calculations. One
+
+238
+00:10:06,240 --> 00:10:10,720
+for left, one for right. So we're going
+
+239
+00:10:08,399 --> 00:10:14,079
+to calculate the offset. And the offset
+
+240
+00:10:10,720 --> 00:10:15,760
+is basically rank minus size. So this is
+
+241
+00:10:14,079 --> 00:10:17,839
+the difference between the max rank and
+
+242
+00:10:15,760 --> 00:10:21,040
+the current rank. And then we're going
+
+243
+00:10:17,839 --> 00:10:22,800
+to do one more for right. And now we can
+
+244
+00:10:21,040 --> 00:10:25,680
+use these helpers to create another
+
+245
+00:10:22,800 --> 00:10:29,519
+helper. We can determine if this axis is
+
+246
+00:10:25,680 --> 00:10:32,240
+inside the current tensor by making use
+
+247
+00:10:29,519 --> 00:10:35,920
+of the offset. So we're going to say
+
+248
+00:10:32,240 --> 00:10:37,839
+left has axis equals left offset and
+
+249
+00:10:35,920 --> 00:10:40,800
+then one more for right. Now we have
+
+250
+00:10:37,839 --> 00:10:43,680
+both. And now we can use these guys to
+
+251
+00:10:40,800 --> 00:10:46,160
+determine which of these axes should be
+
+252
+00:10:43,680 --> 00:10:49,200
+lifted to a higher dimension in which
+
+253
+00:10:46,160 --> 00:10:51,440
+case they're going to be set to one. So
+
+254
+00:10:49,200 --> 00:10:53,760
+let's just initialize the left dimension
+
+255
+00:10:51,440 --> 00:10:57,440
+to one. We're basically assuming it's
+
+256
+00:10:53,760 --> 00:11:00,079
+getting lifted for now. But if the
+
+257
+00:10:57,440 --> 00:11:02,880
+current axis is actually contained in
+
+258
+00:11:00,079 --> 00:11:05,519
+the left tensor, then we can't lift. We
+
+259
+00:11:02,880 --> 00:11:07,600
+need to use the existing dimension. So
+
+260
+00:11:05,519 --> 00:11:11,040
+we will make use of the offset again,
+
+261
+00:11:07,600 --> 00:11:13,279
+but this time to obtain the current axis
+
+262
+00:11:11,040 --> 00:11:17,360
+on the left tensster. So we're going to
+
+263
+00:11:13,279 --> 00:11:19,680
+go class D left axis equals axis minus
+
+264
+00:11:17,360 --> 00:11:22,160
+left offset and then use it to set the
+
+265
+00:11:19,680 --> 00:11:25,040
+left dimension. Done. Now we need to do
+
+266
+00:11:22,160 --> 00:11:28,480
+the same for right. So I will just
+
+267
+00:11:25,040 --> 00:11:33,760
+rename right done. And now we need to
+
+268
+00:11:28,480 --> 00:11:37,600
+determine whether we can or should but
+
+269
+00:11:33,760 --> 00:11:39,920
+can't stretch either of the dimensions.
+
+270
+00:11:37,600 --> 00:11:42,160
+First we need to check if the dimensions
+
+271
+00:11:39,920 --> 00:11:44,000
+match which in that case we don't need
+
+272
+00:11:42,160 --> 00:11:46,480
+to do anything.
+
+273
+00:11:44,000 --> 00:11:48,160
+So let's just write that sizes match.
+
+274
+00:11:46,480 --> 00:11:50,079
+Basically if they're equal we don't need
+
+275
+00:11:48,160 --> 00:11:53,680
+to worry. And then we need to check
+
+276
+00:11:50,079 --> 00:11:56,399
+whether left can stretch which if it is
+
+277
+00:11:53,680 --> 00:11:59,839
+one then yes. And the same idea for
+
+278
+00:11:56,399 --> 00:12:02,720
+right. And then now we can write one
+
+279
+00:11:59,839 --> 00:12:04,959
+check that covers all compatibility
+
+280
+00:12:02,720 --> 00:12:10,079
+issues. Basically the shapes are
+
+281
+00:12:04,959 --> 00:12:14,000
+incompatible where a sizes don't match
+
+282
+00:12:10,079 --> 00:12:17,440
+and then b neither of the operand can
+
+283
+00:12:14,000 --> 00:12:21,600
+stretch. So we're going to say if not
+
+284
+00:12:17,440 --> 00:12:25,600
+size of match and not left can stretch
+
+285
+00:12:21,600 --> 00:12:29,440
+and not right can stretch throw invalid
+
+286
+00:12:25,600 --> 00:12:33,279
+argument cannot broadcast shape mismatch
+
+287
+00:12:29,440 --> 00:12:35,600
+at dimension string axis. Otherwise we
+
+288
+00:12:33,279 --> 00:12:37,440
+know what the current axis should be
+
+289
+00:12:35,600 --> 00:12:39,279
+which is the maximum of either of the
+
+290
+00:12:37,440 --> 00:12:42,000
+dimensions because at this point we know
+
+291
+00:12:39,279 --> 00:12:44,160
+that either they're equal or one of them
+
+292
+00:12:42,000 --> 00:12:45,519
+is one and the other is not. And in that
+
+293
+00:12:44,160 --> 00:12:47,120
+case, we just need to take the larger
+
+294
+00:12:45,519 --> 00:12:50,160
+one because the smaller one is getting
+
+295
+00:12:47,120 --> 00:12:52,000
+broadcast. So standard max left them,
+
+296
+00:12:50,160 --> 00:12:54,959
+right, and then we just return the
+
+297
+00:12:52,000 --> 00:12:57,519
+result. Let's go over it again. So we
+
+298
+00:12:54,959 --> 00:13:01,440
+have left offset and right offset, which
+
+299
+00:12:57,519 --> 00:13:04,320
+are each shapes missing axis count.
+
+300
+00:13:01,440 --> 00:13:07,440
+So we compute those once. And then we
+
+301
+00:13:04,320 --> 00:13:11,360
+begin walking from left to right. And
+
+302
+00:13:07,440 --> 00:13:14,560
+then we ask, has the walk reached left's
+
+303
+00:13:11,360 --> 00:13:16,880
+real axis yet? Because while the axis is
+
+304
+00:13:14,560 --> 00:13:19,120
+still less than left offset, we are
+
+305
+00:13:16,880 --> 00:13:22,399
+still in the padding region which is
+
+306
+00:13:19,120 --> 00:13:24,320
+that implicit one that you get when you
+
+307
+00:13:22,399 --> 00:13:28,079
+align the shapes from the right. And
+
+308
+00:13:24,320 --> 00:13:32,160
+once axis reaches left offset, which we
+
+309
+00:13:28,079 --> 00:13:35,440
+enter here, then left axis converts the
+
+310
+00:13:32,160 --> 00:13:36,959
+output axis back into left's own
+
+311
+00:13:35,440 --> 00:13:40,639
+indexing.
+
+312
+00:13:36,959 --> 00:13:43,279
+And left dim then reads from that left
+
+313
+00:13:40,639 --> 00:13:47,279
+axis. And we basically do the exact same
+
+314
+00:13:43,279 --> 00:13:49,279
+things for right. And then we begin our
+
+315
+00:13:47,279 --> 00:13:52,959
+shape mismatch checks. And the rest was
+
+316
+00:13:49,279 --> 00:13:55,920
+already pretty clear. So at this point,
+
+317
+00:13:52,959 --> 00:13:59,839
+we know the output shape, but we still
+
+318
+00:13:55,920 --> 00:14:01,680
+need to map an output coordinate back to
+
+319
+00:13:59,839 --> 00:14:03,760
+each operand.
+
+320
+00:14:01,680 --> 00:14:07,279
+And that's where the strides are going
+
+321
+00:14:03,760 --> 00:14:10,160
+to be very useful. Now again remember
+
+322
+00:14:07,279 --> 00:14:13,360
+a stride represents how many elements
+
+323
+00:14:10,160 --> 00:14:15,279
+you cover when you take one step in a
+
+324
+00:14:13,360 --> 00:14:16,560
+given dimension.
+
+325
+00:14:15,279 --> 00:14:18,720
+But when we're talking about
+
+326
+00:14:16,560 --> 00:14:21,680
+broadcasting we need to think in terms
+
+327
+00:14:18,720 --> 00:14:25,839
+of what we will later call effective
+
+328
+00:14:21,680 --> 00:14:29,199
+strides. And the core idea there is that
+
+329
+00:14:25,839 --> 00:14:31,199
+on an axis that gets broadcast, we need
+
+330
+00:14:29,199 --> 00:14:36,160
+to give that upper end an effective
+
+331
+00:14:31,199 --> 00:14:39,440
+stride of zero because as the output
+
+332
+00:14:36,160 --> 00:14:41,360
+coordinate changes along that axis,
+
+333
+00:14:39,440 --> 00:14:44,399
+multiplying by the stride would
+
+334
+00:14:41,360 --> 00:14:46,800
+contribute zero to the input index,
+
+335
+00:14:44,399 --> 00:14:49,600
+which would allow us to keep reading the
+
+336
+00:14:46,800 --> 00:14:52,160
+same element over and over. And that's
+
+337
+00:14:49,600 --> 00:14:56,560
+exactly what we want. we're copying the
+
+338
+00:14:52,160 --> 00:15:00,160
+broadcast value or more properly it is
+
+339
+00:14:56,560 --> 00:15:02,800
+reusing a value instead of advancing. So
+
+340
+00:15:00,160 --> 00:15:05,279
+let's create another helper function
+
+341
+00:15:02,800 --> 00:15:08,079
+this time for computing the effective
+
+342
+00:15:05,279 --> 00:15:10,399
+strides and as always we will begin with
+
+343
+00:15:08,079 --> 00:15:12,880
+no discard and again we will mark this
+
+344
+00:15:10,399 --> 00:15:15,519
+static and it will return a vector of
+
+345
+00:15:12,880 --> 00:15:19,440
+size t effective strides and the inputs
+
+346
+00:15:15,519 --> 00:15:23,120
+are going to be a the shape b the
+
+347
+00:15:19,440 --> 00:15:25,839
+strides the actual strides and then c
+
+348
+00:15:23,120 --> 00:15:29,600
+the target rank we are broadcasting the
+
+349
+00:15:25,839 --> 00:15:32,639
+shape onto. So three inputs. First our
+
+350
+00:15:29,600 --> 00:15:36,160
+shape which we will pass in as a cost
+
+351
+00:15:32,639 --> 00:15:38,399
+reference and also the stride. Again we
+
+352
+00:15:36,160 --> 00:15:41,360
+will pass in as a cost reference. And
+
+353
+00:15:38,399 --> 00:15:43,920
+let's call it on strides. And let's
+
+354
+00:15:41,360 --> 00:15:46,639
+additionally pass the target rank which
+
+355
+00:15:43,920 --> 00:15:48,880
+we are broadcasting this shape onto. And
+
+356
+00:15:46,639 --> 00:15:51,040
+now we can initialize the output the
+
+357
+00:15:48,880 --> 00:15:54,000
+effective strides vector. It is going to
+
+358
+00:15:51,040 --> 00:15:57,040
+have target rank many elements. And we
+
+359
+00:15:54,000 --> 00:15:59,040
+can initialize all of them at zero. And
+
+360
+00:15:57,040 --> 00:16:01,120
+just like last time, we are going to
+
+361
+00:15:59,040 --> 00:16:04,720
+calculate an offset and that's going to
+
+362
+00:16:01,120 --> 00:16:07,360
+be equal to target rank minus shape do
+
+363
+00:16:04,720 --> 00:16:09,839
+size. We do this because we're going to
+
+364
+00:16:07,360 --> 00:16:12,480
+iterate over every single element in the
+
+365
+00:16:09,839 --> 00:16:16,160
+shape. And then we will need to map them
+
+366
+00:16:12,480 --> 00:16:18,880
+back onto our result strides.
+
+367
+00:16:16,160 --> 00:16:22,720
+And by initializing all of these values
+
+368
+00:16:18,880 --> 00:16:25,680
+at zero, we are automatically ending up
+
+369
+00:16:22,720 --> 00:16:29,279
+with the situation where the padded
+
+370
+00:16:25,680 --> 00:16:32,320
+dimensions automatically get the zero
+
+371
+00:16:29,279 --> 00:16:35,120
+stride by virtue of not being iterated
+
+372
+00:16:32,320 --> 00:16:37,680
+over. So we will see all of this when we
+
+373
+00:16:35,120 --> 00:16:40,320
+write the loop. We will iterate through
+
+374
+00:16:37,680 --> 00:16:42,959
+every axis in the current shape. And
+
+375
+00:16:40,320 --> 00:16:46,720
+then basically we just need to copy from
+
+376
+00:16:42,959 --> 00:16:49,759
+ohm strides onto result. And to do so we
+
+377
+00:16:46,720 --> 00:16:52,639
+make use of the offset to help with
+
+378
+00:16:49,759 --> 00:16:55,120
+coordinate mapping and then we get the
+
+379
+00:16:52,639 --> 00:16:57,120
+current one. But there is a problem
+
+380
+00:16:55,120 --> 00:17:01,360
+here. And to see it we need to think
+
+381
+00:16:57,120 --> 00:17:04,000
+about how strides are used. Strides are
+
+382
+00:17:01,360 --> 00:17:06,000
+never useful by themselves. you always
+
+383
+00:17:04,000 --> 00:17:08,160
+multiply them with an index to figure
+
+384
+00:17:06,000 --> 00:17:10,559
+out how many elements to skip while
+
+385
+00:17:08,160 --> 00:17:13,760
+calculating some form of flat index
+
+386
+00:17:10,559 --> 00:17:16,000
+mapping. And when you're working with a
+
+387
+00:17:13,760 --> 00:17:19,520
+dimension of size one, the only way you
+
+388
+00:17:16,000 --> 00:17:21,280
+can address it is with an index of zero.
+
+389
+00:17:19,520 --> 00:17:23,199
+And when you multiply one and zero, you
+
+390
+00:17:21,280 --> 00:17:28,000
+always get zero. At least that's the
+
+391
+00:17:23,199 --> 00:17:29,360
+case with regular strides, meaning not
+
+392
+00:17:28,000 --> 00:17:31,200
+effective strides, but just regular
+
+393
+00:17:29,360 --> 00:17:33,760
+tensors doing regular elementwise
+
+394
+00:17:31,200 --> 00:17:35,840
+operations. But when you're working with
+
+395
+00:17:33,760 --> 00:17:38,720
+broadcast tensors
+
+396
+00:17:35,840 --> 00:17:41,840
+in the form of their effective strides,
+
+397
+00:17:38,720 --> 00:17:45,280
+you do not know whether the incoming
+
+398
+00:17:41,840 --> 00:17:47,679
+index for that broadcast dimension is
+
+399
+00:17:45,280 --> 00:17:49,600
+actually going to be zero. It can be
+
+400
+00:17:47,679 --> 00:17:52,400
+something else.
+
+401
+00:17:49,600 --> 00:17:55,200
+And when that happens, you still want
+
+402
+00:17:52,400 --> 00:17:57,840
+the contribution of that index times
+
+403
+00:17:55,200 --> 00:18:01,280
+that effective stride to be zero. And
+
+404
+00:17:57,840 --> 00:18:03,840
+for that reason we actually need to sort
+
+405
+00:18:01,280 --> 00:18:06,400
+of hardcode the effective stride for
+
+406
+00:18:03,840 --> 00:18:08,640
+that dimension to zero. And when we do
+
+407
+00:18:06,400 --> 00:18:10,320
+that we actually don't break the
+
+408
+00:18:08,640 --> 00:18:14,480
+existing behavior because the existing
+
+409
+00:18:10,320 --> 00:18:16,240
+behavior is that if the dimension is one
+
+410
+00:18:14,480 --> 00:18:18,559
+the incoming index is already going to
+
+411
+00:18:16,240 --> 00:18:21,039
+be zero. So their multiplication is
+
+412
+00:18:18,559 --> 00:18:24,799
+zero. And in this case regardless of the
+
+413
+00:18:21,039 --> 00:18:26,960
+incoming index we are ensuring that the
+
+414
+00:18:24,799 --> 00:18:29,039
+multiplication is going to be zero. And
+
+415
+00:18:26,960 --> 00:18:31,760
+we basically achieve that by adding a
+
+416
+00:18:29,039 --> 00:18:35,120
+little condition here. We just need to
+
+417
+00:18:31,760 --> 00:18:37,760
+check if the current dimension is not
+
+418
+00:18:35,120 --> 00:18:39,919
+one. And by doing so, we're falling back
+
+419
+00:18:37,760 --> 00:18:42,320
+to the default value here. Meaning,
+
+420
+00:18:39,919 --> 00:18:45,840
+we're only copying over the actual
+
+421
+00:18:42,320 --> 00:18:48,960
+stride onto the result stride when the
+
+422
+00:18:45,840 --> 00:18:50,480
+dimension is not one. If it is one, it's
+
+423
+00:18:48,960 --> 00:18:52,240
+going to fall back to zero. And with
+
+424
+00:18:50,480 --> 00:18:54,559
+that, we're basically done. We can just
+
+425
+00:18:52,240 --> 00:18:57,280
+return our result. And now we can repair
+
+426
+00:18:54,559 --> 00:18:59,039
+our elementwise binary function. And
+
+427
+00:18:57,280 --> 00:19:01,120
+because this function was built with all
+
+428
+00:18:59,039 --> 00:19:03,440
+sorts of assumptions that are basically
+
+429
+00:19:01,120 --> 00:19:05,520
+no longer true, we are actually going to
+
+430
+00:19:03,440 --> 00:19:07,919
+start over. And the first thing we're
+
+431
+00:19:05,520 --> 00:19:10,640
+going to do is to obtain the broadcast
+
+432
+00:19:07,919 --> 00:19:12,880
+shape, which we will do like so. We're
+
+433
+00:19:10,640 --> 00:19:16,480
+going to get the result shape just from
+
+434
+00:19:12,880 --> 00:19:19,679
+our broadcast function. And we will pass
+
+435
+00:19:16,480 --> 00:19:21,520
+in the current shape and then the other
+
+436
+00:19:19,679 --> 00:19:24,240
+shape. And then we're going to obtain
+
+437
+00:19:21,520 --> 00:19:26,720
+the effective strides. One for left, one
+
+438
+00:19:24,240 --> 00:19:30,640
+for right. So let's begin with left.
+
+439
+00:19:26,720 --> 00:19:32,480
+Left strides equals effective strides of
+
+440
+00:19:30,640 --> 00:19:34,640
+shape. And then we will compute our
+
+441
+00:19:32,480 --> 00:19:38,720
+strides. And then we will pass the
+
+442
+00:19:34,640 --> 00:19:40,400
+target rank which is result shape size.
+
+443
+00:19:38,720 --> 00:19:42,720
+And then we will do the same thing for
+
+444
+00:19:40,400 --> 00:19:45,360
+the right upper end. Right strides
+
+445
+00:19:42,720 --> 00:19:47,520
+other.shape
+
+446
+00:19:45,360 --> 00:19:50,480
+other strides as and then result shape
+
+447
+00:19:47,520 --> 00:19:54,960
+size. Now we will initialize the flat
+
+448
+00:19:50,480 --> 00:19:56,160
+vector to store the data and for that we
+
+449
+00:19:54,960 --> 00:19:59,120
+first need to find the number of
+
+450
+00:19:56,160 --> 00:20:01,520
+elements which we can initialize at one
+
+451
+00:19:59,120 --> 00:20:03,360
+and then we can write a short loop. We
+
+452
+00:20:01,520 --> 00:20:05,600
+will iterate over all of the dimensions
+
+453
+00:20:03,360 --> 00:20:07,120
+of the result shape and then we will
+
+454
+00:20:05,600 --> 00:20:09,440
+make it product and then we can
+
+455
+00:20:07,120 --> 00:20:11,919
+initialize the result data which is
+
+456
+00:20:09,440 --> 00:20:15,360
+going to be a vector of doubles and we
+
+457
+00:20:11,919 --> 00:20:19,760
+can set the size directly here.
+
+458
+00:20:15,360 --> 00:20:22,640
+So now we just need to start from
+
+459
+00:20:19,760 --> 00:20:24,400
+coordinate 0 0 0
+
+460
+00:20:22,640 --> 00:20:27,360
+from the perspective of the result
+
+461
+00:20:24,400 --> 00:20:29,360
+tensor and then walk all the way up
+
+462
+00:20:27,360 --> 00:20:31,760
+until we hit the end. So we're going to
+
+463
+00:20:29,360 --> 00:20:34,960
+write a loop, but this loop is going to
+
+464
+00:20:31,760 --> 00:20:37,360
+do so many different things. And I think
+
+465
+00:20:34,960 --> 00:20:40,240
+it's better if we write a bunch of
+
+466
+00:20:37,360 --> 00:20:44,000
+smaller nice helpers to help with those
+
+467
+00:20:40,240 --> 00:20:47,039
+things. And the first one of those is
+
+468
+00:20:44,000 --> 00:20:49,280
+going to be what I will call the stride
+
+469
+00:20:47,039 --> 00:20:51,919
+offset. And we actually use something
+
+470
+00:20:49,280 --> 00:20:55,039
+very similar to this in the at function.
+
+471
+00:20:51,919 --> 00:20:59,039
+It is basically the dotproduct of a
+
+472
+00:20:55,039 --> 00:21:01,440
+given index or coordinate and the shape
+
+473
+00:20:59,039 --> 00:21:04,159
+and it allows us to find the mapped
+
+474
+00:21:01,440 --> 00:21:07,200
+coordinate in the flat vector. So as
+
+475
+00:21:04,159 --> 00:21:09,039
+always we will begin with no discard
+
+476
+00:21:07,200 --> 00:21:11,919
+static again and it's just going to
+
+477
+00:21:09,039 --> 00:21:14,880
+return size t which is the mapped
+
+478
+00:21:11,919 --> 00:21:16,640
+coordinate. It's going to take two con
+
+479
+00:21:14,880 --> 00:21:19,679
+references. One of them is going to be
+
+480
+00:21:16,640 --> 00:21:21,520
+the coordinates or the indices and then
+
+481
+00:21:19,679 --> 00:21:24,080
+the other is going to be the effective
+
+482
+00:21:21,520 --> 00:21:26,559
+strides and yeah we will just take the
+
+483
+00:21:24,080 --> 00:21:29,919
+dotproduct of these two. So initialize
+
+484
+00:21:26,559 --> 00:21:32,080
+the index to zero and then run a loop
+
+485
+00:21:29,919 --> 00:21:35,039
+from left to right in the coordinate and
+
+486
+00:21:32,080 --> 00:21:39,440
+then increment the index by the product
+
+487
+00:21:35,039 --> 00:21:42,159
+of the current index from the coordinate
+
+488
+00:21:39,440 --> 00:21:43,840
+and the stride and that gives you the
+
+489
+00:21:42,159 --> 00:21:45,679
+dot product. And then the next thing
+
+490
+00:21:43,840 --> 00:21:47,679
+we're going to write is a nice little
+
+491
+00:21:45,679 --> 00:21:50,640
+helper that's going to allow us to
+
+492
+00:21:47,679 --> 00:21:53,200
+increment the coordinate. It's going to
+
+493
+00:21:50,640 --> 00:21:54,960
+be like an odometer where you're going
+
+494
+00:21:53,200 --> 00:21:56,799
+to have one number at one end and as
+
+495
+00:21:54,960 --> 00:21:58,799
+soon as it hits its maximum, it's going
+
+496
+00:21:56,799 --> 00:22:00,960
+to go up, reset to zero, and then carry
+
+497
+00:21:58,799 --> 00:22:03,280
+over to the next one and so on and on
+
+498
+00:22:00,960 --> 00:22:05,600
+until we're done. So, I'm going to call
+
+499
+00:22:03,280 --> 00:22:07,679
+this advanced coordinate and this is not
+
+500
+00:22:05,600 --> 00:22:09,600
+going to take the coordinate as a con
+
+501
+00:22:07,679 --> 00:22:11,760
+reference. It is going to take it as a
+
+502
+00:22:09,600 --> 00:22:15,360
+mutable reference because I wanted to
+
+503
+00:22:11,760 --> 00:22:18,080
+mutate it in place. So static void
+
+504
+00:22:15,360 --> 00:22:20,480
+advanced coordinate and it's going to
+
+505
+00:22:18,080 --> 00:22:22,640
+take the coordinate as a mutable
+
+506
+00:22:20,480 --> 00:22:26,400
+coordinate and it's going to take the
+
+507
+00:22:22,640 --> 00:22:28,240
+shape as an immutable reference
+
+508
+00:22:26,400 --> 00:22:30,799
+and the for loop is going to carry out
+
+509
+00:22:28,240 --> 00:22:34,320
+the odometer logic. We will use our
+
+510
+00:22:30,799 --> 00:22:36,320
+postfix decrement trick like last time.
+
+511
+00:22:34,320 --> 00:22:39,760
+And basically
+
+512
+00:22:36,320 --> 00:22:44,559
+if incrementing the coordinate at the
+
+513
+00:22:39,760 --> 00:22:47,440
+given axis gives us a value that is less
+
+514
+00:22:44,559 --> 00:22:49,760
+than the current dimension then we're
+
+515
+00:22:47,440 --> 00:22:52,000
+done. We don't need to change anything.
+
+516
+00:22:49,760 --> 00:22:54,320
+Otherwise we have hit the limit. So we
+
+517
+00:22:52,000 --> 00:22:56,240
+need to change the current axis or
+
+518
+00:22:54,320 --> 00:22:58,240
+rather the value in the coordinate
+
+519
+00:22:56,240 --> 00:23:00,720
+corresponding to the current axis to
+
+520
+00:22:58,240 --> 00:23:03,919
+zero. And we need to keep iterating. And
+
+521
+00:23:00,720 --> 00:23:05,840
+that is our autoometer logic. So now we
+
+522
+00:23:03,919 --> 00:23:08,480
+can go back up to our element wise
+
+523
+00:23:05,840 --> 00:23:10,799
+binary helper and we can write the rest
+
+524
+00:23:08,480 --> 00:23:13,360
+of the function. So we initialize our
+
+525
+00:23:10,799 --> 00:23:16,320
+result data and then we initialize our
+
+526
+00:23:13,360 --> 00:23:18,640
+coordinate all zeros at first. And now
+
+527
+00:23:16,320 --> 00:23:22,159
+we can write our loop and we will start
+
+528
+00:23:18,640 --> 00:23:24,480
+from the first flat index which is zero.
+
+529
+00:23:22,159 --> 00:23:27,280
+And then we're going to go up to result
+
+530
+00:23:24,480 --> 00:23:32,240
+n. And we will keep incrementing flat.
+
+531
+00:23:27,280 --> 00:23:36,880
+And now we can obtain the flat index of
+
+532
+00:23:32,240 --> 00:23:39,600
+the left tensor using our stride offset
+
+533
+00:23:36,880 --> 00:23:42,240
+helper. So we give the coordinate first
+
+534
+00:23:39,600 --> 00:23:46,159
+and then we give the left strides and we
+
+535
+00:23:42,240 --> 00:23:49,600
+do the same for right strides.
+
+536
+00:23:46,159 --> 00:23:53,280
+And now we can return the tensor. We can
+
+537
+00:23:49,600 --> 00:23:55,760
+pass result shape and then we can move
+
+538
+00:23:53,280 --> 00:23:58,159
+result data. And we can actually move
+
+539
+00:23:55,760 --> 00:24:00,240
+the result shape as well. All we need to
+
+540
+00:23:58,159 --> 00:24:03,840
+do is to stop marking it as const. And
+
+541
+00:24:00,240 --> 00:24:06,880
+we're done. Now we have modified so much
+
+542
+00:24:03,840 --> 00:24:11,120
+code that we should actually run our
+
+543
+00:24:06,880 --> 00:24:12,799
+tests. File main. We got a failing test.
+
+544
+00:24:11,120 --> 00:24:15,679
+Test 19. Let's see what's going on
+
+545
+00:24:12,799 --> 00:24:19,120
+there. Well, what we have here is a
+
+546
+00:24:15,679 --> 00:24:21,039
+shape two and a shape one two. So at
+
+547
+00:24:19,120 --> 00:24:23,440
+this point, this is actually good. They
+
+548
+00:24:21,039 --> 00:24:26,720
+are supposed to broadcast. So the test
+
+549
+00:24:23,440 --> 00:24:30,720
+is updated and we can basically make
+
+550
+00:24:26,720 --> 00:24:33,039
+this test work by changing our shape and
+
+551
+00:24:30,720 --> 00:24:36,960
+let's rerun. Great, we are back to
+
+552
+00:24:33,039 --> 00:24:40,400
+normal and now we can go back down and
+
+553
+00:24:36,960 --> 00:24:42,960
+we can stop this weird manual hack we
+
+554
+00:24:40,400 --> 00:24:45,360
+were doing with the expanded bias and we
+
+555
+00:24:42,960 --> 00:24:47,520
+can just use our regular bias here.
+
+556
+00:24:45,360 --> 00:24:51,279
+Basically last time the result of math
+
+557
+00:24:47,520 --> 00:24:54,320
+mole was three and minus.5
+
+558
+00:24:51,279 --> 00:24:56,400
+and then the bias was.5 so it should get
+
+559
+00:24:54,320 --> 00:24:59,679
+broadcast and added to both of them. So
+
+560
+00:24:56,400 --> 00:25:04,159
+we should check bread 23 data is equal
+
+561
+00:24:59,679 --> 00:25:07,039
+to 3.5 and zero.
+
+562
+00:25:04,159 --> 00:25:08,640
+So let's compile and rerun. Okay. So I
+
+563
+00:25:07,039 --> 00:25:11,520
+was not expecting to see that. So
+
+564
+00:25:08,640 --> 00:25:13,919
+clearly there is a bug in the code. So
+
+565
+00:25:11,520 --> 00:25:16,640
+let's take a look. Okay. Okay, so found
+
+566
+00:25:13,919 --> 00:25:18,960
+the first issue which is that I had my
+
+567
+00:25:16,640 --> 00:25:21,039
+offsets typed as bool but they should
+
+568
+00:25:18,960 --> 00:25:23,039
+have been typed as size t. So let's
+
+569
+00:25:21,039 --> 00:25:28,080
+compile and rerun. That was just a
+
+570
+00:25:23,039 --> 00:25:30,960
+mistake. Okay, so we are done. We have
+
+571
+00:25:28,080 --> 00:25:32,880
+implemented broadcasting. This was a
+
+572
+00:25:30,960 --> 00:25:34,799
+pretty long episode. So I think it's
+
+573
+00:25:32,880 --> 00:25:37,440
+time to wrap up here and let's just
+
+574
+00:25:34,799 --> 00:25:39,840
+recap what we learned today. Today we
+
+575
+00:25:37,440 --> 00:25:42,159
+wrote a bunch of helper functions. one
+
+576
+00:25:39,840 --> 00:25:45,200
+for computing the broadcast shape from
+
+577
+00:25:42,159 --> 00:25:48,400
+two different operants. One for finding
+
+578
+00:25:45,200 --> 00:25:52,000
+the effective strides of a tensor given
+
+579
+00:25:48,400 --> 00:25:53,840
+its shape and its strides and its target
+
+580
+00:25:52,000 --> 00:25:56,960
+rank. We also created two helper
+
+581
+00:25:53,840 --> 00:26:00,400
+functions stride offset which was our
+
+582
+00:25:56,960 --> 00:26:03,200
+helper to quickly find the mapped flat
+
+583
+00:26:00,400 --> 00:26:05,120
+index counterpart of a given coordinate
+
+584
+00:26:03,200 --> 00:26:07,600
+and then another one advanced coordinate
+
+585
+00:26:05,120 --> 00:26:10,080
+to increment the coordinate in an
+
+586
+00:26:07,600 --> 00:26:12,240
+odometer fashion. And then we brought
+
+587
+00:26:10,080 --> 00:26:15,520
+all of these together and rewrote
+
+588
+00:26:12,240 --> 00:26:18,640
+element wise binary and finally
+
+589
+00:26:15,520 --> 00:26:21,039
+implemented real broadcasting. And that
+
+590
+00:26:18,640 --> 00:26:23,120
+was a lot of work, but our tensors are
+
+591
+00:26:21,039 --> 00:26:25,039
+one step closer to being actually
+
+592
+00:26:23,120 --> 00:26:27,520
+complete and production ready. In the
+
+593
+00:26:25,039 --> 00:26:31,360
+next episode, we are going to take a
+
+594
+00:26:27,520 --> 00:26:33,200
+break from building our tensors up and
+
+595
+00:26:31,360 --> 00:26:35,360
+we're going to work a little bit on the
+
+596
+00:26:33,200 --> 00:26:37,840
+deep learning side of things. And
+
+597
+00:26:35,360 --> 00:26:40,000
+basically at this point we still have no
+
+598
+00:26:37,840 --> 00:26:43,919
+way of measuring how good our
+
+599
+00:26:40,000 --> 00:26:45,840
+predictions are. And to measure the
+
+600
+00:26:43,919 --> 00:26:48,400
+performance of our predictions, we're
+
+601
+00:26:45,840 --> 00:26:50,400
+going to start building a toolkit. And
+
+602
+00:26:48,400 --> 00:26:52,480
+that toolkit is going to begin with loss
+
+603
+00:26:50,400 --> 00:26:55,520
+functions. And that's what we will
+
+604
+00:26:52,480 --> 00:26:57,440
+tackle in our next episode. And just
+
+605
+00:26:55,520 --> 00:26:59,919
+like with every episode, I am going to
+
+606
+00:26:57,440 --> 00:27:01,760
+leave you with a few questions.
+
+607
+00:26:59,919 --> 00:27:04,400
+And with that, we are at the end of our
+
+608
+00:27:01,760 --> 00:27:07,520
+episode. So, thank you for watching and
+
+609
+00:27:04,400 --> 00:27:07,520
+I will see you next time.
+

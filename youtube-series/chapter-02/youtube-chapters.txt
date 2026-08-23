@@ -1,0 +1,10 @@
+00:00 Introduction
+00:26 Last chapter's answers
+03:04 Scalars and empty tensors
+08:05 Overflow-safe element count
+14:24 Make indexing overflow-safe
+17:28 Query dimensions safely
+18:47 Add mutable tensor access
+21:43 Const and mutable overloads
+23:30 Implement the sum reduction
+26:35 Recap
