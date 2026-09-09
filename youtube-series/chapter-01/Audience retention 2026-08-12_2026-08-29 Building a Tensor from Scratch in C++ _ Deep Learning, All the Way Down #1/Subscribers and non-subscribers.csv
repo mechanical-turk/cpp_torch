@@ -1,0 +1,201 @@
+Video position (%),Subscription status,Absolute audience retention (%)
+0,Subscribed,45
+0,Not subscribed,54.03
+1,Subscribed,27.5
+1,Not subscribed,26.21
+2,Subscribed,20
+2,Not subscribed,18.15
+3,Subscribed,12.5
+3,Not subscribed,16.53
+4,Subscribed,17.5
+4,Not subscribed,16.13
+5,Subscribed,17.5
+5,Not subscribed,16.13
+6,Subscribed,12.5
+6,Not subscribed,12.9
+7,Subscribed,10
+7,Not subscribed,13.31
+8,Subscribed,17.5
+8,Not subscribed,13.71
+9,Subscribed,17.5
+9,Not subscribed,13.71
+10,Subscribed,27.5
+10,Not subscribed,13.31
+11,Subscribed,10
+11,Not subscribed,11.29
+12,Subscribed,15
+12,Not subscribed,10.08
+13,Subscribed,12.5
+13,Not subscribed,10.48
+14,Subscribed,20
+14,Not subscribed,12.9
+15,Subscribed,22.5
+15,Not subscribed,13.31
+16,Subscribed,17.5
+16,Not subscribed,11.29
+17,Subscribed,17.5
+17,Not subscribed,10.89
+18,Subscribed,7.5
+18,Not subscribed,8.87
+19,Subscribed,10
+19,Not subscribed,9.68
+20,Subscribed,17.5
+20,Not subscribed,8.87
+21,Subscribed,27.5
+21,Not subscribed,11.29
+22,Subscribed,22.5
+22,Not subscribed,11.29
+23,Subscribed,12.5
+23,Not subscribed,11.29
+24,Subscribed,27.5
+24,Not subscribed,10.08
+25,Subscribed,30
+25,Not subscribed,8.87
+26,Subscribed,20
+26,Not subscribed,8.87
+27,Subscribed,20
+27,Not subscribed,9.27
+28,Subscribed,12.5
+28,Not subscribed,8.47
+29,Subscribed,10
+29,Not subscribed,8.47
+30,Subscribed,17.5
+30,Not subscribed,8.87
+31,Subscribed,12.5
+31,Not subscribed,9.27
+32,Subscribed,7.5
+32,Not subscribed,8.47
+33,Subscribed,12.5
+33,Not subscribed,7.66
+34,Subscribed,15
+34,Not subscribed,8.47
+35,Subscribed,12.5
+35,Not subscribed,8.87
+36,Subscribed,10
+36,Not subscribed,8.06
+37,Subscribed,5
+37,Not subscribed,9.27
+38,Subscribed,10
+38,Not subscribed,10.48
+39,Subscribed,12.5
+39,Not subscribed,9.27
+40,Subscribed,10
+40,Not subscribed,8.87
+41,Subscribed,7.5
+41,Not subscribed,8.87
+42,Subscribed,12.5
+42,Not subscribed,10.08
+43,Subscribed,12.5
+43,Not subscribed,10.48
+44,Subscribed,17.5
+44,Not subscribed,8.87
+45,Subscribed,10
+45,Not subscribed,6.85
+46,Subscribed,5
+46,Not subscribed,7.66
+47,Subscribed,30
+47,Not subscribed,6.85
+48,Subscribed,27.5
+48,Not subscribed,6.45
+49,Subscribed,25
+49,Not subscribed,8.06
+50,Subscribed,17.5
+50,Not subscribed,6.05
+51,Subscribed,17.5
+51,Not subscribed,6.85
+52,Subscribed,15
+52,Not subscribed,6.85
+53,Subscribed,12.5
+53,Not subscribed,5.65
+54,Subscribed,7.5
+54,Not subscribed,6.05
+55,Subscribed,10
+55,Not subscribed,7.26
+56,Subscribed,20
+56,Not subscribed,7.26
+57,Subscribed,17.5
+57,Not subscribed,7.26
+58,Subscribed,7.5
+58,Not subscribed,4.84
+59,Subscribed,10
+59,Not subscribed,3.23
+60,Subscribed,12.5
+60,Not subscribed,4.03
+61,Subscribed,10
+61,Not subscribed,5.65
+62,Subscribed,7.5
+62,Not subscribed,4.44
+63,Subscribed,7.5
+63,Not subscribed,4.84
+64,Subscribed,10
+64,Not subscribed,4.44
+65,Subscribed,7.5
+65,Not subscribed,5.24
+66,Subscribed,7.5
+66,Not subscribed,4.44
+67,Subscribed,7.5
+67,Not subscribed,5.24
+68,Subscribed,12.5
+68,Not subscribed,4.44
+69,Subscribed,12.5
+69,Not subscribed,4.84
+70,Subscribed,12.5
+70,Not subscribed,4.44
+71,Subscribed,17.5
+71,Not subscribed,4.03
+72,Subscribed,30
+72,Not subscribed,4.03
+73,Subscribed,22.5
+73,Not subscribed,4.44
+74,Subscribed,12.5
+74,Not subscribed,6.05
+75,Subscribed,10
+75,Not subscribed,10.48
+76,Subscribed,10
+76,Not subscribed,12.5
+77,Subscribed,12.5
+77,Not subscribed,9.27
+78,Subscribed,10
+78,Not subscribed,11.69
+79,Subscribed,2.5
+79,Not subscribed,9.68
+80,Subscribed,2.5
+80,Not subscribed,6.45
+81,Subscribed,2.5
+81,Not subscribed,8.06
+82,Subscribed,2.5
+82,Not subscribed,9.27
+83,Subscribed,2.5
+83,Not subscribed,6.85
+84,Subscribed,2.5
+84,Not subscribed,7.66
+85,Subscribed,2.5
+85,Not subscribed,8.87
+86,Subscribed,2.5
+86,Not subscribed,8.87
+87,Subscribed,2.5
+87,Not subscribed,6.85
+88,Subscribed,10
+88,Not subscribed,5.24
+89,Subscribed,5
+89,Not subscribed,4.44
+90,Subscribed,2.5
+90,Not subscribed,4.84
+91,Subscribed,2.5
+91,Not subscribed,4.03
+92,Subscribed,2.5
+92,Not subscribed,6.85
+93,Subscribed,2.5
+93,Not subscribed,3.63
+94,Subscribed,2.5
+94,Not subscribed,2.02
+95,Subscribed,2.5
+95,Not subscribed,2.82
+96,Subscribed,2.5
+96,Not subscribed,3.63
+97,Subscribed,2.5
+97,Not subscribed,2.82
+98,Subscribed,2.5
+98,Not subscribed,3.23
+99,Subscribed,2.5
+99,Not subscribed,2.02
