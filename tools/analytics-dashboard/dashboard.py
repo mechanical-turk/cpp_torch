@@ -6,12 +6,16 @@ from __future__ import annotations
 import argparse
 import json
 import mimetypes
+import sys
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from typing import Any
 from urllib.parse import urlparse
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from native_insights import load_records, evidence_file, image_type
 
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
@@ -30,6 +34,20 @@ def iso_from_epoch(value: Any) -> str | None:
     if not isinstance(value, (int, float)):
         return None
     return datetime.fromtimestamp(value, tz=timezone.utc).isoformat()
+
+
+def timestamp_value(value: Any) -> float:
+    if isinstance(value, (int, float)):
+        return float(value)
+    if not isinstance(value, str):
+        return float("-inf")
+    try:
+        parsed = datetime.fromisoformat(value.replace("Z", "+00:00"))
+    except ValueError:
+        return float("-inf")
+    if parsed.tzinfo is None:
+        parsed = parsed.replace(tzinfo=timezone.utc)
+    return parsed.timestamp()
 
 
 def result_row(report: dict[str, Any] | None) -> dict[str, Any] | None:
@@ -68,6 +86,10 @@ def load_youtube() -> dict[str, Any]:
                 "likes": int(public.get("likeCount", 0)),
                 "comments": int(public.get("commentCount", 0)),
                 "analytics": result_row(analytics.get("basic")),
+                "reports": {key: value for key, value in analytics.items() if isinstance(value, dict)},
+                "duration": video.get("contentDetails", {}).get("duration"),
+                "source_captured_at": data.get("collected_at"),
+                "analytics_end_date": data.get("analytics_end_date"),
             }
         )
 
@@ -75,6 +97,7 @@ def load_youtube() -> dict[str, Any]:
         "platform": "YouTube",
         "handle": channel.get("snippet", {}).get("customUrl", "@mechaturka"),
         "followers": int(statistics.get("subscriberCount", 0)),
+        "metric_label": "Subscribers",
         "total_views": int(statistics.get("viewCount", 0)),
         "captured_at": data.get("collected_at"),
         "content": content,
@@ -104,12 +127,14 @@ def load_x() -> dict[str, Any]:
                 "metrics": post.get("non_public_metrics", {}),
                 "public_metrics": post.get("public_metrics", {}),
                 "media": media,
+                "source_captured_at": iso_from_epoch(post_data.get("captured_at")),
             }
         )
     return {
         "platform": "X",
         "handle": f"@{account.get('username', 'mechaturka')}",
         "followers": metrics.get("followers_count"),
+        "metric_label": "Followers",
         "captured_at": iso_from_epoch(audience_data.get("captured_at")),
         "content": posts,
     }
@@ -135,12 +160,149 @@ def load_instagram() -> dict[str, Any]:
         "platform": "Instagram",
         "handle": f"@{account.get('username', 'mechaturka')}",
         "followers": account.get("followers_count"),
+        "metric_label": "Followers",
         "captured_at": iso_from_epoch(data.get("captured_at")),
         "content": media,
     }
 
 
+def load_manual_tiktok_content() -> tuple[dict[str, Any], dict[str, Any], list[dict[str, Any]]]:
+    audience = load_json(PRIVATE_ROOT / "manual-audience.json") or {}
+    account = audience.get("tiktok", {})
+    data = load_json(PRIVATE_ROOT / "manual-tiktok.json") or {}
+    content = []
+    for item in data.get("videos", []):
+        content.append(
+            {
+                "id": item.get("id"),
+                "title": item.get("title", "Untitled"),
+                "published_at": item.get("published_at"),
+                "url": item.get("url"),
+                "captured_at": item.get("captured_at") or data.get("captured_at"),
+                "metrics": {
+                    "views": item.get("views"),
+                    "likes": item.get("likes"),
+                    "comments": item.get("comments"),
+                    "shares": item.get("shares"),
+                },
+                "source": "manual",
+            }
+        )
+    return account, data, content
+
+
+def merge_tiktok_content(
+    primary: list[dict[str, Any]], supplemental: list[dict[str, Any]]
+) -> tuple[list[dict[str, Any]], bool]:
+    merged = list(primary)
+    ids = {str(item.get("id")) for item in merged if item.get("id")}
+    urls = {str(item.get("url")) for item in merged if item.get("url")}
+    added = False
+    for item in supplemental:
+        item_id = str(item.get("id")) if item.get("id") else None
+        item_url = str(item.get("url")) if item.get("url") else None
+        if (item_id and item_id in ids) or (item_url and item_url in urls):
+            continue
+        merged.append(item)
+        added = True
+        if item_id:
+            ids.add(item_id)
+        if item_url:
+            urls.add(item_url)
+    return merged, added
+
+
 def load_tiktok() -> dict[str, Any]:
+    manual_account, manual_data, manual_content = load_manual_tiktok_content()
+    public_data = load_json(PRIVATE_ROOT / "tiktok-public" / "latest.json") or {}
+    public_account = public_data.get("account", {})
+    phyllo_profiles = load_json(PRIVATE_ROOT / "phyllo" / "latest-profiles.json")
+    phyllo_content = load_json(PRIVATE_ROOT / "phyllo" / "latest-content.json")
+    phyllo_summary = load_json(PRIVATE_ROOT / "phyllo" / "latest-summary.json") or {}
+    if isinstance(phyllo_profiles, list) and isinstance(phyllo_content, list):
+        profile = next(
+            (
+                item
+                for item in phyllo_profiles
+                if str(item.get("platform", "")).lower() == "tiktok"
+            ),
+            None,
+        )
+        if profile is not None:
+            audience_candidates = [
+                {
+                    "followers": profile.get("followers"),
+                    "captured_at": profile.get("updated_at")
+                    or phyllo_summary.get("collected_at"),
+                    "source": "phyllo",
+                },
+                {
+                    "followers": public_account.get("follower_count"),
+                    "captured_at": iso_from_epoch(public_data.get("captured_at")),
+                    "source": "public-profile",
+                },
+                {
+                    "followers": manual_account.get("followers"),
+                    "captured_at": manual_account.get("captured_at"),
+                    "source": "manual",
+                },
+            ]
+            audience = max(
+                (item for item in audience_candidates if item["followers"] is not None),
+                key=lambda item: timestamp_value(item["captured_at"]),
+                default={
+                    "followers": None,
+                    "captured_at": profile.get("updated_at")
+                    or phyllo_summary.get("collected_at"),
+                    "source": "phyllo",
+                },
+            )
+            content = []
+            for item in phyllo_content:
+                if str(item.get("platform", "")).lower() != "tiktok":
+                    continue
+                content.append(
+                    {
+                        "id": item.get("external_id") or item.get("content_id"),
+                        "title": (
+                            item.get("title")
+                            or item.get("description")
+                            or "Untitled"
+                        ).replace("\n", " "),
+                        "published_at": item.get("published_at"),
+                        "url": item.get("url"),
+                        "metrics": {
+                            "views": item.get("views"),
+                            "likes": item.get("likes"),
+                            "comments": item.get("comments"),
+                            "shares": item.get("shares"),
+                            **{key: item.get(key) for key in (
+                                "average_watch_seconds", "duration_seconds", "organic_impressions",
+                                "organic_reach", "paid_impressions", "paid_reach", "replays",
+                                "reposts", "saves", "watch_time_hours"
+                            )},
+                        },
+                        "source": "phyllo",
+                        "source_captured_at": item.get("updated_at"),
+                    }
+                )
+            content, used_manual = merge_tiktok_content(content, manual_content)
+            return {
+                "platform": "TikTok",
+                "handle": f"@{profile.get('username', 'mechaturka')}",
+                "followers": audience["followers"],
+                "metric_label": "Followers",
+                "captured_at": audience["captured_at"],
+                "content": content,
+                "source": (
+                    ("phyllo+manual" if used_manual else "phyllo")
+                    if audience["source"] == "phyllo"
+                    else f"phyllo-content+{audience['source']}-audience"
+                    + ("+manual-content" if used_manual else "")
+                ),
+                "provider_updated_at": profile.get("updated_at"),
+            }
+
     api_data = load_json(PRIVATE_ROOT / "tiktok" / "latest.json")
     if api_data is not None:
         account = api_data.get("account", {})
@@ -160,46 +322,27 @@ def load_tiktok() -> dict[str, Any]:
                         "comments": item.get("comment_count"),
                         "shares": item.get("share_count"),
                     },
+                    "source": "api",
                 }
             )
+        content, used_manual = merge_tiktok_content(content, manual_content)
         return {
             "platform": "TikTok",
             "handle": account.get("display_name", "@mechaturka"),
             "followers": account.get("follower_count"),
+            "metric_label": "Followers",
             "captured_at": iso_from_epoch(api_data.get("captured_at")),
             "content": content,
-            "source": "api",
+            "source": "api+manual" if used_manual else "api",
         }
-
-    # Fall back to a hand-maintained snapshot until `make tiktok-auth` and
-    # `make tiktok-analytics-sync` have been run at least once.
-    audience = load_json(PRIVATE_ROOT / "manual-audience.json") or {}
-    account = audience.get("tiktok", {})
-    data = load_json(PRIVATE_ROOT / "manual-tiktok.json") or {}
-
-    content = []
-    for item in data.get("videos", []):
-        content.append(
-            {
-                "id": item.get("id"),
-                "title": item.get("title", "Untitled"),
-                "published_at": item.get("published_at"),
-                "url": item.get("url"),
-                "metrics": {
-                    "views": item.get("views"),
-                    "likes": item.get("likes"),
-                    "comments": item.get("comments"),
-                    "shares": item.get("shares"),
-                },
-            }
-        )
 
     return {
         "platform": "TikTok",
-        "handle": account.get("handle", "@mechaturka"),
-        "followers": account.get("followers"),
-        "captured_at": data.get("captured_at") or account.get("captured_at"),
-        "content": content,
+        "handle": manual_account.get("handle", "@mechaturka"),
+        "followers": manual_account.get("followers"),
+        "metric_label": "Followers",
+        "captured_at": manual_data.get("captured_at") or manual_account.get("captured_at"),
+        "content": manual_content,
         "source": "manual",
     }
 
@@ -214,12 +357,29 @@ def load_manual_platforms() -> list[dict[str, Any]]:
                 "platform": name,
                 "handle": entry.get("handle", "@mechaturka"),
                 "followers": entry.get("followers"),
+                "metric_label": "Followers",
                 "captured_at": entry.get("captured_at"),
                 "content": [],
                 "source": "manual",
             }
         )
     return result
+
+
+def load_github() -> dict[str, Any]:
+    data = load_json(PRIVATE_ROOT / "github" / "latest.json") or {}
+    repository = data.get("repository", {})
+    return {
+        "platform": "GitHub",
+        "handle": repository.get(
+            "full_name", "mechanical-turk/deep-learning-all-the-way-down"
+        ),
+        "followers": repository.get("stargazers_count"),
+        "metric_label": "Stars",
+        "captured_at": iso_from_epoch(data.get("captured_at")),
+        "content": [],
+        "source": "github-api",
+    }
 
 
 def load_audience_history() -> dict[str, list[dict[str, Any]]]:
@@ -229,6 +389,7 @@ def load_audience_history() -> dict[str, list[dict[str, Any]]]:
         "Instagram": [],
         "TikTok": [],
         "LinkedIn": [],
+        "GitHub": [],
     }
 
     for path in sorted((PRIVATE_ROOT / "snapshots").glob("*.json")):
@@ -275,6 +436,39 @@ def load_audience_history() -> dict[str, list[dict[str, Any]]]:
                     }
                 )
 
+    for path in sorted((PRIVATE_ROOT / "tiktok-public" / "snapshots").glob("*.json")):
+        data = load_json(path) or {}
+        count = data.get("account", {}).get("follower_count")
+        if count is not None:
+            history["TikTok"].append(
+                {
+                    "captured_at": iso_from_epoch(data.get("captured_at")),
+                    "followers": count,
+                }
+            )
+
+    for path in sorted((PRIVATE_ROOT / "phyllo" / "runs").glob("*/profiles.json")):
+        profiles = load_json(path)
+        if not isinstance(profiles, list):
+            continue
+        profile = next(
+            (
+                item
+                for item in profiles
+                if str(item.get("platform", "")).lower() == "tiktok"
+            ),
+            None,
+        )
+        if profile is None or profile.get("followers") is None:
+            continue
+        summary = load_json(path.parent / "summary.json") or {}
+        history["TikTok"].append(
+            {
+                "captured_at": summary.get("collected_at"),
+                "followers": profile.get("followers"),
+            }
+        )
+
     manual = load_json(PRIVATE_ROOT / "manual-audience.json") or {}
     if not history["TikTok"]:
         for point in manual.get("tiktok", {}).get("history", []):
@@ -282,15 +476,34 @@ def load_audience_history() -> dict[str, list[dict[str, Any]]]:
     for point in manual.get("linkedin", {}).get("history", []):
         history["LinkedIn"].append(point)
 
+    for path in sorted((PRIVATE_ROOT / "github" / "snapshots").glob("*.json")):
+        data = load_json(path) or {}
+        count = data.get("repository", {}).get("stargazers_count")
+        if count is not None:
+            history["GitHub"].append(
+                {
+                    "captured_at": iso_from_epoch(data.get("captured_at")),
+                    "followers": count,
+                }
+            )
+
     return history
 
 
 def dashboard_payload() -> dict[str, Any]:
-    platforms = [load_youtube(), load_x(), load_instagram(), load_tiktok(), *load_manual_platforms()]
+    platforms = [
+        load_youtube(),
+        load_x(),
+        load_instagram(),
+        load_tiktok(),
+        *load_manual_platforms(),
+        load_github(),
+    ]
     return {
         "generated_at": datetime.now(tz=timezone.utc).isoformat(),
         "platforms": platforms,
         "audience_history": load_audience_history(),
+        "native_insights": load_records(PRIVATE_ROOT / "native-insights"),
     }
 
 
@@ -302,6 +515,26 @@ class DashboardHandler(BaseHTTPRequestHandler):
             self.send_response(200)
             self.send_header("Content-Type", "application/json")
             self.send_header("Cache-Control", "no-store")
+            self.send_header("Content-Length", str(len(body)))
+            self.end_headers()
+            self.wfile.write(body)
+            return
+
+        if path.startswith("/native-evidence/"):
+            target = evidence_file(path.removeprefix("/native-evidence/"), PRIVATE_ROOT / "native-insights")
+            if target is None:
+                self.send_error(404)
+                return
+            try:
+                content_type, _ = image_type(target)
+            except (OSError, ValueError):
+                self.send_error(404)
+                return
+            body = target.read_bytes()
+            self.send_response(200)
+            self.send_header("Content-Type", content_type)
+            self.send_header("Cache-Control", "no-store")
+            self.send_header("X-Content-Type-Options", "nosniff")
             self.send_header("Content-Length", str(len(body)))
             self.end_headers()
             self.wfile.write(body)

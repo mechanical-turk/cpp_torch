@@ -1,0 +1,2168 @@
+1
+00:00:00,160 --> 00:00:03,520
+Welcome back to deep learning all the
+
+2
+00:00:01,520 --> 00:00:07,839
+way down where we rebuild deep learning
+
+3
+00:00:03,520 --> 00:00:09,679
+from first principles in modern C++.
+
+4
+00:00:07,839 --> 00:00:11,920
+In this episode we are going to be
+
+5
+00:00:09,679 --> 00:00:14,559
+building autograd from scratch in a
+
+6
+00:00:11,920 --> 00:00:17,119
+single C++ file. In this diagram we have
+
+7
+00:00:14,559 --> 00:00:20,160
+a model with three weights and a bias.
+
+8
+00:00:17,119 --> 00:00:22,240
+We feed three features into it. We take
+
+9
+00:00:20,160 --> 00:00:24,400
+their dot product with the weights. We
+
+10
+00:00:22,240 --> 00:00:26,080
+add the bias and obtain a prediction.
+
+11
+00:00:24,400 --> 00:00:28,080
+And then when we compare that prediction
+
+12
+00:00:26,080 --> 00:00:32,480
+against the target, we obtain our
+
+13
+00:00:28,080 --> 00:00:34,960
+residual. yhat minus y equals residual.
+
+14
+00:00:32,480 --> 00:00:37,920
+Then we square the residual and obtain a
+
+15
+00:00:34,960 --> 00:00:40,559
+single scalar loss for just a single
+
+16
+00:00:37,920 --> 00:00:43,120
+prediction in this entire batch. Now as
+
+17
+00:00:40,559 --> 00:00:44,800
+you can see until we obtain the loss
+
+18
+00:00:43,120 --> 00:00:47,440
+everything so far flows in a single
+
+19
+00:00:44,800 --> 00:00:49,200
+direction. That is our forward path.
+
+20
+00:00:47,440 --> 00:00:51,440
+Every single piece of computation we
+
+21
+00:00:49,200 --> 00:00:52,960
+needed to do so far flows in a single
+
+22
+00:00:51,440 --> 00:00:54,879
+direction.
+
+23
+00:00:52,960 --> 00:00:57,039
+But we can't speak of training or
+
+24
+00:00:54,879 --> 00:00:59,359
+machine learning unless the model
+
+25
+00:00:57,039 --> 00:01:01,840
+figures out how to update its weights
+
+26
+00:00:59,359 --> 00:01:04,640
+and bias. And the most important pieces
+
+27
+00:01:01,840 --> 00:01:06,240
+of information to help accomplish this
+
+28
+00:01:04,640 --> 00:01:08,720
+are going to come in the form of the
+
+29
+00:01:06,240 --> 00:01:12,240
+gradient which in this case are going to
+
+30
+00:01:08,720 --> 00:01:14,159
+be the partial derivative of the loss
+
+31
+00:01:12,240 --> 00:01:15,760
+with respect to the weights and the
+
+32
+00:01:14,159 --> 00:01:18,159
+partial derivative of the loss with
+
+33
+00:01:15,760 --> 00:01:21,119
+respect to the bias. So the number one
+
+34
+00:01:18,159 --> 00:01:22,960
+goal in a backward pass is figuring out
+
+35
+00:01:21,119 --> 00:01:24,880
+these values.
+
+36
+00:01:22,960 --> 00:01:27,759
+But before you can speak of calculating
+
+37
+00:01:24,880 --> 00:01:30,000
+those values, you need to track your
+
+38
+00:01:27,759 --> 00:01:32,400
+computation graph because without your
+
+39
+00:01:30,000 --> 00:01:35,200
+computation graph, by the time you have
+
+40
+00:01:32,400 --> 00:01:37,119
+your loss, you only end up with a scaler
+
+41
+00:01:35,200 --> 00:01:38,400
+with no additional information. But
+
+42
+00:01:37,119 --> 00:01:41,119
+instead, what you need is a more
+
+43
+00:01:38,400 --> 00:01:43,119
+sophisticated data structure
+
+44
+00:01:41,119 --> 00:01:45,200
+that can actually keep track of the
+
+45
+00:01:43,119 --> 00:01:47,439
+historical computation
+
+46
+00:01:45,200 --> 00:01:49,200
+that I had to go through all the way
+
+47
+00:01:47,439 --> 00:01:50,479
+back to the features and the weights.
+
+48
+00:01:49,200 --> 00:01:53,040
+And that history is called the
+
+49
+00:01:50,479 --> 00:01:54,560
+computation graph. And that's exactly
+
+50
+00:01:53,040 --> 00:01:57,520
+what we're going to be building in this
+
+51
+00:01:54,560 --> 00:01:59,840
+episode. So without further ado, let's
+
+52
+00:01:57,520 --> 00:02:02,719
+dive right in. Clean slate, fresh start.
+
+53
+00:01:59,840 --> 00:02:05,759
+We are going to begin with a few strcts.
+
+54
+00:02:02,719 --> 00:02:09,039
+So at this point, we know that in order
+
+55
+00:02:05,759 --> 00:02:10,800
+to move backward through a calculation,
+
+56
+00:02:09,039 --> 00:02:13,520
+we need to store its intermediate
+
+57
+00:02:10,800 --> 00:02:17,360
+results in order to preserve how they
+
+58
+00:02:13,520 --> 00:02:20,160
+were produced. And every node basically
+
+59
+00:02:17,360 --> 00:02:23,520
+needs four things. It needs its
+
+60
+00:02:20,160 --> 00:02:25,520
+numerical value, its gradient, its
+
+61
+00:02:23,520 --> 00:02:28,560
+parent, and the operation that it
+
+62
+00:02:25,520 --> 00:02:30,400
+created it. So let's create a few data
+
+63
+00:02:28,560 --> 00:02:34,560
+structures for those. And we will begin
+
+64
+00:02:30,400 --> 00:02:39,840
+with the enum for operation. And we're
+
+65
+00:02:34,560 --> 00:02:41,840
+going to have leaf add, subtract, and
+
+66
+00:02:39,840 --> 00:02:43,920
+multiply. And let's create the node
+
+67
+00:02:41,840 --> 00:02:45,920
+strct two. It's going to have those four
+
+68
+00:02:43,920 --> 00:02:47,760
+fields. It's going to have the data.
+
+69
+00:02:45,920 --> 00:02:49,920
+It's going to have the gradient. It's
+
+70
+00:02:47,760 --> 00:02:52,560
+going to have the operation and we're
+
+71
+00:02:49,920 --> 00:02:55,760
+going to default to leaf and also it's
+
+72
+00:02:52,560 --> 00:02:57,280
+going to have a vector back to its
+
+73
+00:02:55,760 --> 00:02:59,120
+parents and this is going to be a
+
+74
+00:02:57,280 --> 00:03:00,800
+self-referential data structure and
+
+75
+00:02:59,120 --> 00:03:03,200
+because we need to keep these pointers
+
+76
+00:03:00,800 --> 00:03:07,360
+alive we're going to use a share pointer
+
+77
+00:03:03,200 --> 00:03:08,959
+here. Let's add utility 2. Now a leaf is
+
+78
+00:03:07,360 --> 00:03:11,599
+something that we supply directly into
+
+79
+00:03:08,959 --> 00:03:14,640
+our model such as a feature weight or a
+
+80
+00:03:11,599 --> 00:03:18,159
+bias. It's an entry point whereas the
+
+81
+00:03:14,640 --> 00:03:21,200
+rest are going to be operations
+
+82
+00:03:18,159 --> 00:03:23,200
+that produce the current node. Data is
+
+83
+00:03:21,200 --> 00:03:25,440
+going to store the result of the forward
+
+84
+00:03:23,200 --> 00:03:30,319
+computation and gradient is going to
+
+85
+00:03:25,440 --> 00:03:34,159
+store how changing this particular node
+
+86
+00:03:30,319 --> 00:03:36,159
+is going to affect the result. gradient
+
+87
+00:03:34,159 --> 00:03:38,959
+begins at zero but it will going to
+
+88
+00:03:36,159 --> 00:03:41,680
+eventually store how the loss is going
+
+89
+00:03:38,959 --> 00:03:43,680
+to change with respect to the current
+
+90
+00:03:41,680 --> 00:03:45,840
+value and parents will store the inputs
+
+91
+00:03:43,680 --> 00:03:48,879
+that produce this value. Now let's add a
+
+92
+00:03:45,840 --> 00:03:52,560
+simple constructor to our nstruct.
+
+93
+00:03:48,879 --> 00:03:54,959
+It's going to take a value and it's just
+
+94
+00:03:52,560 --> 00:03:57,439
+going to set the data. Now, we don't
+
+95
+00:03:54,959 --> 00:04:00,080
+want the rest of our code to reach into
+
+96
+00:03:57,439 --> 00:04:03,200
+these node pointers directly.
+
+97
+00:04:00,080 --> 00:04:06,879
+And to prevent that, we're going to wrap
+
+98
+00:04:03,200 --> 00:04:09,200
+our node strct within a value class.
+
+99
+00:04:06,879 --> 00:04:11,680
+This abstraction is going to own a
+
+100
+00:04:09,200 --> 00:04:13,920
+shared pointer to a node and it's going
+
+101
+00:04:11,680 --> 00:04:17,280
+to have a public constructor that will
+
+102
+00:04:13,920 --> 00:04:19,759
+accept a double directly. So we will
+
+103
+00:04:17,280 --> 00:04:22,000
+pass double data and then we're going to
+
+104
+00:04:19,759 --> 00:04:24,080
+initialize our shared pointer and we're
+
+105
+00:04:22,000 --> 00:04:26,560
+going to call make shared with the node
+
+106
+00:04:24,080 --> 00:04:28,800
+by passing the data directly. And we
+
+107
+00:04:26,560 --> 00:04:32,639
+will also add two convenience public
+
+108
+00:04:28,800 --> 00:04:34,880
+getters or accessors. One for data it's
+
+109
+00:04:32,639 --> 00:04:38,639
+going to be double it's going to be
+
+110
+00:04:34,880 --> 00:04:41,840
+const and we will just return node data
+
+111
+00:04:38,639 --> 00:04:43,759
+and then another for grad. And because
+
+112
+00:04:41,840 --> 00:04:46,479
+these are not going to throw we can also
+
+113
+00:04:43,759 --> 00:04:48,880
+add no accept. Done.
+
+114
+00:04:46,479 --> 00:04:51,280
+Now value can represent a leaf but it
+
+115
+00:04:48,880 --> 00:04:53,040
+cannot take part in a calculation yet.
+
+116
+00:04:51,280 --> 00:04:56,080
+So we will need to add some operations
+
+117
+00:04:53,040 --> 00:04:59,280
+namely add, subtract and multiply. So
+
+118
+00:04:56,080 --> 00:05:01,759
+we'll begin with add first. And here the
+
+119
+00:04:59,280 --> 00:05:05,120
+most important thing is each calculation
+
+120
+00:05:01,759 --> 00:05:06,800
+will need to record its history. So
+
+121
+00:05:05,120 --> 00:05:09,360
+we're going to lay the foundation for
+
+122
+00:05:06,800 --> 00:05:12,479
+that. Right here we're going to add
+
+123
+00:05:09,360 --> 00:05:15,280
+value operator plus and we will pass the
+
+124
+00:05:12,479 --> 00:05:18,320
+left and right operand as cost
+
+125
+00:05:15,280 --> 00:05:21,440
+references and then we can initialize
+
+126
+00:05:18,320 --> 00:05:23,520
+the internal node by just adding these
+
+127
+00:05:21,440 --> 00:05:25,919
+two values. And we will need to store
+
+128
+00:05:23,520 --> 00:05:27,919
+the outcome inside this new share
+
+129
+00:05:25,919 --> 00:05:31,280
+pointer. And we also know that the
+
+130
+00:05:27,919 --> 00:05:34,240
+operation that went into this node is
+
+131
+00:05:31,280 --> 00:05:36,240
+going to be the add operation. Next,
+
+132
+00:05:34,240 --> 00:05:38,479
+this new value we're constructing must
+
+133
+00:05:36,240 --> 00:05:41,280
+remember its parents that produced it.
+
+134
+00:05:38,479 --> 00:05:44,639
+But right now, the parents have their
+
+135
+00:05:41,280 --> 00:05:47,120
+node field as a private variable. So, we
+
+136
+00:05:44,639 --> 00:05:49,120
+need to find a way to expose it to here.
+
+137
+00:05:47,120 --> 00:05:51,360
+And we can accomplish that by taking
+
+138
+00:05:49,120 --> 00:05:54,479
+this function and declaring it as a
+
+139
+00:05:51,360 --> 00:05:56,960
+friend right inside our value class.
+
+140
+00:05:54,479 --> 00:05:58,960
+We're going to say friend and we're
+
+141
+00:05:56,960 --> 00:06:01,120
+going to be done. And because it's the
+
+142
+00:05:58,960 --> 00:06:04,400
+friend now this free function can access
+
+143
+00:06:01,120 --> 00:06:08,319
+the internals of left and right. And we
+
+144
+00:06:04,400 --> 00:06:11,440
+are going to say node parents is going
+
+145
+00:06:08,319 --> 00:06:14,240
+to be equal to left node and right dot
+
+146
+00:06:11,440 --> 00:06:17,120
+node. And now we need to return a value
+
+147
+00:06:14,240 --> 00:06:18,479
+that has this node. But we don't have a
+
+148
+00:06:17,120 --> 00:06:21,840
+constructor that supports that right
+
+149
+00:06:18,479 --> 00:06:24,000
+now. So we are going to add a new
+
+150
+00:06:21,840 --> 00:06:26,720
+private constructor that's going to take
+
+151
+00:06:24,000 --> 00:06:29,039
+the shared pointer which is the node and
+
+152
+00:06:26,720 --> 00:06:32,000
+it's going to just pass it into its own
+
+153
+00:06:29,039 --> 00:06:34,720
+node through standard move. And now our
+
+154
+00:06:32,000 --> 00:06:36,479
+plus operator can just return a value
+
+155
+00:06:34,720 --> 00:06:39,600
+and we should remember to call standard
+
+156
+00:06:36,479 --> 00:06:41,440
+move on the node and we're done. Now we
+
+157
+00:06:39,600 --> 00:06:44,319
+just need to repeat the same thing for
+
+158
+00:06:41,440 --> 00:06:48,160
+minus and product operators.
+
+159
+00:06:44,319 --> 00:06:51,360
+So let's mark both of them as friends.
+
+160
+00:06:48,160 --> 00:06:53,199
+one for subtract and then one for
+
+161
+00:06:51,360 --> 00:06:55,919
+product and then let's duplicate our
+
+162
+00:06:53,199 --> 00:06:58,240
+logic again one for subtract. So we're
+
+163
+00:06:55,919 --> 00:07:00,000
+going to use the minus operator minus
+
+164
+00:06:58,240 --> 00:07:01,840
+here and then we're going to mark it as
+
+165
+00:07:00,000 --> 00:07:04,479
+subtract
+
+166
+00:07:01,840 --> 00:07:06,800
+and then again one more this time for
+
+167
+00:07:04,479 --> 00:07:09,680
+product and we're going to mark it as
+
+168
+00:07:06,800 --> 00:07:11,840
+product or multiply. Now our forward
+
+169
+00:07:09,680 --> 00:07:13,599
+pass is basically done and now we need
+
+170
+00:07:11,840 --> 00:07:17,120
+to start thinking about the backwards
+
+171
+00:07:13,599 --> 00:07:20,080
+pass and basically back propagation
+
+172
+00:07:17,120 --> 00:07:21,919
+starts at the loss and then moves toward
+
+173
+00:07:20,080 --> 00:07:24,319
+the inputs.
+
+174
+00:07:21,919 --> 00:07:27,520
+But we cannot just simply follow one
+
+175
+00:07:24,319 --> 00:07:30,639
+path at a time because a value may
+
+176
+00:07:27,520 --> 00:07:33,039
+influence the loss through several later
+
+177
+00:07:30,639 --> 00:07:34,960
+operations. And before that value
+
+178
+00:07:33,039 --> 00:07:37,039
+propagates its gradients to its own
+
+179
+00:07:34,960 --> 00:07:38,720
+parents, it must receive every
+
+180
+00:07:37,039 --> 00:07:41,199
+contribution coming back from its
+
+181
+00:07:38,720 --> 00:07:42,880
+dependence. I actually have some asart
+
+182
+00:07:41,199 --> 00:07:45,440
+right here to help explain this a little
+
+183
+00:07:42,880 --> 00:07:49,039
+bit better. So suppose we have one
+
+184
+00:07:45,440 --> 00:07:53,120
+shared value that feeds two branches and
+
+185
+00:07:49,039 --> 00:07:56,319
+then they combine down to the loss. Now
+
+186
+00:07:53,120 --> 00:08:00,080
+if we propagate the loss back through
+
+187
+00:07:56,319 --> 00:08:03,039
+only branch A, then the gradient is
+
+188
+00:08:00,080 --> 00:08:05,680
+incomplete because branch B has not
+
+189
+00:08:03,039 --> 00:08:08,800
+contributed yet. That implies we need
+
+190
+00:08:05,680 --> 00:08:11,599
+some form of an ordering. We need an
+
+191
+00:08:08,800 --> 00:08:13,759
+order that processes both branches
+
+192
+00:08:11,599 --> 00:08:16,560
+before the shared value.
+
+193
+00:08:13,759 --> 00:08:19,039
+And a topological order is an ordering
+
+194
+00:08:16,560 --> 00:08:22,160
+where every input appears before the
+
+195
+00:08:19,039 --> 00:08:25,120
+result that depends on it. And reversing
+
+196
+00:08:22,160 --> 00:08:27,680
+that order guarantees that every result
+
+197
+00:08:25,120 --> 00:08:30,400
+contributes before any of its input
+
+198
+00:08:27,680 --> 00:08:33,279
+propagate further. So now let's go back
+
+199
+00:08:30,400 --> 00:08:37,680
+up to our value class and we are going
+
+200
+00:08:33,279 --> 00:08:39,519
+to add a build topology function here
+
+201
+00:08:37,680 --> 00:08:43,039
+and we're going to have a static
+
+202
+00:08:39,519 --> 00:08:45,360
+function. So static void build topology
+
+203
+00:08:43,039 --> 00:08:49,120
+it is going to accept the topology
+
+204
+00:08:45,360 --> 00:08:51,600
+vector as a mutable reference but first
+
+205
+00:08:49,120 --> 00:08:53,360
+it's going to begin with a pointer a raw
+
+206
+00:08:51,600 --> 00:08:55,760
+pointer to the node that we're building
+
+207
+00:08:53,360 --> 00:08:58,800
+it upon. And just like any other
+
+208
+00:08:55,760 --> 00:09:02,640
+topological ordering it's going to need
+
+209
+00:08:58,800 --> 00:09:05,120
+to have a way of maintaining which nodes
+
+210
+00:09:02,640 --> 00:09:08,399
+have been visited. So that two is going
+
+211
+00:09:05,120 --> 00:09:10,720
+to be passed in as a mutable reference.
+
+212
+00:09:08,399 --> 00:09:14,080
+And then finally we're going to take the
+
+213
+00:09:10,720 --> 00:09:15,760
+vector again as a mutable reference. And
+
+214
+00:09:14,080 --> 00:09:17,200
+this is not necessarily the most
+
+215
+00:09:15,760 --> 00:09:19,279
+efficient way of doing this but we're
+
+216
+00:09:17,200 --> 00:09:21,680
+going to do recursion here. And the
+
+217
+00:09:19,279 --> 00:09:23,760
+recursion is going to begin with the
+
+218
+00:09:21,680 --> 00:09:25,920
+base case which is going to check if we
+
+219
+00:09:23,760 --> 00:09:27,680
+have already visited this particular
+
+220
+00:09:25,920 --> 00:09:30,480
+node. And if we have we're going to
+
+221
+00:09:27,680 --> 00:09:34,240
+return and we're just making use of the
+
+222
+00:09:30,480 --> 00:09:35,760
+set insertion return value here. it is
+
+223
+00:09:34,240 --> 00:09:37,120
+going to return an iterator and the
+
+224
+00:09:35,760 --> 00:09:39,360
+boolean flag is going to be set to true
+
+225
+00:09:37,120 --> 00:09:42,240
+if the insertion was successful. So if
+
+226
+00:09:39,360 --> 00:09:43,920
+it was already visited then it's not
+
+227
+00:09:42,240 --> 00:09:45,760
+going to be successful. It's going to
+
+228
+00:09:43,920 --> 00:09:47,680
+return false. And that's why we can just
+
+229
+00:09:45,760 --> 00:09:49,760
+early exit here. And if the insertion
+
+230
+00:09:47,680 --> 00:09:52,480
+was successful then we are going to
+
+231
+00:09:49,760 --> 00:09:55,200
+iterate through all of the parents and
+
+232
+00:09:52,480 --> 00:09:58,000
+then we're going to recurse on them. And
+
+233
+00:09:55,200 --> 00:10:00,640
+we're going to obtain the raw node
+
+234
+00:09:58,000 --> 00:10:02,480
+pointer by calling parent.get at first
+
+235
+00:10:00,640 --> 00:10:05,839
+and then we're going to just pass
+
+236
+00:10:02,480 --> 00:10:08,640
+visited and topology directly and only
+
+237
+00:10:05,839 --> 00:10:12,320
+at the end we are going to actually push
+
+238
+00:10:08,640 --> 00:10:15,519
+node onto our topology vector and we're
+
+239
+00:10:12,320 --> 00:10:18,320
+done with the topology building. So now
+
+240
+00:10:15,519 --> 00:10:20,959
+we have the graph, we have the local
+
+241
+00:10:18,320 --> 00:10:24,079
+derivative rules and we also have a safe
+
+242
+00:10:20,959 --> 00:10:26,560
+execution order and now it's time to
+
+243
+00:10:24,079 --> 00:10:28,320
+connect all of them inside a backward
+
+244
+00:10:26,560 --> 00:10:31,279
+function.
+
+245
+00:10:28,320 --> 00:10:34,000
+So let's go up to the public section of
+
+246
+00:10:31,279 --> 00:10:36,720
+our value class and let's create a new
+
+247
+00:10:34,000 --> 00:10:39,279
+function here backward. This is where
+
+248
+00:10:36,720 --> 00:10:40,720
+everything is going to come together.
+
+249
+00:10:39,279 --> 00:10:43,360
+The first thing this function is going
+
+250
+00:10:40,720 --> 00:10:46,320
+to do is to construct the topology. And
+
+251
+00:10:43,360 --> 00:10:48,720
+remember we pass the function the
+
+252
+00:10:46,320 --> 00:10:51,440
+arguments directly instead of having it
+
+253
+00:10:48,720 --> 00:10:54,560
+just return something. So we're going to
+
+254
+00:10:51,440 --> 00:10:56,959
+have our visited node set and our
+
+255
+00:10:54,560 --> 00:11:00,480
+topology vector and then we will call
+
+256
+00:10:56,959 --> 00:11:02,959
+build topology directly with them and we
+
+257
+00:11:00,480 --> 00:11:06,640
+are going to use the current values
+
+258
+00:11:02,959 --> 00:11:09,440
+current nodes raw pointer
+
+259
+00:11:06,640 --> 00:11:12,399
+and then we're going to pass visited and
+
+260
+00:11:09,440 --> 00:11:14,560
+topology and before we start iterating
+
+261
+00:11:12,399 --> 00:11:19,920
+through this topology we're going to
+
+262
+00:11:14,560 --> 00:11:21,519
+seed the grad or the gradient to one.
+
+263
+00:11:19,920 --> 00:11:23,760
+Why?
+
+264
+00:11:21,519 --> 00:11:27,680
+Because the derivative of the loss with
+
+265
+00:11:23,760 --> 00:11:31,040
+respect to itself is one. And once we
+
+266
+00:11:27,680 --> 00:11:32,800
+execute the backward propagation, then
+
+267
+00:11:31,040 --> 00:11:34,399
+the gradient is going to propagate
+
+268
+00:11:32,800 --> 00:11:36,720
+through the computation graph and it's
+
+269
+00:11:34,399 --> 00:11:38,480
+going to obtain the correct values for
+
+270
+00:11:36,720 --> 00:11:41,360
+each node. Now it's time to iterate
+
+271
+00:11:38,480 --> 00:11:44,560
+through our topology. But let's just
+
+272
+00:11:41,360 --> 00:11:47,120
+take a very quick look here again. So
+
+273
+00:11:44,560 --> 00:11:49,760
+our topological order stores every
+
+274
+00:11:47,120 --> 00:11:52,800
+parent before the result that uses it
+
+275
+00:11:49,760 --> 00:11:55,040
+because we recurse before we push. So by
+
+276
+00:11:52,800 --> 00:11:57,440
+the time we push our parents have
+
+277
+00:11:55,040 --> 00:12:00,399
+already pushed. So back propagation
+
+278
+00:11:57,440 --> 00:12:03,519
+needs the opposite order. Results must
+
+279
+00:12:00,399 --> 00:12:05,600
+propagate before their parents. And that
+
+280
+00:12:03,519 --> 00:12:07,839
+is why we need to iterate the
+
+281
+00:12:05,600 --> 00:12:10,480
+topological order in reverse. And that's
+
+282
+00:12:07,839 --> 00:12:12,560
+what we're going to do here. We are
+
+283
+00:12:10,480 --> 00:12:15,760
+going to set a for loop. We're going to
+
+284
+00:12:12,560 --> 00:12:17,519
+iterate in reverse order by using arb
+
+285
+00:12:15,760 --> 00:12:20,560
+begin. And then we're going to iterate
+
+286
+00:12:17,519 --> 00:12:22,399
+until current is not equal to the end.
+
+287
+00:12:20,560 --> 00:12:24,160
+And we're going to keep advancing the
+
+288
+00:12:22,399 --> 00:12:27,360
+iterator.
+
+289
+00:12:24,160 --> 00:12:31,519
+And then we're going to obtain the
+
+290
+00:12:27,360 --> 00:12:35,200
+current node pointer by dreferencing the
+
+291
+00:12:31,519 --> 00:12:38,720
+iterator. But that two is going to give
+
+292
+00:12:35,200 --> 00:12:40,639
+us a pointer. So referencing right here
+
+293
+00:12:38,720 --> 00:12:43,040
+does not d reference the node itself. It
+
+294
+00:12:40,639 --> 00:12:45,839
+just dreferences the iterator. And this
+
+295
+00:12:43,040 --> 00:12:48,240
+is where we can begin accumulating the
+
+296
+00:12:45,839 --> 00:12:49,839
+gradient as it propagates through the
+
+297
+00:12:48,240 --> 00:12:52,800
+nodes.
+
+298
+00:12:49,839 --> 00:12:55,440
+And we are going to begin by switching
+
+299
+00:12:52,800 --> 00:12:58,240
+on the operation because the operation
+
+300
+00:12:55,440 --> 00:13:00,320
+contains the information we need to
+
+301
+00:12:58,240 --> 00:13:03,120
+figure out how we're going to combine
+
+302
+00:13:00,320 --> 00:13:05,440
+the gradient from the operand. And the
+
+303
+00:13:03,120 --> 00:13:07,680
+easiest case is the leaf because when
+
+304
+00:13:05,440 --> 00:13:10,000
+you are at a leaf, you don't need to do
+
+305
+00:13:07,680 --> 00:13:12,160
+any gradient accumulation. You're done.
+
+306
+00:13:10,000 --> 00:13:14,800
+But the more interesting stuff begins at
+
+307
+00:13:12,160 --> 00:13:19,040
+the actual operations. So let's begin
+
+308
+00:13:14,800 --> 00:13:23,200
+with add. Now we can't just set say
+
+309
+00:13:19,040 --> 00:13:24,959
+output parents equal to output.grant. We
+
+310
+00:13:23,200 --> 00:13:28,320
+can't do this because we would be
+
+311
+00:13:24,959 --> 00:13:30,639
+overwriting the various sources of
+
+312
+00:13:28,320 --> 00:13:33,360
+gradient that was already accumulated on
+
+313
+00:13:30,639 --> 00:13:36,399
+the parent. So instead we need to
+
+314
+00:13:33,360 --> 00:13:39,360
+increment the parents gradient by the
+
+315
+00:13:36,399 --> 00:13:41,760
+current output gradient. And the same
+
+316
+00:13:39,360 --> 00:13:44,800
+idea applies to the other operant too.
+
+317
+00:13:41,760 --> 00:13:47,440
+So together they are going to contribute
+
+318
+00:13:44,800 --> 00:13:49,839
+to the accumulated total gradient of
+
+319
+00:13:47,440 --> 00:13:52,959
+their parent. And the same idea applies
+
+320
+00:13:49,839 --> 00:13:55,519
+for subtraction. But the only difference
+
+321
+00:13:52,959 --> 00:13:58,240
+is that we're going to decrement.
+
+322
+00:13:55,519 --> 00:13:59,920
+Technically we are incrementing by the
+
+323
+00:13:58,240 --> 00:14:02,320
+negative output gradient of the right
+
+324
+00:13:59,920 --> 00:14:05,279
+operand. But it's the same idea. We're
+
+325
+00:14:02,320 --> 00:14:07,120
+just decrementing right here.
+
+326
+00:14:05,279 --> 00:14:10,320
+And now we are going to do the same
+
+327
+00:14:07,120 --> 00:14:13,199
+thing but this time for multiply.
+
+328
+00:14:10,320 --> 00:14:17,680
+And the principle is the same. We need
+
+329
+00:14:13,199 --> 00:14:20,959
+to find how we will increment the
+
+330
+00:14:17,680 --> 00:14:23,199
+parents gradients based on the current
+
+331
+00:14:20,959 --> 00:14:25,760
+output gradient.
+
+332
+00:14:23,199 --> 00:14:28,880
+And in the case of multiply the local
+
+333
+00:14:25,760 --> 00:14:30,560
+rule requires you to multiply the
+
+334
+00:14:28,880 --> 00:14:33,600
+gradient by the value of the other
+
+335
+00:14:30,560 --> 00:14:37,040
+operand. So we are going to increment
+
+336
+00:14:33,600 --> 00:14:39,199
+the left parents gradient by taking the
+
+337
+00:14:37,040 --> 00:14:42,720
+product of the value of the other
+
+338
+00:14:39,199 --> 00:14:44,959
+operand and its own gradient and then we
+
+339
+00:14:42,720 --> 00:14:48,160
+will do the same thing for the other
+
+340
+00:14:44,959 --> 00:14:50,320
+operand and we break. So quick summary
+
+341
+00:14:48,160 --> 00:14:52,959
+addition passes the arriving gradient to
+
+342
+00:14:50,320 --> 00:14:55,360
+both parents. Subtraction passes it
+
+343
+00:14:52,959 --> 00:14:58,639
+unchanged to the left and then negates
+
+344
+00:14:55,360 --> 00:15:00,880
+it right here or the right. And then
+
+345
+00:14:58,639 --> 00:15:03,680
+multiplication scales the arriving
+
+346
+00:15:00,880 --> 00:15:06,800
+gradient by the other operants's forward
+
+347
+00:15:03,680 --> 00:15:10,160
+value. And this is technically the the
+
+348
+00:15:06,800 --> 00:15:12,320
+chain rule in code. Basically the
+
+349
+00:15:10,160 --> 00:15:14,880
+gradient that arrived
+
+350
+00:15:12,320 --> 00:15:17,519
+later in the graph is multiplied by the
+
+351
+00:15:14,880 --> 00:15:20,959
+operations local derivative.
+
+352
+00:15:17,519 --> 00:15:23,519
+And then every update uses an increment
+
+353
+00:15:20,959 --> 00:15:26,639
+or a decrement rather than assignment
+
+354
+00:15:23,519 --> 00:15:29,839
+because at the end of the day a node can
+
+355
+00:15:26,639 --> 00:15:32,720
+affect the loss through multiple edges
+
+356
+00:15:29,839 --> 00:15:35,519
+and its final gradient is therefore the
+
+357
+00:15:32,720 --> 00:15:38,560
+sum of all of those contributions. Now I
+
+358
+00:15:35,519 --> 00:15:40,639
+think we can take our graph to a spin.
+
+359
+00:15:38,560 --> 00:15:42,320
+So let's put together a main function
+
+360
+00:15:40,639 --> 00:15:45,040
+here. Now in this function let's put
+
+361
+00:15:42,320 --> 00:15:47,519
+together a prediction. Let's say it was
+
+362
+00:15:45,040 --> 00:15:51,199
+set to 3.5. And then let's say it was
+
+363
+00:15:47,519 --> 00:15:53,120
+trying to predict this target and let's
+
+364
+00:15:51,199 --> 00:15:56,639
+say it was 2.5.
+
+365
+00:15:53,120 --> 00:15:58,240
+Now the residual is going to be the
+
+366
+00:15:56,639 --> 00:16:00,800
+difference between the prediction and
+
+367
+00:15:58,240 --> 00:16:02,800
+the target. So let's subtract the target
+
+368
+00:16:00,800 --> 00:16:05,120
+from the prediction. And then we are
+
+369
+00:16:02,800 --> 00:16:07,600
+going to have our loss. And the loss I'm
+
+370
+00:16:05,120 --> 00:16:10,720
+not going to mark as const because we're
+
+371
+00:16:07,600 --> 00:16:14,560
+going to run one backward pass on it.
+
+372
+00:16:10,720 --> 00:16:17,120
+So let's say loss is equal to the square
+
+373
+00:16:14,560 --> 00:16:20,079
+of the scalar residual. Now let's rename
+
+374
+00:16:17,120 --> 00:16:22,880
+this to scalar loss. And then let's run
+
+375
+00:16:20,079 --> 00:16:25,360
+one backward pass on it. And then we can
+
+376
+00:16:22,880 --> 00:16:28,639
+begin running a bunch of assertions. The
+
+377
+00:16:25,360 --> 00:16:31,120
+first one is going to be on the loss. We
+
+378
+00:16:28,639 --> 00:16:33,279
+expect the gradient on the loss to be
+
+379
+00:16:31,120 --> 00:16:36,560
+exactly equal to 1.0 because that's how
+
+380
+00:16:33,279 --> 00:16:38,720
+we initialized it. And the derivative of
+
+381
+00:16:36,560 --> 00:16:40,959
+the loss with respect to itself must be
+
+382
+00:16:38,720 --> 00:16:44,079
+equal to one. The residual on the other
+
+383
+00:16:40,959 --> 00:16:47,600
+hand needs to be twice as much because
+
+384
+00:16:44,079 --> 00:16:50,800
+we squared it. So adding a tiny bit of
+
+385
+00:16:47,600 --> 00:16:54,240
+change onto the residual needs to have
+
+386
+00:16:50,800 --> 00:16:56,560
+twice the impact on the loss. And then
+
+387
+00:16:54,240 --> 00:16:59,519
+the prediction needs to basically
+
+388
+00:16:56,560 --> 00:17:01,519
+maintain what it gets from the residual
+
+389
+00:16:59,519 --> 00:17:04,720
+because that is the local derivative
+
+390
+00:17:01,519 --> 00:17:07,360
+rule of the addition operation.
+
+391
+00:17:04,720 --> 00:17:10,400
+Whereas the target needs to get the
+
+392
+00:17:07,360 --> 00:17:14,000
+negated counterpart because that is the
+
+393
+00:17:10,400 --> 00:17:15,839
+local derivative rule of subtraction.
+
+394
+00:17:14,000 --> 00:17:17,679
+Now let's add a little success message
+
+395
+00:17:15,839 --> 00:17:20,160
+here. And let's make sure we add the
+
+396
+00:17:17,679 --> 00:17:23,360
+header, the IO stream header. And now
+
+397
+00:17:20,160 --> 00:17:26,559
+when we compile and run, we should get
+
+398
+00:17:23,360 --> 00:17:28,640
+the success message. Great. So now we
+
+399
+00:17:26,559 --> 00:17:31,280
+have a small example that proves the
+
+400
+00:17:28,640 --> 00:17:34,160
+backward path. But the real purpose
+
+401
+00:17:31,280 --> 00:17:37,280
+behind all of this is to reach the model
+
+402
+00:17:34,160 --> 00:17:39,440
+parameters. And for that, I think we
+
+403
+00:17:37,280 --> 00:17:42,640
+should build a more complete linear
+
+404
+00:17:39,440 --> 00:17:44,640
+prediction with value objects.
+
+405
+00:17:42,640 --> 00:17:47,360
+So I'm going to copy and paste a few
+
+406
+00:17:44,640 --> 00:17:50,400
+values here. And these are borrowed
+
+407
+00:17:47,360 --> 00:17:52,640
+directly from the opening visual. We
+
+408
+00:17:50,400 --> 00:17:55,919
+have three features 432. Three features
+
+409
+00:17:52,640 --> 00:17:59,919
+432. And then we have three weights.5 -
+
+410
+00:17:55,919 --> 00:18:01,840
+1 2.0.5 - 1 2.0. zero and then we have
+
+411
+00:17:59,919 --> 00:18:04,559
+the model bias at 0.5 and then the
+
+412
+00:18:01,840 --> 00:18:06,400
+target at 2.5. Now the first thing our
+
+413
+00:18:04,559 --> 00:18:09,919
+model is going to do is to take the
+
+414
+00:18:06,400 --> 00:18:11,679
+dotproduct of the features and the
+
+415
+00:18:09,919 --> 00:18:13,760
+weights. So we're going to have model
+
+416
+00:18:11,679 --> 00:18:20,320
+prediction and at first it's going to be
+
+417
+00:18:13,760 --> 00:18:24,160
+the dotproduct. So w1 x1 plus w2 x2
+
+418
+00:18:20,320 --> 00:18:26,480
+plus w3 x3 and then we can also add the
+
+419
+00:18:24,160 --> 00:18:28,799
+model bias and that's our complete
+
+420
+00:18:26,480 --> 00:18:31,520
+prediction. Now we can calculate the
+
+421
+00:18:28,799 --> 00:18:33,280
+model residual which is going to be
+
+422
+00:18:31,520 --> 00:18:36,160
+again the difference between the
+
+423
+00:18:33,280 --> 00:18:39,039
+prediction and the target. So we can say
+
+424
+00:18:36,160 --> 00:18:41,679
+model prediction minus model target and
+
+425
+00:18:39,039 --> 00:18:43,760
+then the model loss is going to be the
+
+426
+00:18:41,679 --> 00:18:46,480
+square of the model residual. And just
+
+427
+00:18:43,760 --> 00:18:49,600
+like last time we can call backward on
+
+428
+00:18:46,480 --> 00:18:51,440
+the model loss. Now before we write any
+
+429
+00:18:49,600 --> 00:18:53,760
+assertions let's take a look at the
+
+430
+00:18:51,440 --> 00:18:56,240
+forward pass. The forward pass takes the
+
+431
+00:18:53,760 --> 00:19:01,280
+dotproduct of the features and the
+
+432
+00:18:56,240 --> 00:19:04,400
+weights. So we're going to get 4 *.5 2
+
+433
+00:19:01,280 --> 00:19:06,080
+minus 3 which is minus one and then + 4
+
+434
+00:19:04,400 --> 00:19:09,600
+which is 3 and then we're going to
+
+435
+00:19:06,080 --> 00:19:13,039
+add.5. So the expected value of the
+
+436
+00:19:09,600 --> 00:19:14,799
+current prediction is 3.5. So let's
+
+437
+00:19:13,039 --> 00:19:17,760
+write an assertion for that. First we
+
+438
+00:19:14,799 --> 00:19:22,000
+are going to say model prediction
+
+439
+00:19:17,760 --> 00:19:24,080
+dot data is expected to be equal to 3.5.
+
+440
+00:19:22,000 --> 00:19:27,039
+And let's run our test again just to be
+
+441
+00:19:24,080 --> 00:19:29,679
+sure. Good. And then the model residual
+
+442
+00:19:27,039 --> 00:19:32,160
+is the difference between the prediction
+
+443
+00:19:29,679 --> 00:19:34,080
+and the target. And in this case that's
+
+444
+00:19:32,160 --> 00:19:36,480
+going to be one. So I'm just going to
+
+445
+00:19:34,080 --> 00:19:39,440
+put it right here. I expect it to be
+
+446
+00:19:36,480 --> 00:19:43,760
+one. And then I expect the value of the
+
+447
+00:19:39,440 --> 00:19:46,400
+loss to be equal to also one because 1^2
+
+448
+00:19:43,760 --> 00:19:51,039
+is 1. So let's run the test again just
+
+449
+00:19:46,400 --> 00:19:54,720
+to be certain. Good. Now let's take a
+
+450
+00:19:51,039 --> 00:19:57,600
+stab at the gradient. So again the loss
+
+451
+00:19:54,720 --> 00:20:00,799
+is going to have gradient equal to one.
+
+452
+00:19:57,600 --> 00:20:03,760
+Why? Because the derivative of the loss
+
+453
+00:20:00,799 --> 00:20:06,400
+with respect to itself is one. And then
+
+454
+00:20:03,760 --> 00:20:09,760
+the model residuals gradient is going to
+
+455
+00:20:06,400 --> 00:20:12,080
+be 2.0. Why? Because we're squaring it.
+
+456
+00:20:09,760 --> 00:20:14,400
+And square is going to double the the
+
+457
+00:20:12,080 --> 00:20:17,679
+local gradient. And then the residual is
+
+458
+00:20:14,400 --> 00:20:20,080
+going to have its gradient contribute to
+
+459
+00:20:17,679 --> 00:20:21,520
+the predictions gradient exactly as it
+
+460
+00:20:20,080 --> 00:20:24,000
+is because that's the local derivative
+
+461
+00:20:21,520 --> 00:20:27,360
+rule of addition.
+
+462
+00:20:24,000 --> 00:20:30,000
+So we're going to have model prediction.
+
+463
+00:20:27,360 --> 00:20:32,400
+GRAD equal to 2.0.
+
+464
+00:20:30,000 --> 00:20:34,159
+And then the model targets gradient. Not
+
+465
+00:20:32,400 --> 00:20:36,080
+that it matters at this point, but the
+
+466
+00:20:34,159 --> 00:20:37,600
+model gradient's target is going to be
+
+467
+00:20:36,080 --> 00:20:40,000
+minus2 because that's the local
+
+468
+00:20:37,600 --> 00:20:42,400
+derivative rule of subtraction. And then
+
+469
+00:20:40,000 --> 00:20:45,200
+for the bias, basically the gradient is
+
+470
+00:20:42,400 --> 00:20:48,320
+going to follow or flow through the
+
+471
+00:20:45,200 --> 00:20:51,440
+residual back to the bias. And because
+
+472
+00:20:48,320 --> 00:20:54,400
+the local derivative rule of addition is
+
+473
+00:20:51,440 --> 00:20:56,960
+just preserving the gradient, the model
+
+474
+00:20:54,400 --> 00:20:59,600
+bias gradient just borrows directly from
+
+475
+00:20:56,960 --> 00:21:03,360
+the residual, which is 2.0.
+
+476
+00:20:59,600 --> 00:21:05,280
+So now let's rerun our tests. Great.
+
+477
+00:21:03,360 --> 00:21:08,720
+Now let's take a look at the gradients
+
+478
+00:21:05,280 --> 00:21:11,039
+for the weights. Now the gradients for
+
+479
+00:21:08,720 --> 00:21:13,200
+the weights are going to use the local
+
+480
+00:21:11,039 --> 00:21:15,600
+derivative rule for multiplication
+
+481
+00:21:13,200 --> 00:21:18,320
+because as the gradient flows from the
+
+482
+00:21:15,600 --> 00:21:22,320
+prediction back to the weights, they are
+
+483
+00:21:18,320 --> 00:21:23,919
+going to be multiplied by the inputs. So
+
+484
+00:21:22,320 --> 00:21:26,799
+whatever the gradient is for the
+
+485
+00:21:23,919 --> 00:21:28,400
+prediction for the weight number one
+
+486
+00:21:26,799 --> 00:21:30,159
+we're going to have it multiplied by
+
+487
+00:21:28,400 --> 00:21:31,840
+four and then for weight two we're going
+
+488
+00:21:30,159 --> 00:21:33,360
+to have it multiplied by three and then
+
+489
+00:21:31,840 --> 00:21:36,080
+for weight three we're going to have it
+
+490
+00:21:33,360 --> 00:21:38,159
+multiplied by two. So it is going to be
+
+491
+00:21:36,080 --> 00:21:40,799
+basically the double of everything we're
+
+492
+00:21:38,159 --> 00:21:43,280
+seeing here in this exact order. So
+
+493
+00:21:40,799 --> 00:21:48,240
+let's write it down. We are going to say
+
+494
+00:21:43,280 --> 00:21:53,280
+weight one.grad is equal to 8.02.grad
+
+495
+00:21:48,240 --> 00:21:56,880
+is equal to 6.0 0 and then wait 3.
+
+496
+00:21:53,280 --> 00:22:00,880
+4.0. Let's run the tests one more time.
+
+497
+00:21:56,880 --> 00:22:04,159
+Good. And with that we are done. So
+
+498
+00:22:00,880 --> 00:22:07,440
+basically at this point we're able to
+
+499
+00:22:04,159 --> 00:22:10,960
+obtain the gradients and we did not
+
+500
+00:22:07,440 --> 00:22:12,799
+derive or hardcode a formula for getting
+
+501
+00:22:10,960 --> 00:22:14,640
+the final gradients back to the weights
+
+502
+00:22:12,799 --> 00:22:16,400
+and the bias for this model. We just
+
+503
+00:22:14,640 --> 00:22:18,240
+used our computation graph and automatic
+
+504
+00:22:16,400 --> 00:22:21,360
+differentiation
+
+505
+00:22:18,240 --> 00:22:23,280
+and the graph recovered those gradients
+
+506
+00:22:21,360 --> 00:22:26,559
+from the small derivative rules we
+
+507
+00:22:23,280 --> 00:22:29,440
+implemented in the local derivative rule
+
+508
+00:22:26,559 --> 00:22:32,880
+section of our backward propagation and
+
+509
+00:22:29,440 --> 00:22:36,240
+now it just works. We have not trained a
+
+510
+00:22:32,880 --> 00:22:39,200
+model just yet. And this engine only
+
+511
+00:22:36,240 --> 00:22:42,159
+handles scalar values so far. But for
+
+512
+00:22:39,200 --> 00:22:44,000
+the first time, our C++ program can
+
+513
+00:22:42,159 --> 00:22:46,799
+calculate how every parameter
+
+514
+00:22:44,000 --> 00:22:48,960
+contributed to a loss automatically. And
+
+515
+00:22:46,799 --> 00:22:51,039
+that is actually a big deal. But now we
+
+516
+00:22:48,960 --> 00:22:54,480
+are done with this episode and it is
+
+517
+00:22:51,039 --> 00:22:56,559
+time for a recap. In this episode, we
+
+518
+00:22:54,480 --> 00:22:59,520
+represented scalar calculations as a
+
+519
+00:22:56,559 --> 00:23:02,559
+graph. We encoded the local derivative
+
+520
+00:22:59,520 --> 00:23:05,600
+rules for each operation. We ordered the
+
+521
+00:23:02,559 --> 00:23:07,679
+graph for a safe backward traversal and
+
+522
+00:23:05,600 --> 00:23:10,960
+then we accumulated gradients from
+
+523
+00:23:07,679 --> 00:23:13,200
+shared paths and built a working scalar
+
+524
+00:23:10,960 --> 00:23:15,360
+backwards pass. Next, we're going to
+
+525
+00:23:13,200 --> 00:23:17,679
+carry this mechanism into our previous
+
+526
+00:23:15,360 --> 00:23:20,799
+tensor implementation. We are going to
+
+527
+00:23:17,679 --> 00:23:22,240
+store gradients with tensor shapes and
+
+528
+00:23:20,799 --> 00:23:24,480
+then we're going to differentiate the
+
+529
+00:23:22,240 --> 00:23:27,440
+mean squared error we built in the
+
+530
+00:23:24,480 --> 00:23:29,120
+earlier episode. Now, as always, I'll
+
+531
+00:23:27,440 --> 00:23:31,360
+share a few questions for you to ponder
+
+532
+00:23:29,120 --> 00:23:33,120
+before the next episode, and you can
+
+533
+00:23:31,360 --> 00:23:35,760
+read the answers in the pin comment.
+
+534
+00:23:33,120 --> 00:23:37,600
+First, why must the lost gradient begin
+
+535
+00:23:35,760 --> 00:23:40,080
+at 1.0?
+
+536
+00:23:37,600 --> 00:23:42,400
+Second, why do parent gradients use
+
+537
+00:23:40,080 --> 00:23:44,720
+incrementation instead of assignment?
+
+538
+00:23:42,400 --> 00:23:46,640
+And then three, why does back
+
+539
+00:23:44,720 --> 00:23:48,960
+propagation use reverse topological
+
+540
+00:23:46,640 --> 00:23:51,120
+order? So, that brings us to the end of
+
+541
+00:23:48,960 --> 00:23:54,240
+this episode. Thanks for watching and I
+
+542
+00:23:51,120 --> 00:23:54,240
+will see you next time.
+

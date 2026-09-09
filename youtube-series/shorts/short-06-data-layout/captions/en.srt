@@ -1,0 +1,32 @@
+1
+00:00:00,080 --> 00:00:04,319
+This pattern destroys performance. We
+
+2
+00:00:02,240 --> 00:00:06,240
+only need the scores. Look how far apart
+
+3
+00:00:04,319 --> 00:00:08,400
+they are. Pull the scores out. Pack them
+
+4
+00:00:06,240 --> 00:00:10,880
+together. The histories stay here. The
+
+5
+00:00:08,400 --> 00:00:12,240
+same lookups ran 12 times faster. Why do
+
+6
+00:00:10,880 --> 00:00:13,920
+you think that's happening? Need the
+
+7
+00:00:12,240 --> 00:00:16,320
+histories, too? That's what I'm testing
+
+8
+00:00:13,920 --> 00:00:16,320
+next.
+

@@ -19,7 +19,7 @@
       <section>
         <div class="section-heading">
           <h2>Audience</h2>
-          <p>Current followers and change since the first saved snapshot.</p>
+          <p>Current followers, subscribers, stars, and change since the first saved snapshot.</p>
         </div>
         <div class="platform-grid" id="platform-grid"></div>
       </section>
@@ -55,6 +55,48 @@
         </div>
       </section>
     </main>
+    <dialog id="content-dialog" aria-labelledby="content-title">
+      <div class="chart-heading">
+        <div><p class="eyebrow" id="content-platform"></p><h2 id="content-title"></h2></div>
+        <button id="content-close" type="button" autofocus>Close</button>
+      </div>
+      <p><a id="content-link" target="_blank" rel="noreferrer">Open original post ↗</a></p>
+      <p class="chart-note" id="content-summary-source"></p>
+      <div id="content-summary" class="metric-grid"></div>
+      <section id="content-reports"></section>
+      <section id="native-section">
+        <div class="section-heading">
+          <h2>Retention & creative analysis</h2>
+          <label>Capture <select id="native-select"></select></label>
+        </div>
+        <div id="native-insights"></div>
+      </section>
+    </dialog>
+    <dialog id="chart-dialog" aria-labelledby="chart-title">
+      <div class="chart-heading">
+        <h2 id="chart-title"></h2>
+        <button id="chart-close" type="button" autofocus>Close</button>
+      </div>
+      <div class="chart-controls">
+        <label>Time range <select id="chart-range">
+          <option value="0">All snapshots</option>
+          <option value="30">Last 30 days</option>
+          <option value="7">Last 7 days</option>
+          <option value="1">Last 24 hours</option>
+        </select></label>
+        <span id="chart-summary"></span>
+      </div>
+      <div id="chart-plot"></div>
+      <p id="chart-readout" aria-live="polite"></p>
+      <label class="chart-scrubber">Inspect snapshot <input id="chart-point" type="range" min="0" value="0" step="1"></label>
+      <p class="chart-note">Saved snapshots only. Times are local; ranges end at the latest snapshot. Lines connect observations, not measured activity between them.</p>
+      <details><summary>Exact snapshot values</summary>
+        <div class="snapshot-table"><table><thead><tr><th>Captured</th><th>Count</th></tr></thead><tbody id="chart-values"></tbody></table></div>
+      </details>
+    </dialog>
+    <script src="/charts.js"></script>
+    <script src="/native.js"></script>
+    <script src="/collected.js"></script>
     <script src="/app.js"></script>
   </body>
 </html>

@@ -1,0 +1,2272 @@
+1
+00:00:00,000 --> 00:00:06,640
+Our tensor can calculate the loss. And
+
+2
+00:00:04,319 --> 00:00:09,360
+now we will make it tell us how each
+
+3
+00:00:06,640 --> 00:00:12,480
+prediction needs to change.
+
+4
+00:00:09,360 --> 00:00:14,960
+And we will start right here where we
+
+5
+00:00:12,480 --> 00:00:17,520
+return the result because we need the
+
+6
+00:00:14,960 --> 00:00:20,160
+result to remember which tensors it came
+
+7
+00:00:17,520 --> 00:00:23,039
+from. To do that, the result will need
+
+8
+00:00:20,160 --> 00:00:26,400
+to hold on to its inputs even after we
+
+9
+00:00:23,039 --> 00:00:30,400
+leave the function that created them. So
+
+10
+00:00:26,400 --> 00:00:33,200
+let us move their shape and data into a
+
+11
+00:00:30,400 --> 00:00:35,920
+new node strct that we can share. So
+
+12
+00:00:33,200 --> 00:00:40,239
+let's go to the top and let's add a few
+
+13
+00:00:35,920 --> 00:00:42,719
+extra headers. One for memory, one for
+
+14
+00:00:40,239 --> 00:00:45,040
+utility because we're going to make use
+
+15
+00:00:42,719 --> 00:00:48,239
+of shared pointers. And then let's
+
+16
+00:00:45,040 --> 00:00:52,320
+create our first helper strct for
+
+17
+00:00:48,239 --> 00:00:55,680
+autograd. We will call this tensor node.
+
+18
+00:00:52,320 --> 00:00:59,520
+It's going to have one field for shape
+
+19
+00:00:55,680 --> 00:01:02,239
+and then another for data. This is what
+
+20
+00:00:59,520 --> 00:01:04,479
+we were holding inside the tensor until
+
+21
+00:01:02,239 --> 00:01:07,040
+now. So notice how I've kept the whole
+
+22
+00:01:04,479 --> 00:01:10,640
+array together with a shape. We're
+
+23
+00:01:07,040 --> 00:01:13,439
+making one node per tensor and we will
+
+24
+00:01:10,640 --> 00:01:16,240
+now replace these two fields in the
+
+25
+00:01:13,439 --> 00:01:17,759
+tensor directly from their private
+
+26
+00:01:16,240 --> 00:01:19,520
+variables
+
+27
+00:01:17,759 --> 00:01:21,280
+which are right here. So instead of
+
+28
+00:01:19,520 --> 00:01:23,520
+these two guys, we're going to have a
+
+29
+00:01:21,280 --> 00:01:26,000
+single shared pointer for the tensor
+
+30
+00:01:23,520 --> 00:01:28,159
+node. And now with those fields mode, we
+
+31
+00:01:26,000 --> 00:01:30,479
+need to fix the constructor. So let's go
+
+32
+00:01:28,159 --> 00:01:33,360
+up and let's begin right here. Instead
+
+33
+00:01:30,479 --> 00:01:36,079
+of these two here,
+
+34
+00:01:33,360 --> 00:01:38,079
+we are going to have a make shared just
+
+35
+00:01:36,079 --> 00:01:41,119
+for the node. And we will put together
+
+36
+00:01:38,079 --> 00:01:44,880
+our tensor node. And then right here,
+
+37
+00:01:41,119 --> 00:01:48,000
+we're going to assign the shape and the
+
+38
+00:01:44,880 --> 00:01:50,640
+data. Now the rest of the class still
+
+39
+00:01:48,000 --> 00:01:52,000
+refers to shape and data as they were
+
+40
+00:01:50,640 --> 00:01:54,479
+even though we just replaced it with
+
+41
+00:01:52,000 --> 00:01:56,479
+node. So I'm just going to very quickly
+
+42
+00:01:54,479 --> 00:01:57,920
+go over every single instance of shape
+
+43
+00:01:56,479 --> 00:01:59,920
+and data and I'm going to replace them
+
+44
+00:01:57,920 --> 00:02:03,119
+with node. All right, we're back. So
+
+45
+00:01:59,920 --> 00:02:06,719
+that finishes the storage refactor. So
+
+46
+00:02:03,119 --> 00:02:10,640
+now copying a tensor should share its
+
+47
+00:02:06,719 --> 00:02:12,959
+node. So let's write a test. Let's
+
+48
+00:02:10,640 --> 00:02:17,760
+create a predictions tensor and then
+
+49
+00:02:12,959 --> 00:02:21,440
+copy it. So say tensor predictions 21
+
+50
+00:02:17,760 --> 00:02:26,080
+and then so this is a 2x one tensor and
+
+51
+00:02:21,440 --> 00:02:30,360
+then the data in it is 3.5 and 0.0
+
+52
+00:02:26,080 --> 00:02:30,360
+and then let's create an alias
+
+53
+00:02:32,000 --> 00:02:40,480
+and then let's assert that the objects
+
+54
+00:02:37,440 --> 00:02:42,959
+are exactly the same not just in terms
+
+55
+00:02:40,480 --> 00:02:46,319
+of value but in terms of address. So
+
+56
+00:02:42,959 --> 00:02:49,519
+let's compile and then run. Good. So the
+
+57
+00:02:46,319 --> 00:02:52,000
+test pass including the address check.
+
+58
+00:02:49,519 --> 00:02:53,760
+And now we can reach the same data
+
+59
+00:02:52,000 --> 00:02:56,640
+through either handle predictions or
+
+60
+00:02:53,760 --> 00:02:58,319
+alias. We now want the same thing for
+
+61
+00:02:56,640 --> 00:03:01,120
+gradients.
+
+62
+00:02:58,319 --> 00:03:03,440
+When backward updates a node through the
+
+63
+00:03:01,120 --> 00:03:06,640
+graph, we should be able to read those
+
+64
+00:03:03,440 --> 00:03:09,120
+gradients from our original tensor. So
+
+65
+00:03:06,640 --> 00:03:12,159
+let's put together a grad vector in that
+
+66
+00:03:09,120 --> 00:03:14,000
+shared node with one entry for each
+
+67
+00:03:12,159 --> 00:03:18,159
+value. So let's go all the way up right
+
+68
+00:03:14,000 --> 00:03:21,200
+here. And then I am going to add a grad
+
+69
+00:03:18,159 --> 00:03:23,920
+vector right here. Now let's initialize
+
+70
+00:03:21,200 --> 00:03:26,800
+the gradient to zero. And we can do that
+
+71
+00:03:23,920 --> 00:03:29,040
+right here. And can just call the assign
+
+72
+00:03:26,800 --> 00:03:33,599
+function here. And we're going to assign
+
+73
+00:03:29,040 --> 00:03:38,159
+a numel number of zeros. And then let's
+
+74
+00:03:33,599 --> 00:03:41,040
+add a grad accessor just like data. So
+
+75
+00:03:38,159 --> 00:03:45,120
+we can just copy this. We name this one
+
+76
+00:03:41,040 --> 00:03:48,319
+to grad and then expose grad like this.
+
+77
+00:03:45,120 --> 00:03:50,319
+Now to calculate these gradients, we
+
+78
+00:03:48,319 --> 00:03:54,000
+need to know how each tensor was
+
+79
+00:03:50,319 --> 00:03:56,799
+produced. So let's record the operation
+
+80
+00:03:54,000 --> 00:03:59,280
+and its inputs in the node too. So we're
+
+81
+00:03:56,799 --> 00:04:02,080
+going to go back up here. And now we're
+
+82
+00:03:59,280 --> 00:04:04,720
+going to create a new enum for each
+
+83
+00:04:02,080 --> 00:04:08,000
+operation. Let's start with class
+
+84
+00:04:04,720 --> 00:04:10,000
+operation. And we are going to have leaf
+
+85
+00:04:08,000 --> 00:04:12,239
+or just pure raw data that was just
+
+86
+00:04:10,000 --> 00:04:15,040
+given as input. And then everything else
+
+87
+00:04:12,239 --> 00:04:17,919
+will be tensor operations. We're going
+
+88
+00:04:15,040 --> 00:04:20,799
+to have add, subtract,
+
+89
+00:04:17,919 --> 00:04:23,759
+multiply, divide.
+
+90
+00:04:20,799 --> 00:04:26,560
+We're going to have sum and metal. And
+
+91
+00:04:23,759 --> 00:04:28,639
+now let's expand the tensor node to a
+
+92
+00:04:26,560 --> 00:04:30,400
+include the operation that created this
+
+93
+00:04:28,639 --> 00:04:33,520
+tensor.
+
+94
+00:04:30,400 --> 00:04:35,280
+So we can begin with operation operation
+
+95
+00:04:33,520 --> 00:04:37,840
+and then the default value is going to
+
+96
+00:04:35,280 --> 00:04:40,639
+be leaf. And on top of that let's also
+
+97
+00:04:37,840 --> 00:04:43,199
+record the parents that produced this
+
+98
+00:04:40,639 --> 00:04:46,320
+value and for that we are going to use a
+
+99
+00:04:43,199 --> 00:04:49,520
+shared pointer. So at this point a
+
+100
+00:04:46,320 --> 00:04:52,479
+tensor starts as a leaf with no parents
+
+101
+00:04:49,520 --> 00:04:56,080
+and now we should go back to our
+
+102
+00:04:52,479 --> 00:04:57,840
+arithmetic operators and whenever we run
+
+103
+00:04:56,080 --> 00:05:00,240
+an operator we need to record the
+
+104
+00:04:57,840 --> 00:05:03,520
+parents and the operation when we create
+
+105
+00:05:00,240 --> 00:05:06,560
+a result. So let's go to element wise
+
+106
+00:05:03,520 --> 00:05:09,520
+binary. So right here we can just add a
+
+107
+00:05:06,560 --> 00:05:13,280
+very simple enhancement here. We can
+
+108
+00:05:09,520 --> 00:05:14,560
+just pass the operation enum with this
+
+109
+00:05:13,280 --> 00:05:17,840
+kind
+
+110
+00:05:14,560 --> 00:05:21,039
+value the kind argument and we can now
+
+111
+00:05:17,840 --> 00:05:24,639
+force each operator to actually pass the
+
+112
+00:05:21,039 --> 00:05:28,000
+kind as they're calling it. So for
+
+113
+00:05:24,639 --> 00:05:30,320
+example the add operator should actually
+
+114
+00:05:28,000 --> 00:05:32,639
+call with operation add and then the
+
+115
+00:05:30,320 --> 00:05:37,039
+subtract operator should call with
+
+116
+00:05:32,639 --> 00:05:39,680
+operation subtract or multiply and
+
+117
+00:05:37,039 --> 00:05:42,560
+divide for division like this. And now
+
+118
+00:05:39,680 --> 00:05:45,199
+let's go back to the element wise binary
+
+119
+00:05:42,560 --> 00:05:47,840
+helper and let's rename the result
+
+120
+00:05:45,199 --> 00:05:49,280
+before we return it because that's going
+
+121
+00:05:47,840 --> 00:05:52,240
+to give us a chance to attach the
+
+122
+00:05:49,280 --> 00:05:55,440
+operation and both parents.
+
+123
+00:05:52,240 --> 00:05:58,400
+So let's go back down here before we
+
+124
+00:05:55,440 --> 00:06:02,240
+return let's give it a name tensor
+
+125
+00:05:58,400 --> 00:06:05,039
+result and then let's return result. But
+
+126
+00:06:02,240 --> 00:06:08,319
+before we return it let's make a quick
+
+127
+00:06:05,039 --> 00:06:12,400
+adjustment to the operation. So we pass
+
+128
+00:06:08,319 --> 00:06:14,639
+the kind and let's also pass the parent
+
+129
+00:06:12,400 --> 00:06:17,039
+so that our bookkeeping is actually
+
+130
+00:06:14,639 --> 00:06:19,520
+complete. So now we have combined the
+
+131
+00:06:17,039 --> 00:06:22,479
+left and right operands and pass them in
+
+132
+00:06:19,520 --> 00:06:24,560
+as parents for this single tensor that
+
+133
+00:06:22,479 --> 00:06:27,280
+was the result of this one element wise
+
+134
+00:06:24,560 --> 00:06:29,759
+binary and that closes the loop. Now,
+
+135
+00:06:27,280 --> 00:06:32,000
+we're not quite done just yet because we
+
+136
+00:06:29,759 --> 00:06:34,319
+have a bunch of other places where we
+
+137
+00:06:32,000 --> 00:06:37,039
+produce tensors by combining a bunch of
+
+138
+00:06:34,319 --> 00:06:38,479
+others. And one of them is sum. And just
+
+139
+00:06:37,039 --> 00:06:41,120
+for the sake of simplicity, I have
+
+140
+00:06:38,479 --> 00:06:44,160
+decided to turn this reduction into an
+
+141
+00:06:41,120 --> 00:06:46,720
+operation. So, we're going to use a
+
+142
+00:06:44,160 --> 00:06:48,960
+similar pattern right here. I'm going to
+
+143
+00:06:46,720 --> 00:06:51,360
+rename this to output. I'm going to
+
+144
+00:06:48,960 --> 00:06:55,600
+return it. And then I'm going to make an
+
+145
+00:06:51,360 --> 00:06:58,000
+adjustment to its node to update the
+
+146
+00:06:55,600 --> 00:07:01,520
+operation. and the parents. So I'm going
+
+147
+00:06:58,000 --> 00:07:06,479
+to add the operation to set it to sum
+
+148
+00:07:01,520 --> 00:07:09,120
+and I'm going to set the parent to just
+
+149
+00:07:06,479 --> 00:07:12,800
+this tensor node. Let me clean this up a
+
+150
+00:07:09,120 --> 00:07:16,160
+little bit. Good. So we have one more
+
+151
+00:07:12,800 --> 00:07:18,479
+thing and that is the metal and we are
+
+152
+00:07:16,160 --> 00:07:21,120
+going to employ exactly the same pattern
+
+153
+00:07:18,479 --> 00:07:24,400
+right here. So I'm going to call this
+
+154
+00:07:21,120 --> 00:07:27,120
+tensor result. I'm going to return it
+
+155
+00:07:24,400 --> 00:07:30,319
+and then before returning it I'm going
+
+156
+00:07:27,120 --> 00:07:33,759
+to set the operation and the parents. So
+
+157
+00:07:30,319 --> 00:07:37,520
+result node operation we're going to set
+
+158
+00:07:33,759 --> 00:07:40,400
+it to metal. Then result node parents
+
+159
+00:07:37,520 --> 00:07:44,639
+we're going to set it equal to node and
+
+160
+00:07:40,400 --> 00:07:47,039
+other node. So now that each result
+
+161
+00:07:44,639 --> 00:07:50,080
+remembers its parents let's follow these
+
+162
+00:07:47,039 --> 00:07:53,360
+links back from the loss. We will
+
+163
+00:07:50,080 --> 00:07:55,440
+collect the nodes in the list so we can
+
+164
+00:07:53,360 --> 00:07:59,599
+calculate their gradients in the right
+
+165
+00:07:55,440 --> 00:08:03,280
+order. And to do that, let's put the
+
+166
+00:07:59,599 --> 00:08:06,560
+list in topology. So when you're doing
+
+167
+00:08:03,280 --> 00:08:09,599
+this type of topological ordering, you
+
+168
+00:08:06,560 --> 00:08:12,240
+will need a way to track which nodes
+
+169
+00:08:09,599 --> 00:08:14,639
+were already visited. So for that, let's
+
+170
+00:08:12,240 --> 00:08:17,759
+add an order set. And then let's go to
+
+171
+00:08:14,639 --> 00:08:21,440
+the private section of our tensor
+
+172
+00:08:17,759 --> 00:08:25,120
+so that we can create this new function
+
+173
+00:08:21,440 --> 00:08:28,160
+called build topology. Now this function
+
+174
+00:08:25,120 --> 00:08:30,560
+is going to take the visited nodes in
+
+175
+00:08:28,160 --> 00:08:33,360
+the form of an unordered set of tensor
+
+176
+00:08:30,560 --> 00:08:36,399
+node raw pointers. In fact a reference
+
+177
+00:08:33,360 --> 00:08:40,479
+to an unordered set of tensor node raw
+
+178
+00:08:36,399 --> 00:08:45,120
+pointers. and then also a reference to a
+
+179
+00:08:40,479 --> 00:08:47,760
+vector of tensor node pointers called
+
+180
+00:08:45,120 --> 00:08:50,160
+topology. We need to have it this way
+
+181
+00:08:47,760 --> 00:08:52,000
+because we're going to write recursion.
+
+182
+00:08:50,160 --> 00:08:55,600
+Now the first step is the base case
+
+183
+00:08:52,000 --> 00:08:59,360
+where in one pass we can both try to add
+
+184
+00:08:55,600 --> 00:09:03,040
+the given node into our visited set and
+
+185
+00:08:59,360 --> 00:09:05,200
+then use the return value of insert to
+
+186
+00:09:03,040 --> 00:09:08,320
+determine whether we need to continue
+
+187
+00:09:05,200 --> 00:09:09,839
+recursing or not. So let's do
+
+188
+00:09:08,320 --> 00:09:13,600
+visitor.insert
+
+189
+00:09:09,839 --> 00:09:17,120
+node. This will return a pupil a pair
+
+190
+00:09:13,600 --> 00:09:19,839
+and the second element of this pupil or
+
+191
+00:09:17,120 --> 00:09:22,800
+the pair rather is going to be a boolean
+
+192
+00:09:19,839 --> 00:09:26,399
+flag that returns false if the insertion
+
+193
+00:09:22,800 --> 00:09:28,480
+was not successful because the element
+
+194
+00:09:26,399 --> 00:09:30,560
+was already in the set. So when that
+
+195
+00:09:28,480 --> 00:09:33,680
+happens we just return. Otherwise, we
+
+196
+00:09:30,560 --> 00:09:35,440
+are going to visit every single parent
+
+197
+00:09:33,680 --> 00:09:37,440
+and then we're going to keep recursing
+
+198
+00:09:35,440 --> 00:09:40,160
+and once those calls finish, we're going
+
+199
+00:09:37,440 --> 00:09:42,720
+to add the current node to the list. So,
+
+200
+00:09:40,160 --> 00:09:45,200
+let's begin with a for loop. We're going
+
+201
+00:09:42,720 --> 00:09:47,120
+to have const auto auto parent and then
+
+202
+00:09:45,200 --> 00:09:49,839
+we're going to recurse with them. We're
+
+203
+00:09:47,120 --> 00:09:52,240
+going to get the raw pointer from the
+
+204
+00:09:49,839 --> 00:09:56,160
+parent node. We're going to just pass
+
+205
+00:09:52,240 --> 00:09:59,279
+the visited set as is and also topology
+
+206
+00:09:56,160 --> 00:10:01,279
+as is. And then at the end we are going
+
+207
+00:09:59,279 --> 00:10:04,240
+to add the current node into our
+
+208
+00:10:01,279 --> 00:10:06,320
+topology. Some of you may remember this
+
+209
+00:10:04,240 --> 00:10:08,480
+exact pattern from the previous video
+
+210
+00:10:06,320 --> 00:10:11,200
+where we built scalar autograph. It's
+
+211
+00:10:08,480 --> 00:10:14,800
+the same idea. Now because we add the
+
+212
+00:10:11,200 --> 00:10:18,160
+node after visiting its parents. Every
+
+213
+00:10:14,800 --> 00:10:21,279
+input comes before the result that uses
+
+214
+00:10:18,160 --> 00:10:24,000
+it. That's a topological order and we
+
+215
+00:10:21,279 --> 00:10:26,000
+will read it backward when we calculate
+
+216
+00:10:24,000 --> 00:10:29,040
+gradients. So a result can update its
+
+217
+00:10:26,000 --> 00:10:31,839
+inputs before we process them. Now let's
+
+218
+00:10:29,040 --> 00:10:33,440
+use this list in a public backward
+
+219
+00:10:31,839 --> 00:10:37,120
+method.
+
+220
+00:10:33,440 --> 00:10:39,680
+Let's go back to where we were with grad
+
+221
+00:10:37,120 --> 00:10:42,240
+right here. And then let's add our
+
+222
+00:10:39,680 --> 00:10:45,839
+backward function. So this function is
+
+223
+00:10:42,240 --> 00:10:47,680
+meant to just update the gradient. And
+
+224
+00:10:45,839 --> 00:10:50,880
+it's not supposed to return anything. So
+
+225
+00:10:47,680 --> 00:10:53,680
+it's just void. And also the external
+
+226
+00:10:50,880 --> 00:10:56,480
+caller is supposed to call it on just a
+
+227
+00:10:53,680 --> 00:10:58,800
+scaler otherwise it doesn't make sense.
+
+228
+00:10:56,480 --> 00:11:01,120
+So first let's check if the rank was
+
+229
+00:10:58,800 --> 00:11:04,959
+indeed zero to ensure that this was a
+
+230
+00:11:01,120 --> 00:11:07,760
+scalar otherwise we're just going to
+
+231
+00:11:04,959 --> 00:11:11,680
+throw an invalid argument error and we
+
+232
+00:11:07,760 --> 00:11:13,760
+can say backward requires scalar loss
+
+233
+00:11:11,680 --> 00:11:16,640
+and then let's create the recursion
+
+234
+00:11:13,760 --> 00:11:19,920
+state. So let's begin with an unorded
+
+235
+00:11:16,640 --> 00:11:23,120
+set of tensor node raw pointers for
+
+236
+00:11:19,920 --> 00:11:26,079
+visited and then let's create a vector
+
+237
+00:11:23,120 --> 00:11:28,079
+of tensor node raw pointers for the
+
+238
+00:11:26,079 --> 00:11:29,839
+topology and then let's call build
+
+239
+00:11:28,079 --> 00:11:32,800
+topology
+
+240
+00:11:29,839 --> 00:11:34,880
+starting from the given node where we're
+
+241
+00:11:32,800 --> 00:11:37,279
+going to get the raw pointer and then we
+
+242
+00:11:34,880 --> 00:11:40,240
+will pass visited and topology as they
+
+243
+00:11:37,279 --> 00:11:43,200
+are. So now we have collected the nodes.
+
+244
+00:11:40,240 --> 00:11:46,000
+They're all inside topology. And now
+
+245
+00:11:43,200 --> 00:11:48,640
+let's clear their gradients. So this
+
+246
+00:11:46,000 --> 00:11:50,800
+call starts from zero. And then set the
+
+247
+00:11:48,640 --> 00:11:52,560
+loss gradient to one. And then the loss
+
+248
+00:11:50,800 --> 00:11:55,600
+changes one for one with itself. And
+
+249
+00:11:52,560 --> 00:11:58,000
+that's where we start. So we're going to
+
+250
+00:11:55,600 --> 00:12:00,640
+place a for loop here. And we're going
+
+251
+00:11:58,000 --> 00:12:03,040
+to iterate over every single tensor node
+
+252
+00:12:00,640 --> 00:12:05,680
+pointer inside the topology. And then
+
+253
+00:12:03,040 --> 00:12:07,920
+we're going to fill all of them starting
+
+254
+00:12:05,680 --> 00:12:11,760
+from the beginning of the gradient to
+
+255
+00:12:07,920 --> 00:12:14,880
+the end. And we're going to set it all
+
+256
+00:12:11,760 --> 00:12:17,120
+to 0.0. And then for the entry point,
+
+257
+00:12:14,880 --> 00:12:20,639
+which is the loss, we're going to set
+
+258
+00:12:17,120 --> 00:12:22,399
+the singleton gradient to 1.0. Why?
+
+259
+00:12:20,639 --> 00:12:25,120
+Because the partial derivative of the
+
+260
+00:12:22,399 --> 00:12:27,279
+loss with respect to itself is one. And
+
+261
+00:12:25,120 --> 00:12:29,920
+that's where we begin. Now let's work
+
+262
+00:12:27,279 --> 00:12:33,040
+through the nodes in reverse and use the
+
+263
+00:12:29,920 --> 00:12:35,200
+operation tag to choose what to do. So
+
+264
+00:12:33,040 --> 00:12:37,440
+we're going to set another loop here.
+
+265
+00:12:35,200 --> 00:12:40,160
+This time we're going to begin from the
+
+266
+00:12:37,440 --> 00:12:42,480
+back. So we're going to say r begin and
+
+267
+00:12:40,160 --> 00:12:44,959
+then we are going to iterate until we
+
+268
+00:12:42,480 --> 00:12:47,440
+hit our end. And then we will keep
+
+269
+00:12:44,959 --> 00:12:49,519
+incrementing the iterator. Then we are
+
+270
+00:12:47,440 --> 00:12:52,720
+going to pick the tensor node by
+
+271
+00:12:49,519 --> 00:12:55,440
+dreferencing the iterator. And then
+
+272
+00:12:52,720 --> 00:12:58,160
+right here we are going to switch over
+
+273
+00:12:55,440 --> 00:13:00,720
+the operation tag. First let's handle
+
+274
+00:12:58,160 --> 00:13:02,959
+the easiest one which is the leaf in
+
+275
+00:13:00,720 --> 00:13:04,959
+which case we do nothing. It has no
+
+276
+00:13:02,959 --> 00:13:07,200
+parents so it has no reason to update
+
+277
+00:13:04,959 --> 00:13:10,240
+any gradients. And then let's add a
+
+278
+00:13:07,200 --> 00:13:13,200
+default for everything else that we may
+
+279
+00:13:10,240 --> 00:13:16,480
+or may not have implemented yet. So
+
+280
+00:13:13,200 --> 00:13:18,880
+let's throw a logic error and let's say
+
+281
+00:13:16,480 --> 00:13:21,279
+backward rule not implemented yet. Now
+
+282
+00:13:18,880 --> 00:13:25,920
+for addition we do have parents to
+
+283
+00:13:21,279 --> 00:13:28,800
+update and each output uses one value
+
+284
+00:13:25,920 --> 00:13:30,800
+from each input or each parent. So we
+
+285
+00:13:28,800 --> 00:13:34,160
+need to find those two values and then
+
+286
+00:13:30,800 --> 00:13:37,920
+we need to add to their gradients.
+
+287
+00:13:34,160 --> 00:13:40,320
+So we will put that work in a helper
+
+288
+00:13:37,920 --> 00:13:42,639
+called backward element wise. So I'm
+
+289
+00:13:40,320 --> 00:13:46,000
+just going to put it here and then I'll
+
+290
+00:13:42,639 --> 00:13:49,040
+break. So the idea here is we will pass
+
+291
+00:13:46,000 --> 00:13:52,639
+it the result node or the output node
+
+292
+00:13:49,040 --> 00:13:55,839
+and it will update both parent gradients
+
+293
+00:13:52,639 --> 00:13:58,800
+and the other arithmetic operations will
+
+294
+00:13:55,839 --> 00:14:00,880
+use the same input mapping. So they're
+
+295
+00:13:58,800 --> 00:14:02,959
+going to actually reuse this helper.
+
+296
+00:14:00,880 --> 00:14:05,839
+It's going to be shared. Now before we
+
+297
+00:14:02,959 --> 00:14:08,480
+write the helpers loop, let's take a
+
+298
+00:14:05,839 --> 00:14:11,360
+look at the elementwise binary function
+
+299
+00:14:08,480 --> 00:14:13,279
+which is right here. And then let's take
+
+300
+00:14:11,360 --> 00:14:15,519
+a look at how the forward loop finds
+
+301
+00:14:13,279 --> 00:14:17,279
+those input cells that we care about.
+
+302
+00:14:15,519 --> 00:14:19,199
+And specifically, this is the part we
+
+303
+00:14:17,279 --> 00:14:21,440
+want to look at. This section is
+
+304
+00:14:19,199 --> 00:14:23,120
+critical because it deals with
+
+305
+00:14:21,440 --> 00:14:25,920
+broadcasting.
+
+306
+00:14:23,120 --> 00:14:28,560
+And when you're doing broadcasting,
+
+307
+00:14:25,920 --> 00:14:31,760
+you are going to be reusing existing
+
+308
+00:14:28,560 --> 00:14:34,399
+cells from a smaller tensor when you're
+
+309
+00:14:31,760 --> 00:14:36,800
+doing binary operations with it onto a
+
+310
+00:14:34,399 --> 00:14:39,199
+larger tensor. That means you need to be
+
+311
+00:14:36,800 --> 00:14:41,839
+careful about how you will propagate the
+
+312
+00:14:39,199 --> 00:14:43,920
+gradients. And right now our tensor node
+
+313
+00:14:41,839 --> 00:14:47,680
+data structure does not track the
+
+314
+00:14:43,920 --> 00:14:49,920
+broadcast indices or the strides. So
+
+315
+00:14:47,680 --> 00:14:52,000
+right now these strides actually give us
+
+316
+00:14:49,920 --> 00:14:54,160
+the input indices
+
+317
+00:14:52,000 --> 00:14:56,240
+including when an input is broadcast or
+
+318
+00:14:54,160 --> 00:14:59,360
+not. But right now they're local to this
+
+319
+00:14:56,240 --> 00:15:01,360
+function. So backward won't have them.
+
+320
+00:14:59,360 --> 00:15:04,880
+So we need to store them on the result
+
+321
+00:15:01,360 --> 00:15:06,959
+node. So let's go to the tensor node and
+
+322
+00:15:04,880 --> 00:15:09,360
+then let's add left strides and right
+
+323
+00:15:06,959 --> 00:15:12,720
+strides just below the parents right
+
+324
+00:15:09,360 --> 00:15:16,560
+here. I'm going to put a vector of size
+
+325
+00:15:12,720 --> 00:15:18,639
+t for left strides and then another one
+
+326
+00:15:16,560 --> 00:15:21,760
+for right strides. And then let's go
+
+327
+00:15:18,639 --> 00:15:23,760
+back to element wise binary right here.
+
+328
+00:15:21,760 --> 00:15:26,800
+And let's go to where we attach the
+
+329
+00:15:23,760 --> 00:15:30,240
+results parent which is right here. We
+
+330
+00:15:26,800 --> 00:15:33,440
+are going to copy the two stride vectors
+
+331
+00:15:30,240 --> 00:15:36,560
+into that same node where we attach the
+
+332
+00:15:33,440 --> 00:15:39,440
+operation and the parents right here. So
+
+333
+00:15:36,560 --> 00:15:41,120
+I'm going to assign left strides
+
+334
+00:15:39,440 --> 00:15:42,959
+and then I'm going to assign right
+
+335
+00:15:41,120 --> 00:15:44,560
+strides. And in fact because we're
+
+336
+00:15:42,959 --> 00:15:46,399
+returning and because nothing else is
+
+337
+00:15:44,560 --> 00:15:49,360
+using these sprites, we should standard
+
+338
+00:15:46,399 --> 00:15:53,519
+move them. It's not going to immediately
+
+339
+00:15:49,360 --> 00:15:55,920
+work because they are marked as const.
+
+340
+00:15:53,519 --> 00:15:58,000
+So let's go up and then let's remove the
+
+341
+00:15:55,920 --> 00:16:00,639
+const markers.
+
+342
+00:15:58,000 --> 00:16:03,600
+So now we should be good to go. So right
+
+343
+00:16:00,639 --> 00:16:05,440
+now the result node contains everything
+
+344
+00:16:03,600 --> 00:16:06,959
+that the element wise backward function
+
+345
+00:16:05,440 --> 00:16:08,560
+needs
+
+346
+00:16:06,959 --> 00:16:11,279
+which means we can go ahead and start
+
+347
+00:16:08,560 --> 00:16:13,360
+writing the helper. And I am going to do
+
+348
+00:16:11,279 --> 00:16:14,880
+that right under the build topology
+
+349
+00:16:13,360 --> 00:16:16,560
+function
+
+350
+00:16:14,880 --> 00:16:18,880
+in the private section of our tensor
+
+351
+00:16:16,560 --> 00:16:21,440
+class. I'm going to create another
+
+352
+00:16:18,880 --> 00:16:23,680
+static void function here and I'm going
+
+353
+00:16:21,440 --> 00:16:26,399
+to call it backwards element wise and it
+
+354
+00:16:23,680 --> 00:16:28,399
+is just going to take a raw tensor node
+
+355
+00:16:26,399 --> 00:16:31,839
+pointer and basically what we're going
+
+356
+00:16:28,399 --> 00:16:35,680
+to do here is that we will take two
+
+357
+00:16:31,839 --> 00:16:38,399
+parent from the result node and then we
+
+358
+00:16:35,680 --> 00:16:41,040
+will loop over its output values and
+
+359
+00:16:38,399 --> 00:16:44,000
+then for each one the saved strides will
+
+360
+00:16:41,040 --> 00:16:46,480
+give us the input indices and grad gives
+
+361
+00:16:44,000 --> 00:16:48,560
+us the gradient to pass back. So that's
+
+362
+00:16:46,480 --> 00:16:50,800
+what we're going to code. So first we're
+
+363
+00:16:48,560 --> 00:16:53,759
+going to obtain a pointer to the left
+
+364
+00:16:50,800 --> 00:16:56,000
+operand or the left parent which we can
+
+365
+00:16:53,759 --> 00:16:58,480
+obtain like this. And then we will do
+
+366
+00:16:56,000 --> 00:17:00,160
+the same for right like this. And then
+
+367
+00:16:58,480 --> 00:17:01,920
+we are going to use a pattern that you
+
+368
+00:17:00,160 --> 00:17:04,559
+will recognize from an earlier episode
+
+369
+00:17:01,920 --> 00:17:07,360
+where we will walk through the
+
+370
+00:17:04,559 --> 00:17:09,839
+coordinates using the strides. And the
+
+371
+00:17:07,360 --> 00:17:12,319
+first thing we do for this is to create
+
+372
+00:17:09,839 --> 00:17:15,439
+an all zeros coordinate. And this is
+
+373
+00:17:12,319 --> 00:17:18,000
+going to have the shape of the output.
+
+374
+00:17:15,439 --> 00:17:19,839
+And it's going to be all zeros.
+
+375
+00:17:18,000 --> 00:17:22,480
+And then we are going to iterate through
+
+376
+00:17:19,839 --> 00:17:24,880
+the output one by one while incrementing
+
+377
+00:17:22,480 --> 00:17:27,439
+this coordinate. And that means we're
+
+378
+00:17:24,880 --> 00:17:29,760
+going to write a for loop here. And this
+
+379
+00:17:27,439 --> 00:17:32,799
+is where we will do our flat coordinate
+
+380
+00:17:29,760 --> 00:17:34,240
+mapping. We set it equal to zero first.
+
+381
+00:17:32,799 --> 00:17:36,960
+And then we're going to keep
+
+382
+00:17:34,240 --> 00:17:39,679
+incrementing it until we hit every
+
+383
+00:17:36,960 --> 00:17:41,919
+single element. And then we're going to
+
+384
+00:17:39,679 --> 00:17:44,559
+obtain the left index combining the
+
+385
+00:17:41,919 --> 00:17:46,720
+coordinate with the stride offset
+
+386
+00:17:44,559 --> 00:17:48,880
+function. And then we will pass the left
+
+387
+00:17:46,720 --> 00:17:52,080
+strides. And we will do the same thing
+
+388
+00:17:48,880 --> 00:17:54,640
+for the right strides too. So right
+
+389
+00:17:52,080 --> 00:17:56,559
+index take the coordinate and then the
+
+390
+00:17:54,640 --> 00:17:58,799
+right strides. And then we will obtain
+
+391
+00:17:56,559 --> 00:18:01,679
+the gradient which is a double for this
+
+392
+00:17:58,799 --> 00:18:03,840
+specific cell using the flat index of
+
+393
+00:18:01,679 --> 00:18:07,039
+the output. And finally, we're going to
+
+394
+00:18:03,840 --> 00:18:09,200
+advance the coordinate
+
+395
+00:18:07,039 --> 00:18:12,640
+using the coordinate and the output
+
+396
+00:18:09,200 --> 00:18:14,799
+shape. So this allows us to advance the
+
+397
+00:18:12,640 --> 00:18:17,200
+flat index one by one. This is just a
+
+398
+00:18:14,799 --> 00:18:20,000
+simple increment. And then here we are
+
+399
+00:18:17,200 --> 00:18:22,720
+incrementing the coordinate just like in
+
+400
+00:18:20,000 --> 00:18:25,280
+an odometer where once a lower digit
+
+401
+00:18:22,720 --> 00:18:28,080
+hits its maximum, it resets to zero and
+
+402
+00:18:25,280 --> 00:18:31,200
+then it increments the next one.
+
+403
+00:18:28,080 --> 00:18:34,960
+And then in between we're finding how
+
+404
+00:18:31,200 --> 00:18:37,200
+every single cell in the output tensor
+
+405
+00:18:34,960 --> 00:18:39,520
+is mapped to their parents. So where the
+
+406
+00:18:37,200 --> 00:18:42,000
+parents are coming from is computed
+
+407
+00:18:39,520 --> 00:18:43,919
+using the stride offset function. So
+
+408
+00:18:42,000 --> 00:18:46,799
+right now we can actually begin
+
+409
+00:18:43,919 --> 00:18:49,039
+implementing the specific operation
+
+410
+00:18:46,799 --> 00:18:52,559
+based local derivative rules as we
+
+411
+00:18:49,039 --> 00:18:55,200
+propagate the gradient. We will pass a
+
+412
+00:18:52,559 --> 00:18:58,320
+rule into this helper in the form of a
+
+413
+00:18:55,200 --> 00:19:01,039
+binary lambda. So let's add a parameter
+
+414
+00:18:58,320 --> 00:19:05,120
+for it. And for that I'm going to use
+
+415
+00:19:01,039 --> 00:19:07,360
+con auto local derivatives. And then
+
+416
+00:19:05,120 --> 00:19:09,840
+inside the loop we've already found the
+
+417
+00:19:07,360 --> 00:19:12,400
+input indices. So let's just pass those
+
+418
+00:19:09,840 --> 00:19:14,720
+values to the rule. And then we can
+
+419
+00:19:12,400 --> 00:19:18,240
+unpack the derivatives it returns. And
+
+420
+00:19:14,720 --> 00:19:22,320
+we will pass left first then right. So
+
+421
+00:19:18,240 --> 00:19:25,280
+I'm going to do con auto. Let's get left
+
+422
+00:19:22,320 --> 00:19:27,919
+derivative and then right derivative. as
+
+423
+00:19:25,280 --> 00:19:31,200
+we unpack the output of local
+
+424
+00:19:27,919 --> 00:19:34,640
+derivatives the lambda where we pass the
+
+425
+00:19:31,200 --> 00:19:37,919
+left cell and the right cell. Now these
+
+426
+00:19:34,640 --> 00:19:41,440
+derivatives tell us how each input
+
+427
+00:19:37,919 --> 00:19:43,120
+changes this operations output but we
+
+428
+00:19:41,440 --> 00:19:45,840
+want to know how it changes the final
+
+429
+00:19:43,120 --> 00:19:48,640
+loss not just this output and the
+
+430
+00:19:45,840 --> 00:19:51,120
+incoming gradient right here tells us
+
+431
+00:19:48,640 --> 00:19:52,799
+how that output affects the loss. So
+
+432
+00:19:51,120 --> 00:19:55,360
+what we need to do is to multiply the
+
+433
+00:19:52,799 --> 00:19:58,480
+two because that is the chain rule. So
+
+434
+00:19:55,360 --> 00:20:01,360
+I'm going to execute that right here.
+
+435
+00:19:58,480 --> 00:20:04,400
+I'm going to obtain a reference to the
+
+436
+00:20:01,360 --> 00:20:07,120
+left cell and I'm going to increment it
+
+437
+00:20:04,400 --> 00:20:09,440
+by the product of the gradient and the
+
+438
+00:20:07,120 --> 00:20:12,720
+left derivative. And I'm going to do the
+
+439
+00:20:09,440 --> 00:20:15,600
+same thing for the right cell using the
+
+440
+00:20:12,720 --> 00:20:17,679
+right index and the right derivative. So
+
+441
+00:20:15,600 --> 00:20:21,039
+for example, the idea here is if an
+
+442
+00:20:17,679 --> 00:20:23,360
+input changes the output twice as much
+
+443
+00:20:21,039 --> 00:20:26,400
+and then that output changes the loss
+
+444
+00:20:23,360 --> 00:20:29,679
+three times as much then that means the
+
+445
+00:20:26,400 --> 00:20:32,080
+input changes the loss six times as
+
+446
+00:20:29,679 --> 00:20:34,559
+much. That's why we multiply them. And
+
+447
+00:20:32,080 --> 00:20:39,120
+then we increment because we want to add
+
+448
+00:20:34,559 --> 00:20:42,400
+the contribution to the inputs gradient.
+
+449
+00:20:39,120 --> 00:20:45,919
+And the incrementation keeps the
+
+450
+00:20:42,400 --> 00:20:49,760
+contributions that were already in place
+
+451
+00:20:45,919 --> 00:20:52,320
+from every prior use of that input
+
+452
+00:20:49,760 --> 00:20:54,640
+including broadcasting. So we just
+
+453
+00:20:52,320 --> 00:20:58,000
+introduced this local derivatives
+
+454
+00:20:54,640 --> 00:21:00,320
+parameter here, but we have not changed
+
+455
+00:20:58,000 --> 00:21:04,480
+the way we're calling it. So let's add
+
+456
+00:21:00,320 --> 00:21:07,280
+it here. So we can begin putting in a
+
+457
+00:21:04,480 --> 00:21:10,480
+lambda right here. And this one is
+
+458
+00:21:07,280 --> 00:21:12,960
+pretty simple here. We're supposed to
+
+459
+00:21:10,480 --> 00:21:14,960
+let's let's first create the the lambda.
+
+460
+00:21:12,960 --> 00:21:16,960
+So the lambda is going to have this
+
+461
+00:21:14,960 --> 00:21:18,320
+signature. It is not going to refer to
+
+462
+00:21:16,960 --> 00:21:20,480
+anything. It's going to be a
+
+463
+00:21:18,320 --> 00:21:22,880
+self-contained lambda.
+
+464
+00:21:20,480 --> 00:21:25,200
+And the objective of this lambda is to
+
+465
+00:21:22,880 --> 00:21:28,080
+return the local derivative of the
+
+466
+00:21:25,200 --> 00:21:30,400
+output with respect to its parents. So
+
+467
+00:21:28,080 --> 00:21:32,799
+it's supposed to return a pair and the
+
+468
+00:21:30,400 --> 00:21:34,480
+entries in this pair are supposed to
+
+469
+00:21:32,799 --> 00:21:37,120
+represent
+
+470
+00:21:34,480 --> 00:21:39,039
+the partial derivative of the output
+
+471
+00:21:37,120 --> 00:21:43,440
+with respect to the corresponding
+
+472
+00:21:39,039 --> 00:21:45,280
+parent. So in the case of addition, the
+
+473
+00:21:43,440 --> 00:21:48,640
+partial derivative of the output with
+
+474
+00:21:45,280 --> 00:21:50,240
+respect to its left parent is one. And
+
+475
+00:21:48,640 --> 00:21:52,000
+then the same thing applies for the
+
+476
+00:21:50,240 --> 00:21:54,640
+right side too. And we're actually done
+
+477
+00:21:52,000 --> 00:21:57,039
+with add here. And now we're going to do
+
+478
+00:21:54,640 --> 00:21:59,039
+a little bit of pattern matching. The
+
+479
+00:21:57,039 --> 00:22:00,799
+next thing is subtract. This one is
+
+480
+00:21:59,039 --> 00:22:05,440
+pretty simple too. The only difference
+
+481
+00:22:00,799 --> 00:22:07,360
+is that we will need to turn the right
+
+482
+00:22:05,440 --> 00:22:09,360
+partial derivative to minus one. Why?
+
+483
+00:22:07,360 --> 00:22:11,039
+Because the partial derivative of the
+
+484
+00:22:09,360 --> 00:22:13,679
+output with respect to the left parent
+
+485
+00:22:11,039 --> 00:22:16,880
+is one. Whereas the partial derivative
+
+486
+00:22:13,679 --> 00:22:18,880
+of the output with respect to the right
+
+487
+00:22:16,880 --> 00:22:20,720
+parent is minus one. That's just the
+
+488
+00:22:18,880 --> 00:22:22,960
+local derivative rule for subtraction.
+
+489
+00:22:20,720 --> 00:22:25,440
+And then the rule for multiplication
+
+490
+00:22:22,960 --> 00:22:27,840
+gets a little bit more interesting
+
+491
+00:22:25,440 --> 00:22:31,760
+because here we have the operands
+
+492
+00:22:27,840 --> 00:22:34,159
+scaling each other. So when the
+
+493
+00:22:31,760 --> 00:22:36,559
+operations multiply
+
+494
+00:22:34,159 --> 00:22:39,919
+we actually need to return or or refer
+
+495
+00:22:36,559 --> 00:22:43,200
+to the values. So here
+
+496
+00:22:39,919 --> 00:22:45,600
+the partial derivative of the output
+
+497
+00:22:43,200 --> 00:22:47,120
+with respect to the left input is the
+
+498
+00:22:45,600 --> 00:22:49,039
+right operand and then the partial
+
+499
+00:22:47,120 --> 00:22:51,440
+derivative of the output with respect to
+
+500
+00:22:49,039 --> 00:22:55,280
+the right operand is the left operand
+
+501
+00:22:51,440 --> 00:22:56,640
+which we can actually place right here
+
+502
+00:22:55,280 --> 00:22:58,400
+and this is what they're going to be
+
+503
+00:22:56,640 --> 00:23:01,360
+called with.
+
+504
+00:22:58,400 --> 00:23:03,919
+This is what we have been setting up in
+
+505
+00:23:01,360 --> 00:23:06,080
+the backward element wise function where
+
+506
+00:23:03,919 --> 00:23:08,159
+these are passed back to us as a call
+
+507
+00:23:06,080 --> 00:23:09,919
+back. And now it's time for division.
+
+508
+00:23:08,159 --> 00:23:12,720
+And division, you always need to be a
+
+509
+00:23:09,919 --> 00:23:15,039
+little bit more careful. So we're going
+
+510
+00:23:12,720 --> 00:23:17,200
+to have divide here. But before we write
+
+511
+00:23:15,039 --> 00:23:21,039
+the rest, let's take a look at how we're
+
+512
+00:23:17,200 --> 00:23:23,679
+handling divide in the forward pass.
+
+513
+00:23:21,039 --> 00:23:26,640
+So let's take a look at operator
+
+514
+00:23:23,679 --> 00:23:29,440
+and then divide. Right here, you can see
+
+515
+00:23:26,640 --> 00:23:31,840
+that in our forward pass, we actually do
+
+516
+00:23:29,440 --> 00:23:33,360
+not check for division by zero, but we
+
+517
+00:23:31,840 --> 00:23:37,280
+should.
+
+518
+00:23:33,360 --> 00:23:40,960
+So let's make sure write is not equal to
+
+519
+00:23:37,280 --> 00:23:44,240
+zero and if it is let's throw a domain
+
+520
+00:23:40,960 --> 00:23:46,080
+error and let's say division by zero. We
+
+521
+00:23:44,240 --> 00:23:50,000
+could have technically said invalid
+
+522
+00:23:46,080 --> 00:23:52,559
+argument error but this is more specific
+
+523
+00:23:50,000 --> 00:23:53,919
+and it's more appropriate because it was
+
+524
+00:23:52,559 --> 00:23:57,280
+not because of an argument that we
+
+525
+00:23:53,919 --> 00:23:59,840
+directly passed and B this is more about
+
+526
+00:23:57,280 --> 00:24:02,799
+the mathematical problem. It is about
+
+527
+00:23:59,840 --> 00:24:04,880
+how the input falls outside of the legal
+
+528
+00:24:02,799 --> 00:24:07,520
+domain that we're working in. So it's
+
+529
+00:24:04,880 --> 00:24:10,400
+more appropriate. So now the backward
+
+530
+00:24:07,520 --> 00:24:14,320
+rule can assume the denominator is not
+
+531
+00:24:10,400 --> 00:24:15,840
+zero. So let's go back to backward and
+
+532
+00:24:14,320 --> 00:24:18,320
+then let's go back to the device
+
+533
+00:24:15,840 --> 00:24:21,360
+section. So here I'm going to rename
+
+534
+00:24:18,320 --> 00:24:23,679
+these to numerator and denominator to be
+
+535
+00:24:21,360 --> 00:24:25,600
+a little bit more specific. And then I'm
+
+536
+00:24:23,679 --> 00:24:28,480
+going to apply the local derivative rule
+
+537
+00:24:25,600 --> 00:24:33,039
+for division. So on the left we're going
+
+538
+00:24:28,480 --> 00:24:35,279
+to have 1 over denominator and then let
+
+539
+00:24:33,039 --> 00:24:38,080
+me actually put this to a new line. And
+
+540
+00:24:35,279 --> 00:24:42,000
+then on the right I'm going to have
+
+541
+00:24:38,080 --> 00:24:43,919
+minus numerator over denominator
+
+542
+00:24:42,000 --> 00:24:46,559
+squared. And that will take care of the
+
+543
+00:24:43,919 --> 00:24:49,440
+local derivative rule for division.
+
+544
+00:24:46,559 --> 00:24:51,840
+That's all four of our arithmetic rules.
+
+545
+00:24:49,440 --> 00:24:55,360
+Each of them picks a lambda once and
+
+546
+00:24:51,840 --> 00:24:58,720
+then the helper uses it throughout the
+
+547
+00:24:55,360 --> 00:25:01,919
+coordinate iteration loop and then
+
+548
+00:24:58,720 --> 00:25:04,799
+propagates it all the way back to the
+
+549
+00:25:01,919 --> 00:25:07,679
+roots of our computation graph. We have
+
+550
+00:25:04,799 --> 00:25:10,960
+now connected the arithmetic operators
+
+551
+00:25:07,679 --> 00:25:13,520
+to backward including how they add up
+
+552
+00:25:10,960 --> 00:25:16,159
+gradients when an input is reused in the
+
+553
+00:25:13,520 --> 00:25:19,200
+case of broadcasting for example. So
+
+554
+00:25:16,159 --> 00:25:21,279
+let's just wrap up right here and leave
+
+555
+00:25:19,200 --> 00:25:23,679
+the rest of our operations to the next
+
+556
+00:25:21,279 --> 00:25:25,840
+episode, namely sum and matrix
+
+557
+00:25:23,679 --> 00:25:29,039
+multiplication. We will get to them in
+
+558
+00:25:25,840 --> 00:25:32,559
+the next episode. And once those rules
+
+559
+00:25:29,039 --> 00:25:34,240
+are in place, then we can take the loss
+
+560
+00:25:32,559 --> 00:25:36,720
+all the way back to the weights and
+
+561
+00:25:34,240 --> 00:25:39,679
+bias. And then we will be able to test
+
+562
+00:25:36,720 --> 00:25:43,279
+the gradients and then we will use them
+
+563
+00:25:39,679 --> 00:25:45,279
+in a proper actual complete linear
+
+564
+00:25:43,279 --> 00:25:48,159
+regression loop that actually learns
+
+565
+00:25:45,279 --> 00:25:50,320
+from data. But that is going to be it
+
+566
+00:25:48,159 --> 00:25:53,279
+for now and that brings us to the end of
+
+567
+00:25:50,320 --> 00:25:55,919
+this episode. So thanks for watching and
+
+568
+00:25:53,279 --> 00:25:55,919
+I will see you next
+

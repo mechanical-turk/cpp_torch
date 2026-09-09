@@ -2,16 +2,17 @@
 
 ## Release target
 
-- **Final edit:** complete; final exported file path and media verification remain
-  to be recorded after the 4K CapCut export
-- **Thumbnail:** [`thumbnail.png`](thumbnail.png), verified at 1280x720
+- **Final edit:** complete; final export verified at 2560x1440, 30 fps,
+  H.264 High, Rec.709, AAC stereo, with a 10:59 runtime
+- **Final export:** `/Users/keremkazan/Movies/CapCut/Deep Learning All The Way Down - Ep 06.mp4`
+- **Thumbnail:** [`thumbnail-v5.png`](thumbnail-v5.png), verified at 1280x720
 - **YouTube publication:** Monday, August 24, 2026 at 11:00 AM ET, provided the
   export and release checks pass
 - **X announcement:** Monday, August 24 at approximately 12:00 PM ET
 - **LinkedIn announcement:** Tuesday, August 25 between 9:00 and 10:30 AM ET
 - **Native Short:** produce separately; do not clip the long-form recording
 
-The date remains provisional until the final export, HD or 4K processing,
+The date remains provisional until the final export and 1440p processing,
 playback, captions, metadata, playlist, comment, and end-screen checks pass.
 
 ## Final title
@@ -53,7 +54,7 @@ https://www.youtube.com/playlist?list=PLZSg76FHvdTw
 
 ## Thumbnail
 
-Upload [`thumbnail.png`](thumbnail.png).
+Upload [`thumbnail-v5.png`](thumbnail-v5.png).
 
 The visual presents the episode's central contradiction: residuals `1.0` and
 `-1.0` cancel to `0.0`, while their mean squared error correctly produces a
@@ -67,8 +68,9 @@ C++, C++23, modern C++, tensors, mean squared error, MSE, loss function, machine
 
 ## Chapter timestamps
 
-Manual chapters are omitted from the initial release. Add them only after the
-final recording has been transcribed and the timestamps can be verified.
+The caption-derived chapters are preserved in
+[`youtube-chapters.txt`](youtube-chapters.txt) and are live in the YouTube
+description.
 
 ## Pinned comment
 
@@ -83,9 +85,6 @@ Answers to the questions at the end:
 2. Zero is the additive identity, so the sum of an empty tensor is well-defined as zero. A mean divides that sum by the number of elements. For an empty tensor, that becomes 0 / 0, which is undefined.
 
 3. mean() is a general reduction that applies to any tensor. mse_loss() expresses a machine-learning-specific relationship between predictions and targets, so it composes tensor operations without becoming part of the tensor's fundamental interface.
-
-Source code:
-https://github.com/mechanical-turk/deep-learning-all-the-way-down
 
 Complete playlist:
 https://www.youtube.com/playlist?list=PLZSg76FHvdTw
@@ -103,23 +102,23 @@ These answers reproduce the three closing questions from
 - Audience: **No, it is not made for kids**
 - Comments: **On**
 - Embedding: **On**
-- Thumbnail: [`thumbnail.png`](thumbnail.png)
+- Thumbnail: [`thumbnail-v5.png`](thumbnail-v5.png)
 - End screen: **Subscribe** plus the **complete series playlist**
 - Captions: review the automatic English captions, especially `mean`,
   `mse_loss`, `residual`, `size_t`, `NaN`, and rank zero
 
 Do not make the video public until:
 
-- [ ] The exported media dimensions, frame rate, codecs, audio, and runtime are
+- [x] The exported media dimensions, frame rate, codecs, audio, and runtime are
       recorded above.
-- [ ] YouTube finishes processing the highest uploaded resolution.
-- [ ] YouTube reports no copyright or processing restriction.
+- [x] YouTube finishes processing the highest uploaded resolution.
+- [x] YouTube reports no copyright or processing restriction.
 - [ ] The opening, a code-heavy middle section, and the ending play correctly.
 - [ ] Audio is present and synchronized.
 - [ ] Code is legible at ordinary desktop and mobile playback sizes.
 - [ ] Every closing question finishes before the clean five-second end-screen
       tail.
-- [ ] The title, description, thumbnail, tags, playlist, audience setting, and
+- [x] The title, description, thumbnail, tags, playlist, audience setting, and
       comments are rechecked on the private upload.
 - [ ] The end screen contains Subscribe and the complete-series playlist only
       over the clean tail.
@@ -134,17 +133,11 @@ after the YouTube release.
 ### Main post
 
 ```text
-episode 6 is out.
+If one prediction is off by 1 and another is off by -1, adding the errors together gives us zero, even though the model made two mistakes.
 
-our predictions have residuals of 1.0 and -1.0. add them together and the errors disappear:
+In Episode 6 of Deep Learning, All the Way Down, we build mean squared error from scratch in C++ so we can measure those errors properly.
 
-1.0 + -1.0 = 0.0
-
-so we build mean squared error from scratch and reduce the whole batch to one scalar loss.
-
-everything underneath it is C++23 and the standard library.
-
-[EPISODE 6 URL]
+https://www.youtube.com/watch?v=26Eg8tpM6_Q
 ```
 
 ### Navigation reply
@@ -159,9 +152,9 @@ https://github.com/mechanical-turk/deep-learning-all-the-way-down
 
 ### X checks
 
-- Replace `[EPISODE 6 URL]` with the public URL before posting.
+- Use the finalized public URL already present in the copy.
 - Inspect the YouTube card. If X serves a compact player card, remove its
-  preview and attach [`thumbnail.png`](thumbnail.png) directly while retaining
+  preview and attach [`thumbnail-v5.png`](thumbnail-v5.png) directly while retaining
   the visible YouTube URL.
 - Publish the navigation reply immediately afterward.
 - Remain available for substantive replies during the first hour.
@@ -191,10 +184,8 @@ The episode covers:
 • why mse_loss() is a free function rather than a Tensor member
 • reducing a batch of errors to one rank-zero loss tensor
 
-The complete implementation remains one C++23 file using only the standard library.
-
 Watch Episode 6:
-[EPISODE 6 URL]
+https://www.youtube.com/watch?v=26Eg8tpM6_Q
 
 Source code:
 https://github.com/mechanical-turk/deep-learning-all-the-way-down

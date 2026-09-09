@@ -12,6 +12,10 @@ __pycache__/
 # Private YouTube channel analytics
 /youtube-series/analytics/private/
 
+# Local Phyllo credentials and scratch scripts
+/phyllo.sh
+/phyllo2.sh
+
 # Generated Blender scenes, renders, previews, audio, and reports
 /youtube-series/**/assets/blender*/**/*.png
 /youtube-series/**/assets/blender*/**/*.jpg

@@ -60,8 +60,8 @@ needed:
 make x-post-analytics-sync
 ```
 
-Open the read-only local dashboard over the latest YouTube, X, and Instagram
-snapshots:
+Open the read-only local dashboard over the latest YouTube, X, Instagram, and
+TikTok snapshots:
 
 ```sh
 make analytics-dashboard
@@ -69,8 +69,8 @@ make analytics-dashboard
 
 Then visit <http://127.0.0.1:8765>. The dashboard never refreshes an external
 API on page load, which prevents accidental X credit usage. Run the platform
-sync commands deliberately, then reload the page. TikTok and LinkedIn remain
-marked unavailable until a manual follower snapshot or API collector exists.
+sync commands deliberately, then reload the page. TikTok profile and content
+metrics come from the experimental Phyllo collector. LinkedIn remains manual.
 
 ## Private state
 

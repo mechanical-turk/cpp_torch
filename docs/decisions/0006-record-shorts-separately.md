@@ -4,6 +4,10 @@
 
 Accepted.
 
+The closing-retrieval format recorded below is historical. Episode 8 onward
+uses recap, follow-up, sign-off and a clean end-screen tail, with no closing
+Q&A or required answer comment. See the current long-form playbook.
+
 ## Context
 
 Designing portions of a long-form 16:9 lesson for later vertical extraction

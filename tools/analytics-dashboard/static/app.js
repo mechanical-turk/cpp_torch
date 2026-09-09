@@ -25,6 +25,7 @@ function audienceCards(data) {
     const first = history[0]?.followers;
     const delta = platform.followers == null || first == null ? null : platform.followers - first;
     const count = platform.followers == null ? "—" : number.format(platform.followers);
+    const metricLabel = platform.metric_label || "Followers";
     const deltaText = delta == null ? "No history yet" : `${delta >= 0 ? "+" : ""}${number.format(delta)} since first snapshot`;
     const points = history.map((point, index) => {
       const values = history.map(item => item.followers);
@@ -38,11 +39,13 @@ function audienceCards(data) {
       <article class="platform-card">
         <div class="card-top"><span>${platform.platform}</span><span class="status ${platform.followers == null ? "missing" : "live"}">${platform.followers == null ? "manual needed" : "tracked"}</span></div>
         <strong>${count}</strong>
+        <span class="metric-name">${escapeHtml(metricLabel)}</span>
         <p>${deltaText}</p>
         <svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
           ${points ? `<polyline points="${points}" />` : ""}
         </svg>
         <small>Updated ${displayTime(platform.captured_at)}</small>
+        <button class="expand-chart" type="button" data-chart="${escapeHtml(platform.platform)}" aria-label="Expand ${escapeHtml(platform.platform)} audience chart">Expand chart ↗</button>
       </article>`;
   }).join("");
 }
@@ -54,7 +57,8 @@ function funnelCards(data) {
     item => item.media?.type === "video"
   );
   const instagram = latestContent(data.platforms.find(item => item.platform === "Instagram"));
-  const tiktok = latestContent(data.platforms.find(item => item.platform === "TikTok"));
+  const tiktokPlatform = data.platforms.find(item => item.platform === "TikTok");
+  const tiktok = latestContent(tiktokPlatform);
   const xMedia = x?.media;
   const xStarts = xMedia?.non_public_metrics?.playback_0_count;
   const xComplete = xMedia?.non_public_metrics?.playback_100_count;
@@ -97,7 +101,11 @@ function funnelCards(data) {
         ["Comments", tiktok?.metrics?.comments],
         ["Shares", tiktok?.metrics?.shares]
       ],
-      note: "Manually recorded — no working API access for this account yet"
+      note: tiktok?.source === "manual"
+        ? "Manual checkpoint while TikTok indexing catches up"
+        : tiktokPlatform?.source?.includes("manual")
+          ? "Provider data with a manual gap-fill for unindexed posts"
+          : "Profile and video metrics from the connected provider"
     }
   ];
   document.querySelector("#funnel-grid").innerHTML = cards.map(card => `
@@ -111,6 +119,7 @@ function funnelCards(data) {
 }
 
 function rowMetrics(platform, item) {
+  if (item.native_only) return {reach: 'Native capture available', consumption: 'Open analysis', engagement: 'Open analysis', conversion: 'Open analysis'};
   if (platform === "YouTube") {
     const analytics = item.analytics;
     return {
@@ -132,7 +141,7 @@ function rowMetrics(platform, item) {
   if (platform === "TikTok") {
     const m = item.metrics;
     return {
-      reach: m.views == null ? "— (manual, not yet recorded)" : `${number.format(m.views)} views`,
+      reach: m.views == null ? "—" : `${number.format(m.views)} views`,
       consumption: "—",
       engagement: [
         m.likes == null ? null : `${number.format(m.likes)} likes`,
@@ -150,32 +159,39 @@ function rowMetrics(platform, item) {
   };
 }
 
-function contentTable(data, selected = "All") {
-  const rows = data.platforms.flatMap(platform =>
-    platform.content.map(item => ({platform: platform.platform, ...item}))
-  ).filter(item => selected === "All" || item.platform === selected)
+function contentTable(data, selected = "All", openDetails) {
+  const rows = dashboardContentRows(data).filter(item => selected === "All" || item.platform === selected)
    .sort((a, b) => new Date(b.published_at || 0) - new Date(a.published_at || 0));
-  document.querySelector("#content-table").innerHTML = rows.map(item => {
+  const table = document.querySelector("#content-table");
+  table.innerHTML = rows.map((item, index) => {
     const metrics = rowMetrics(item.platform, item);
     return `<tr>
       <td><span class="platform-pill">${item.platform}</span></td>
       <td>${displayTime(item.published_at)}</td>
-      <td><a href="${item.url}" target="_blank" rel="noreferrer">${escapeHtml(item.title.slice(0, 110))}</a></td>
+      <td><button class="content-open" type="button" data-content-index="${index}" aria-label="View analysis: ${escapeHtml(item.title)}">${escapeHtml(item.title.slice(0, 110))}<span>View analysis ↗</span></button></td>
       <td>${metrics.reach}</td>
       <td>${metrics.consumption}</td>
       <td>${metrics.engagement}</td>
       <td>${metrics.conversion}</td>
     </tr>`;
   }).join("");
+  table.onclick = event => {
+    const button = event.target.closest('[data-content-index]');
+    if (!button) return;
+    const item = rows[Number(button.dataset.contentIndex)];
+    openDetails(item, rowMetrics(item.platform, item), button);
+  };
 }
 
 async function main() {
   const response = await fetch("/api/dashboard", {cache: "no-store"});
   const data = await response.json();
+  const openDetails = setupNativeInsights(data.native_insights || {records: [], errors: []});
   document.querySelector("#freshness").textContent = `Rendered ${displayTime(data.generated_at)}`;
   audienceCards(data);
+  setupChartDialog(data);
   funnelCards(data);
-  const names = ["All", ...data.platforms.filter(item => item.content.length).map(item => item.platform)];
+  const names = ["All", ...new Set(dashboardContentRows(data).map(item => item.platform))];
   const filters = document.querySelector("#filters");
   filters.innerHTML = names.map((name, index) => `<button class="${index === 0 ? "active" : ""}" data-platform="${name}">${name}</button>`).join("");
   filters.addEventListener("click", event => {
@@ -183,9 +199,9 @@ async function main() {
     if (!button) return;
     filters.querySelectorAll("button").forEach(item => item.classList.remove("active"));
     button.classList.add("active");
-    contentTable(data, button.dataset.platform);
+    contentTable(data, button.dataset.platform, openDetails);
   });
-  contentTable(data);
+  contentTable(data, "All", openDetails);
 }
 
 main().catch(error => {

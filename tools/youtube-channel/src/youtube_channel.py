@@ -514,7 +514,7 @@ def publishing_package(path: Path) -> dict[str, Any]:
         "tags": tags,
         "pinned_comment": publishing_section(
             document, "Pinned comment", prefer_fenced=True
-        ),
+        ) if re.search(r"^## Pinned comment\s*$", document, re.MULTILINE) else "",
     }
 
 
@@ -790,9 +790,9 @@ def command_package(args: argparse.Namespace) -> int:
         "\n".join(desired.get("tags", [])),
     )
 
-    comment_available = True
+    comment_available = bool(package["pinned_comment"])
     try:
-        comment_exists = channel_comment_exists(
+        comment_exists = bool(package["pinned_comment"]) and channel_comment_exists(
             services.youtube,
             channel_id=channel["id"],
             video_id=args.video_id,
@@ -809,13 +809,16 @@ def command_package(args: argparse.Namespace) -> int:
         comment_available = False
         comment_exists = False
     print("\nPinned-comment text:")
-    if not comment_available:
+    if not package["pinned_comment"]:
+        print("  no comment planned; comment actions skipped")
+    elif not comment_available:
         print("  unavailable while comments are disabled or the video is private")
     else:
         print("  already posted" if comment_exists else package["pinned_comment"])
 
     if not args.apply:
-        print("\nDry run only. Re-run with `--apply` to update metadata and post the comment.")
+        action = "update metadata and post the comment if missing" if package["pinned_comment"] else "update metadata only"
+        print(f"\nDry run only. Re-run with `--apply` to {action}.")
         return 0
 
     execute(
@@ -835,7 +838,7 @@ def command_package(args: argparse.Namespace) -> int:
         print(f"Comment posted: {comment_id}")
     if comment_available:
         print("Pinning is not exposed by the YouTube API; pin this comment in Studio.")
-    else:
+    elif package["pinned_comment"]:
         print("Post and pin the comment after comments become available.")
     return 0
 

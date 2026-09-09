@@ -1,0 +1,12 @@
+00:00 Introduction
+00:42 Add prediction targets
+01:12 Compute residuals
+01:38 Why residual sums fail
+02:28 Square the residuals
+03:11 Normalize batch loss
+04:14 Implement tensor mean
+06:15 Calculate MSE
+06:42 Keep mse_loss standalone
+07:14 Implement mse_loss
+08:00 Test the loss function
+09:40 Recap

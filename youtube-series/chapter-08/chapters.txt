@@ -1,0 +1,17 @@
+00:00 Introduction
+00:26 Shared tensor nodes
+01:58 Check shared copies
+02:53 Store gradients
+03:45 Record operation history
+06:27 Record sum and matmul
+07:40 Build topological order
+10:29 Start backward
+11:37 Reset and seed gradients
+12:25 Reverse traversal
+14:02 Save broadcast strides
+15:58 Write backward helper
+18:42 Apply local derivatives
+20:52 Addition and subtraction
+22:20 Multiplication rule
+23:06 Division rule
+24:46 Recap

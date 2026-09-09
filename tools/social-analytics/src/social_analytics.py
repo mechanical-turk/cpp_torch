@@ -4,7 +4,9 @@ import argparse
 import base64
 import getpass
 import hashlib
+from html.parser import HTMLParser
 import json
+import os
 import secrets
 import threading
 import time
@@ -49,6 +51,11 @@ TIKTOK_PRIVATE_DIR = (
 )
 TIKTOK_LATEST_PATH = TIKTOK_PRIVATE_DIR / "latest.json"
 TIKTOK_SNAPSHOTS_DIR = TIKTOK_PRIVATE_DIR / "snapshots"
+TIKTOK_PUBLIC_PRIVATE_DIR = (
+    REPOSITORY_ROOT / "youtube-series" / "analytics" / "private" / "tiktok-public"
+)
+TIKTOK_PUBLIC_LATEST_PATH = TIKTOK_PUBLIC_PRIVATE_DIR / "latest.json"
+TIKTOK_PUBLIC_SNAPSHOTS_DIR = TIKTOK_PUBLIC_PRIVATE_DIR / "snapshots"
 # TikTok's app console may reject a loopback redirect URI outright (unlike X,
 # which allows it for public clients). Try this first; if TikTok's console
 # won't accept it, register a redirect URI you do control instead and use
@@ -59,6 +66,12 @@ TIKTOK_VIDEO_FIELDS = (
     "id,create_time,share_url,video_description,duration,cover_image_url,"
     "view_count,like_count,comment_count,share_count"
 )
+GITHUB_REPOSITORY = "mechanical-turk/deep-learning-all-the-way-down"
+GITHUB_PRIVATE_DIR = (
+    REPOSITORY_ROOT / "youtube-series" / "analytics" / "private" / "github"
+)
+GITHUB_LATEST_PATH = GITHUB_PRIVATE_DIR / "latest.json"
+GITHUB_SNAPSHOTS_DIR = GITHUB_PRIVATE_DIR / "snapshots"
 
 
 def base64url(value: bytes) -> str:
@@ -75,6 +88,64 @@ def write_private_json(path: Path, value: dict[str, Any]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(value, indent=2) + "\n", encoding="utf-8")
     path.chmod(0o600)
+
+
+class TikTokProfileDataParser(HTMLParser):
+    def __init__(self) -> None:
+        super().__init__()
+        self.in_profile_data = False
+        self.profile_data: list[str] = []
+
+    def handle_starttag(
+        self, tag: str, attrs: list[tuple[str, str | None]]
+    ) -> None:
+        attributes = dict(attrs)
+        if tag == "script" and attributes.get("id") == (
+            "__UNIVERSAL_DATA_FOR_REHYDRATION__"
+        ):
+            self.in_profile_data = True
+
+    def handle_endtag(self, tag: str) -> None:
+        if tag == "script" and self.in_profile_data:
+            self.in_profile_data = False
+
+    def handle_data(self, data: str) -> None:
+        if self.in_profile_data:
+            self.profile_data.append(data)
+
+
+def parse_tiktok_profile(html: str, username: str) -> tuple[dict[str, Any], dict[str, Any]]:
+    parser = TikTokProfileDataParser()
+    parser.feed(html)
+    if not parser.profile_data:
+        raise RuntimeError("TikTok profile page did not contain embedded profile data")
+    payload = json.loads("".join(parser.profile_data))
+
+    def find_profile(value: Any) -> tuple[dict[str, Any], dict[str, Any]] | None:
+        if isinstance(value, dict):
+            user = value.get("user")
+            stats = value.get("stats")
+            if (
+                isinstance(user, dict)
+                and isinstance(stats, dict)
+                and str(user.get("uniqueId", "")).lower() == username.lower()
+            ):
+                return user, stats
+            for child in value.values():
+                found = find_profile(child)
+                if found is not None:
+                    return found
+        elif isinstance(value, list):
+            for child in value:
+                found = find_profile(child)
+                if found is not None:
+                    return found
+        return None
+
+    result = find_profile(payload)
+    if result is None:
+        raise RuntimeError(f"TikTok profile data did not contain @{username}")
+    return result
 
 
 def client_id() -> str:
@@ -210,6 +281,54 @@ def command_x_audience_sync(_args: argparse.Namespace) -> int:
     write_private_json(X_AUDIENCE_LATEST_PATH, snapshot)
     followers = account.get("public_metrics", {}).get("followers_count")
     print(f"Collected X follower count for @{account['username']}: {followers}")
+    return 0
+
+
+def command_github_stars_sync(_args: argparse.Namespace) -> int:
+    """Collect public repository stars and supporting repository metrics."""
+    headers = {
+        "Accept": "application/vnd.github+json",
+        "User-Agent": "dlatwd-social-analytics/0.1",
+        "X-GitHub-Api-Version": "2022-11-28",
+    }
+    token = os.environ.get("GITHUB_TOKEN")
+    if token:
+        headers["Authorization"] = f"Bearer {token}"
+    request = Request(
+        f"https://api.github.com/repos/{GITHUB_REPOSITORY}",
+        headers=headers,
+    )
+    try:
+        with urlopen(request, timeout=30) as response:
+            repository = json.load(response)
+    except HTTPError as error:
+        detail = error.read().decode("utf-8", errors="replace")
+        raise RuntimeError(
+            f"GitHub repository sync failed ({error.code}): {detail}"
+        ) from error
+
+    captured_at = int(time.time())
+    snapshot = {
+        "captured_at": captured_at,
+        "repository": {
+            "full_name": repository.get("full_name", GITHUB_REPOSITORY),
+            "html_url": repository.get(
+                "html_url", f"https://github.com/{GITHUB_REPOSITORY}"
+            ),
+            "stargazers_count": repository.get("stargazers_count"),
+            "forks_count": repository.get("forks_count"),
+            "subscribers_count": repository.get("subscribers_count"),
+            "open_issues_count": repository.get("open_issues_count"),
+        },
+    }
+    GITHUB_SNAPSHOTS_DIR.mkdir(parents=True, exist_ok=True)
+    timestamp = time.strftime("%Y-%m-%dT%H-%M-%SZ", time.gmtime(captured_at))
+    write_private_json(GITHUB_SNAPSHOTS_DIR / f"{timestamp}.json", snapshot)
+    write_private_json(GITHUB_LATEST_PATH, snapshot)
+    print(
+        f"Collected GitHub stars for {snapshot['repository']['full_name']}: "
+        f"{snapshot['repository']['stargazers_count']}"
+    )
     return 0
 
 
@@ -801,6 +920,51 @@ def command_tiktok_sync(_args: argparse.Namespace) -> int:
     return 0
 
 
+def command_tiktok_public_audience_sync(args: argparse.Namespace) -> int:
+    username = args.username.lstrip("@")
+    request = Request(
+        f"https://www.tiktok.com/@{username}",
+        headers={
+            "Accept": "text/html",
+            "User-Agent": (
+                "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
+                "AppleWebKit/537.36 Chrome/128.0 Safari/537.36"
+            ),
+        },
+    )
+    try:
+        with urlopen(request, timeout=30) as response:
+            html = response.read().decode("utf-8", errors="replace")
+    except HTTPError as error:
+        raise RuntimeError(
+            f"TikTok public profile sync failed with HTTP {error.code}"
+        ) from error
+
+    user, stats = parse_tiktok_profile(html, username)
+    captured_at = int(time.time())
+    snapshot = {
+        "captured_at": captured_at,
+        "account": {
+            "username": user.get("uniqueId", username),
+            "display_name": user.get("nickname"),
+            "url": f"https://www.tiktok.com/@{username}",
+            "follower_count": stats.get("followerCount"),
+            "following_count": stats.get("followingCount"),
+            "likes_count": stats.get("heartCount"),
+            "video_count": stats.get("videoCount"),
+        },
+    }
+    TIKTOK_PUBLIC_SNAPSHOTS_DIR.mkdir(parents=True, exist_ok=True)
+    timestamp = time.strftime("%Y-%m-%dT%H-%M-%SZ", time.gmtime(captured_at))
+    write_private_json(TIKTOK_PUBLIC_SNAPSHOTS_DIR / f"{timestamp}.json", snapshot)
+    write_private_json(TIKTOK_PUBLIC_LATEST_PATH, snapshot)
+    print(
+        f"Collected public TikTok follower count for @{username}: "
+        f"{snapshot['account']['follower_count']}"
+    )
+    return 0
+
+
 def parser() -> argparse.ArgumentParser:
     root = argparse.ArgumentParser(description="Local social analytics collector")
     commands = root.add_subparsers(required=True)
@@ -816,6 +980,10 @@ def parser() -> argparse.ArgumentParser:
         "x-sync", help="Explicitly collect series-era X posts and their metrics"
     )
     x_sync.set_defaults(handler=command_x_sync)
+    github_sync = commands.add_parser(
+        "github-stars-sync", help="Collect public repository star count"
+    )
+    github_sync.set_defaults(handler=command_github_stars_sync)
     x_reply = commands.add_parser(
         "x-reply", help="Preview or publish a reply from a UTF-8 text file"
     )
@@ -864,6 +1032,12 @@ def parser() -> argparse.ArgumentParser:
         "tiktok-sync", help="Collect owned TikTok videos and their stats"
     )
     tiktok_sync.set_defaults(handler=command_tiktok_sync)
+    tiktok_public_sync = commands.add_parser(
+        "tiktok-public-audience-sync",
+        help="Collect the public TikTok profile follower count",
+    )
+    tiktok_public_sync.add_argument("--username", default="mechaturka")
+    tiktok_public_sync.set_defaults(handler=command_tiktok_public_audience_sync)
     return root
 
 

@@ -28,7 +28,7 @@ This C++ Loop Can Never Finish
 ```text
 This reverse loop looks completely normal, right up until i hits zero.
 
-size_t is unsigned, so it can never go negative. Decrementing past zero wraps around to the largest value the type can hold, and i >= 0 stays true forever, because it always was. The exit condition can never fail.
+size_t is unsigned, so it can never go negative. Decrementing past zero wraps around to the largest value the type can hold, and i ≥ 0 stays true forever, because it always was. The exit condition can never fail.
 
 The fix: check before you decrement, not after.
 

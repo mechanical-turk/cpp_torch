@@ -1,4 +1,315 @@
-# Short 06 animation production log
+# Short 06 handoff: data layout, benchmark, and the unresolved hook
+
+September 5, 2026. Prepared for restarting the conversation in Claude.
+This is an internal handoff, not an approved script. Append future developments
+below rather than rewriting this account of the session.
+
+## Read this first
+
+We have a working C++ experiment with a substantial measured performance
+difference. We have not landed a hook and script the creator wants to record.
+The immediate failure is creative, not a failed benchmark or a published Short
+with poor analytics. There is no audience test of this Short in these records.
+
+The assistant spent too many rounds polishing diagrams, labels, and production
+instructions while failing the main requirement: sell a provocative idea to a
+cold viewer immediately. The latest rewrite made that problem worse by putting
+abstract setup before the performance claim.
+
+The creator's latest correction is the most important instruction for resuming:
+
+> The golden rule of hooks is that every word matters, and the important words
+> that carry the higher signal should be said before.
+
+Do not interpret “short hook” as merely a low total word count. The first words
+must already communicate something interesting. A sentence that becomes
+interesting at its end still wastes the opening.
+
+## Current state and where things live
+
+- Content repository: `/Users/keremkazan/Documents/Projects/Content HQ`.
+- This package: `youtube-series/shorts/short-06-data-layout/`. This is the
+  existing Short 06 folder; scripts and production notes stay here.
+- [script.md](script.md) contains the Round 10 rewrite, including the opening
+  the creator just rejected. Canonical file does not mean approved copy.
+- [Iteration index](iterations-2026-09-05/README.md): nine completed, checked
+  rounds out of a requested twenty sequential revisions of this same idea.
+- [Round 10](iterations-2026-09-05/round-10.md) was written and the canonical
+  script replaced. Its final verification and completion record were not
+  finished before feedback redirected the work. The index still says 9/20.
+  Do not claim twenty rounds or a final audit are complete.
+- [Chronological iteration log](../../../docs/logs/short-06-script-iterations-2026-09-05.md)
+  and [evidence register](iterations-2026-09-05/evidence.md) preserve detail.
+- Demonstration code: `aliases/01-screen-short-form` points to
+  `/Users/keremkazan/code`.
+- Runnable experiment: [data-layout](../../../aliases/01-screen-short-form/data-layout/LOOKUP-RESULTS.md).
+- Camera snippets: [scene_1.cpp](../../../aliases/01-screen-short-form/short-06-data-layout/scenes/scene_1.cpp)
+  and [scene_2.cpp](../../../aliases/01-screen-short-form/short-06-data-layout/scenes/scene_2.cpp).
+
+This handoff does not revise the script, run more iterations, refresh analytics,
+or approve recording or upload. Resume the creative discussion first.
+
+## What we are demonstrating
+
+A player has a score and fifteen historical scores. A loop only needs the
+current scores for a selected set of player IDs.
+
+When each score sits inside a full player record, successive scores are spaced
+apart by the histories. Separating the scores into their own array substantially
+improved the measured lookup batch. All player histories remain stored in a
+separate array. We change storage layout, not the requested answer or data.
+
+The camera-facing before:
+
+```cpp
+struct Player {
+  int score;
+  array<int, 15> history;
+};
+
+int total = 0;
+for (int id : ids)
+  total += players[id].score;
+```
+
+The camera-facing after:
+
+```cpp
+struct SplitPlayers {
+  vector<int> scores;
+  vector<array<int, 15>> histories;
+};
+
+int total = 0;
+for (int id : ids)
+  total += scores[id];
+```
+
+These are viewport fragments, not standalone programs. Setup and the binding
+for `scores` stay off-screen. The tested experiment lives separately.
+
+Two related tensions have informed the pitch:
+
+1. A field the loop does not read can still affect its performance.
+2. Keeping related fields together, a familiar design choice, can hurt this
+   score-only workload.
+
+The second can invite a real defense of maintainability and access to complete
+objects. Neither warrants claiming all structs are slow or all related data
+should always be separated.
+
+## What the technical work established
+
+We first built a sequential-scan comparison. Its normal optimized version
+showed a large gain, but the packed layout also gained SIMD. A scalar control
+existed. The creator did not want another demonstration dependent on disabling
+compiler optimizations after the criticism of Short 5.
+
+We therefore built an active-player ID lookup. Under normal `-O3`, inspection
+of the actual linked binary found scalar loads and arithmetic on both sides,
+without vectorization-disabling flags or pragmas. Both kernels use four scalar
+accumulators. This is the experiment the current Short must show.
+
+At 4,194,304 players and the same 1,048,576 active IDs:
+
+| ID order | Object layout, repeat median | Split layout, repeat median | Ratio |
+| --- | ---: | ---: | ---: |
+| Ordered | 4.355233 ms | 0.347342 ms | 12.54x |
+| Clustered | 4.867926 ms | 1.271375 ms | 3.83x |
+| Shuffled | 4.612306 ms | 1.272952 ms | 3.62x |
+
+The first ordered run gave 12.26x. The smallest workload changed little.
+These are existing measurements, not new measurements taken for this handoff.
+See [LOOKUP-RESULTS.md](../../../aliases/01-screen-short-form/data-layout/LOOKUP-RESULTS.md)
+for protocol, validation, assembly, and raw-data links.
+
+Essential boundaries:
+
+- Same player data, active IDs, query order, additions, and result per comparison.
+- Histories remain stored on both sides. No deleting data to make the test win.
+- Timing covers lookup batches in existing data. Allocation, conversion,
+  sorting, and validation are outside timing.
+- The roughly 12.5x result belongs to the displayed ordered workload and size.
+  It is not a universal layout speedup or a whole-game performance claim.
+- Unequal SIMD does not explain this particular compiled comparison.
+  Address generation and memory-system effects were not isolated. We collected
+  no hardware counters, so do not call the result a measured cache-miss reduction.
+- Do not put these timings over the earlier sequential-scan code.
+- A follow-up reading scores plus complete histories for the same selected IDs
+  has not been measured. Older full sequential scans do not answer that test.
+
+Keep decisive conditions legible with the evidence. Do not turn the spoken
+hook into a methodology disclaimer or narrate machine specifications.
+
+## What we learned from Short 5 and want to carry forward
+
+This evidence is about Instagram Short 5, not long-form retention or proof of
+what YouTube and TikTok will do. The source is the
+[final-media and retention analysis](../../analytics/reports/2026-09-02-short-05-instagram-retention-and-creative-analysis.md).
+
+- The 19.77-second Reel reached 104,182 plays at the report's checkpoint.
+  Its complete opening proposition took about 3.7 seconds. The screenshot
+  suggests roughly a third of viewers left by four seconds; it explicitly
+  shows 43% remaining at 19 seconds. Intermediate values are estimates.
+- The middle paired code changes with speech, arrows, circles, emphasized
+  captions, and hand gestures. Retention declined more gradually there.
+- `Inefficient loop?` provided a compact text hook. Yellow captions with teal
+  emphasis made important words stand out. Preserve the coordinated system;
+  do not claim an isolated causal effect for a sticker or color.
+- The measured result came before a genuine technical question and an
+  immediate cut. There was no request to follow.
+- A later Insights screenshot showed 155 profile visits, 74 follows,
+  86 comments, 134 shares, and 286 saves. These are a later capture, not a
+  perfectly synchronized funnel with the earlier play count. Follows divided
+  by profile visits is not a proven profile-to-follow conversion rate.
+- Compiler and optimization objections generated substantive discussion.
+  The creator believes that disagreement helped drive the breakout and wants
+  to design for that participation deliberately. The exact effect on ranking
+  and distribution is not measured.
+
+The creator explicitly rejected improving follower conversion by sacrificing
+discussion and reach. The outro should preserve an interesting question and
+make another concrete experiment feel worth returning for.
+
+## The creative contract
+
+The current [Short-form playbook](../../production/short-form-playbook.md) makes
+the top priority explicit: a thought-provoking hook and a strongly opinionated,
+controversial claim that evokes a reaction. Bland correctness is insufficient.
+
+- Sell the idea within the first second. Put the concrete subject, stakes, or
+  contradiction first. Basic words and short sentences; no abstract warm-up.
+- Challenge a familiar engineering choice viewers might defend. Know the
+  specific objection we expect, not merely “people might comment.”
+- Deliberately omit broader nuance. We do not need to preempt every compiler,
+  workload, architecture, or maintainability objection in twenty seconds.
+  Keep the central claim correct and the experiment honest. Do not provoke
+  by making deliberate mistakes or feigning ignorance.
+- First-frame code/image, spoken hook, readable caption, curiosity callout,
+  and red annotation must all reinforce one idea immediately.
+- Preserve selective yellow/teal caption emphasis, meaningful arrows/circles,
+  and hands or other interesting presenter movement throughout.
+- Start delivering immediately, then provide the complete measured payoff
+  before the ending. Do not pretend the winner is still hidden after showing
+  both timings.
+- End with a genuine adjacent question plus a specific next test, then cut.
+  The useful framing is “That's what I'm testing next.” No follow/like CTA,
+  withheld original answer, generic cliffhanger, or end card.
+- Final export must be strictly below 20 seconds. An 18-19-second script target
+  and word count are not runtime verification.
+- Use `>` for narration. Keep code compact: 14 preferred / 17 maximum visible
+  lines, short safe types, no unnecessary setup or qualifiers in camera snippets.
+- No em dash, corporate language, forced lowercase, or canned AI cadence such
+  as “It's not X, it's Y.” Do not add filler to sound conversational.
+- Public titles, captions, descriptions, filenames, and hashtags require the
+  [copy and SEO audit](../../production/platform-copy-playbook.md). Candidate
+  keywords are not an approved publishing package. Do not use `#shorts`.
+
+Follow current visual guidelines for layout rather than assuming Short 5's
+historic webcam position is the current template. No render or upload gate
+has been passed by this script exercise.
+
+## How the script iterations lost their way
+
+The initial hook was:
+
+> This unused field is slowing your loop.
+
+The body showed score spacing, moved histories to separate storage, revealed
+the faster lookup, and asked whether reading histories too would change the
+winner. The creator questioned whether scene 1 being slower than scene 2 was
+clear enough. That concern was valid, but reviews became dominated by visual
+bookkeeping.
+
+Rounds 1-9 repaired example values, identity continuity, layout labels, spacing
+brackets, caption timing, duplicated narration, result-to-question transitions,
+and an incorrect implication of multiple history lanes. Those improvements
+helped accuracy and production clarity. They did not establish a stronger hook
+or prove cold-viewer interest. None was an audience experiment.
+
+The creator repeatedly asked us to move faster. Excessive rereading, long
+production instructions, archive verification, and minor changes made the
+process slow without proportionate creative progress. A large iteration count
+became a distraction from the main requirement.
+
+When challenged about controversy, the assistant admitted the script had
+become a neutral tutorial. The creator reinforced the top-priority rule and
+asked for the script to be deleted and rewritten.
+
+Round 10 did challenge a design choice, but opened with:
+
+> Keeping related data together made this loop slower.
+
+The creator rejected it strongly. “Keeping related data together made this”
+spends six words before identifying the loop or performance cost. “Slower” is
+word eight. We corrected the argument while worsening its delivery order.
+
+### Latest chat proposal, not approved or written into script.md
+
+The assistant then suggested:
+
+> This struct is killing performance.
+>
+> We only need the scores. Why are we putting all this between them?
+
+Proposed frame: the Player struct already visible, with `history` circled.
+The creator has not accepted this replacement. Do not call it the winning
+hook, assume the continuation works, or treat it as a completed rewrite.
+
+### Current on-disk narration, preserved here as rejected working context
+
+> Keeping related data together made this loop slower.
+>
+> It only reads scores, but they're buried between player histories.
+>
+> I'd store scores together and keep the histories separate.
+>
+> The same lookups ran over twelve times faster.
+>
+> Would you put them back together if we read both? That's what I'm testing next.
+
+The full file includes a planned three-player diagram, preserved histories,
+matching lookup code, scoped result card, and a separate final-question frame.
+Those assets are directions, not evidence that viewers understand the edit.
+
+## Why we have not succeeded yet
+
+1. We optimized explanation before attention. A correct, tidy lesson does not
+   automatically give a scrolling viewer a reason to stay.
+2. We evaluated whole sentences instead of the first few words. The latest
+   rejected hook withheld its useful information until the end.
+3. We softened the stance during critique. We kept qualifying and clarifying
+   instead of preserving the deliberate tension around a familiar choice.
+4. We confused mechanical progress with creative progress. Label fixes and
+   checked archives did not answer whether the premise was compelling.
+5. We made the viewer carry too much setup: players, IDs, scores, histories,
+   layout names, and benchmark conditions. These may belong in the proof,
+   but need not all become prerequisites for understanding the opening.
+6. We have no cold-viewer test or approved delivery. More revisions cannot
+   justify claims of proven clarity, retention, or distribution success.
+
+## Best way to resume
+
+Start with the hook, not another full-script rewrite or benchmark rerun.
+Offer one strongest opening with its exact first-frame visual. Explain briefly
+which words carry the subject and consequence immediately and what belief it
+challenges. Do not give a long menu of near-identical alternatives.
+
+Judge whether the first few words alone sell something interesting. Then
+check whether the next sentence visibly advances the demonstration rather than
+rephrasing the hook. Preserve the useful technical work and invite a meaningful
+counterargument at the end.
+
+Once the creator accepts that opening, build one lean script around it. Keep
+the proof scoped and the outro genuinely open. Do not declare success based on
+word count, bookkeeping, or reaching twenty rounds. The unresolved job is an
+opening and delivery the creator actually wants to record.
+
+Do not change benchmark kernels or compiler controls to rescue a weak pitch.
+Preserve unrelated work and do not modify `.clangd`, `.clang-format`, or
+`.vscode/settings.json`. No publishing, new analytics, or new research is
+required merely to resume this handoff.
+
 
 ## September 5, 2026: Blender mechanical-assembly animation built
 

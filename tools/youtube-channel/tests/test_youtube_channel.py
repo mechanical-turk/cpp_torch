@@ -2,10 +2,16 @@ from __future__ import annotations
 
 import tempfile
 import unittest
+from argparse import Namespace
+from contextlib import redirect_stdout
+from io import StringIO
+from types import SimpleNamespace
+from unittest.mock import MagicMock, patch
 from pathlib import Path
 
 from youtube_channel import (
     analytics_start_date,
+    command_package,
     description_with_chapters,
     desired_video_snippet,
     publishing_package,
@@ -18,6 +24,35 @@ from youtube_channel import (
 
 
 class PublishingPackageTest(unittest.TestCase):
+    def test_comment_is_optional(self) -> None:
+        document = "## Final title\nTitle\n\n## YouTube description\nDescription\n\n## Suggested tags\nC++\n"
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "publishing.md"
+            path.write_text(document, encoding="utf-8")
+            self.assertEqual(publishing_package(path)["pinned_comment"], "")
+
+    def test_no_comment_package_skips_comment_actions(self) -> None:
+        package = {"title": "Title", "description": "Description", "tags": ["C++"], "pinned_comment": ""}
+        video = {"snippet": {"title": "Title", "description": "Description", "categoryId": "28"}}
+        for apply in (False, True):
+            with self.subTest(apply=apply), \
+                patch("youtube_channel.publishing_package", return_value=package), \
+                patch("youtube_channel.authorize"), \
+                patch("youtube_channel.build_services", return_value=SimpleNamespace(youtube=MagicMock())), \
+                patch("youtube_channel.channel_details", return_value={"id": "channel"}), \
+                patch("youtube_channel.owned_video", return_value=video), \
+                patch("youtube_channel.execute") as execute, \
+                patch("youtube_channel.channel_comment_exists") as inspect_comment, \
+                patch("youtube_channel.post_comment") as post_comment, \
+                redirect_stdout(StringIO()) as output:
+                self.assertEqual(command_package(Namespace(package="unused.md", video_id="video", apply=apply)), 0)
+                inspect_comment.assert_not_called()
+                post_comment.assert_not_called()
+                self.assertEqual(execute.call_count, int(apply))
+                self.assertIn("comment actions skipped", output.getvalue())
+                self.assertNotIn("pin this comment", output.getvalue())
+                self.assertNotIn("Post and pin", output.getvalue())
+
     def test_reads_fenced_platform_ready_sections(self) -> None:
         document = """\
 # Publishing

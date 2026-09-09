@@ -8,7 +8,9 @@ from social_analytics import (
     SCOPES,
     X_COLLECTION_START,
     base64url,
+    command_github_stars_sync,
     command_x_audience_sync,
+    parse_tiktok_profile,
     parser,
     pkce_pair,
 )
@@ -44,6 +46,24 @@ class XCommandTest(unittest.TestCase):
     def test_audience_sync_is_distinct_from_tweet_sync(self) -> None:
         args = parser().parse_args(["x-audience-sync"])
         self.assertIs(args.handler, command_x_audience_sync)
+
+
+class GitHubCommandTest(unittest.TestCase):
+    def test_github_stars_have_a_dedicated_sync_command(self) -> None:
+        args = parser().parse_args(["github-stars-sync"])
+        self.assertIs(args.handler, command_github_stars_sync)
+
+
+class TikTokPublicProfileTest(unittest.TestCase):
+    def test_extracts_the_requested_profile_from_embedded_data(self) -> None:
+        html = """
+        <script id="__UNIVERSAL_DATA_FOR_REHYDRATION__" type="application/json">
+        {"scope":{"userInfo":{"user":{"uniqueId":"mechaturka","nickname":"Kerem"},"stats":{"followerCount":19,"videoCount":3}}}}
+        </script>
+        """
+        user, stats = parse_tiktok_profile(html, "mechaturka")
+        self.assertEqual(user["nickname"], "Kerem")
+        self.assertEqual(stats["followerCount"], 19)
 
 
 if __name__ == "__main__":

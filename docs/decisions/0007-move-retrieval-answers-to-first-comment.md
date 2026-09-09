@@ -2,7 +2,11 @@
 
 ## Status
 
-Accepted.
+Superseded for new episodes by [Decision 0009](0009-retire-long-form-closing-qa.md)
+and the September 7, 2026 direction in the
+[long-form playbook](../../youtube-series/production/long-form-playbook.md):
+Episode 8 onward omits closing Q&A and the answer-comment requirement.
+The decision below is historical; preserve existing videos and comments.
 
 ## Context
 

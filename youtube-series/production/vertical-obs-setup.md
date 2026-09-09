@@ -7,8 +7,8 @@ Way Down*.
 
 - Profile: `Shorts 9x16`
 - Scene collection: `Shorts 9x16`
-- Base canvas: `1080x1920`
-- Output resolution: `1080x1920`
+- Base canvas: `2160x3840`
+- Output resolution: `2160x3840`
 - Frame rate: `30 fps`
 - Recording format: MKV, remuxed to MP4 after recording
 
@@ -16,11 +16,11 @@ The long-form profile and scene collection remain separate at `16:9`.
 
 ## Vertical region allocation
 
-- Webcam region: `1080 x 744`, positioned at `x = 0`, `y = 0`.
-- Visual-aid region: `1080 x 1176`, positioned at `x = 0`, `y = 744`.
-- Together these regions fill the complete `1080 x 1920` canvas with no gap or
+- Webcam region: `2160 x 1488`, positioned at `x = 0`, `y = 0`.
+- Visual-aid region: `2160 x 2352`, positioned at `x = 0`, `y = 1488`.
+- Together these regions fill the complete `2160 x 3840` canvas with no gap or
   overlap.
-- Visual-aid assets are authored at the native `1080 x 1176` region size and
+- Visual-aid assets are authored at the native `2160 x 2352` region size and
   occupy that region completely.
 
 ## Visual states

@@ -1,4 +1,4 @@
-.PHONY: analytics-sync youtube-auth youtube-reauthorize youtube-analytics-sync youtube-analytics-sync-full youtube-analytics-report youtube-captions-download youtube-video-chapters youtube-video-description-plain youtube-channel-test x-auth x-test x-audience-sync x-post-analytics-sync x-analytics-sync instagram-import-token instagram-test instagram-analytics-sync tiktok-auth tiktok-test tiktok-analytics-sync social-analytics-test analytics-dashboard dashboard-up dashboard-down
+.PHONY: analytics-sync youtube-auth youtube-reauthorize youtube-analytics-sync youtube-analytics-sync-full youtube-analytics-report youtube-captions-download youtube-video-chapters youtube-video-description-plain youtube-channel-test x-auth x-test x-audience-sync x-post-analytics-sync x-analytics-sync github-stars-sync instagram-import-token instagram-test instagram-analytics-sync tiktok-auth tiktok-test tiktok-analytics-sync tiktok-public-audience-sync social-analytics-test phyllo-sync phyllo-tiktok-sync phyllo-test analytics-dashboard dashboard-up dashboard-down
 
 DASHBOARD_PORT := 8765
 DASHBOARD_URL := http://127.0.0.1:$(DASHBOARD_PORT)/
@@ -56,6 +56,9 @@ x-analytics-sync:
 	@echo "Use 'make x-post-analytics-sync' only when tweet analytics were explicitly requested."
 	@exit 2
 
+github-stars-sync:
+	UV_CACHE_DIR=build/uv-cache uv run --project tools/social-analytics social-analytics github-stars-sync
+
 instagram-import-token:
 	UV_CACHE_DIR=build/uv-cache uv run --project tools/social-analytics social-analytics instagram-import-token
 
@@ -74,17 +77,28 @@ tiktok-test:
 tiktok-analytics-sync:
 	UV_CACHE_DIR=build/uv-cache uv run --project tools/social-analytics social-analytics tiktok-sync
 
+tiktok-public-audience-sync:
+	UV_CACHE_DIR=build/uv-cache uv run --project tools/social-analytics social-analytics tiktok-public-audience-sync
+
 social-analytics-test:
 	PYTHONPATH=tools/social-analytics/src python3 -m unittest discover -s tools/social-analytics/tests -v
 
+# Experimental unified pull through Phyllo. This remains separate from the
+# dashboard and routine analytics sync until its coverage proves useful.
+phyllo-sync:
+	UV_CACHE_DIR=build/uv-cache uv run --project tools/phyllo-analytics phyllo-analytics sync
+
+phyllo-tiktok-sync:
+	UV_CACHE_DIR=build/uv-cache uv run --project tools/phyllo-analytics phyllo-analytics sync --platform tiktok
+
+phyllo-test:
+	PYTHONPATH=tools/phyllo-analytics/src python3 -m unittest discover -s tools/phyllo-analytics/tests -v
+
 # Default dashboard refresh. X is follower-only by design; this target never
-# requests tweet-level X metadata.
-analytics-sync: youtube-analytics-sync x-audience-sync instagram-analytics-sync
-	@if [ -f "$$HOME/.config/dlatwd/tiktok-analytics/token.json" ]; then \
-		$(MAKE) tiktok-analytics-sync; \
-	else \
-		echo "TikTok sync skipped: authorization is not configured."; \
-	fi
+# requests tweet-level X metadata. TikTok content uses Phyllo while its follower
+# count uses the freshest timestamped provider or public-profile observation.
+# GitHub stars use the public repository API.
+analytics-sync: youtube-analytics-sync x-audience-sync instagram-analytics-sync phyllo-tiktok-sync tiktok-public-audience-sync github-stars-sync
 
 analytics-dashboard:
 	python3 tools/analytics-dashboard/dashboard.py

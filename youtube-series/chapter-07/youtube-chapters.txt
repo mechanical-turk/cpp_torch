@@ -1,0 +1,12 @@
+00:00 Introduction
+01:47 Define graph nodes
+03:50 Build Value handles
+04:33 Overload arithmetic
+06:57 Plan backpropagation
+08:20 Build topological order
+10:11 Implement backward()
+12:37 Apply derivative rules
+15:26 Test scalar backprop
+17:18 Build the model loss
+19:38 Verify model gradients
+22:38 Recap

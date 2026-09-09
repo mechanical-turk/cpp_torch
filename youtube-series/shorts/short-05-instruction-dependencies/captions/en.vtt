@@ -1,0 +1,44 @@
+1
+00:00:00,080 --> 00:00:04,000
+How much faster can you make this loop
+
+2
+00:00:01,760 --> 00:00:05,680
+with only a single extra variable? Right
+
+3
+00:00:04,000 --> 00:00:08,160
+now, every addition has to wait for the
+
+4
+00:00:05,680 --> 00:00:09,920
+one before it. Add B, split the values
+
+5
+00:00:08,160 --> 00:00:11,840
+between them, and now the processor has
+
+6
+00:00:09,920 --> 00:00:14,080
+two independent sums to work on. On my
+
+7
+00:00:11,840 --> 00:00:16,240
+machine, that gave me almost a 40% speed
+
+8
+00:00:14,080 --> 00:00:17,920
+up. Two is faster. Four is even faster
+
+9
+00:00:16,240 --> 00:00:19,359
+than two. So, what do you think is going
+
+10
+00:00:17,920 --> 00:00:21,600
+on here? What is the CPU doing
+
+11
+00:00:19,359 --> 00:00:21,600
+differently?
+

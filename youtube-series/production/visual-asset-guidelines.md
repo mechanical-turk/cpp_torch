@@ -20,13 +20,29 @@ for the selected Retro Sunset clay system, reusable assets and pending placement
   the singleton contains one element; the empty vector contains none.
 - Use brackets to communicate the vector container. A scalar value uses the
   same element glyph without surrounding brackets.
+- Number nodes and operation nodes must use visibly different shapes.
+- Every edge must terminate at the value or operation it actually describes.
+  Never let a backward parameter edge appear to terminate at an unrelated
+  operation.
+- Include the upstream values and parameters needed to understand the promise.
+  Do not begin at a derived result when the lesson is about how its inputs
+  produced it.
+- Every input in a computation diagram needs its own visible outbound edge.
+  When paths merge and split, show both junctions clearly.
+- A semantic accent color applies to the complete object: frame, label, value,
+  glow, and reflection. Do not place an orange or green result inside an
+  unrelated blue frame unless the mixed encoding has a defined meaning.
+- Keep reflection and glow restrained and consistent across blue, orange, green,
+  and C++ elements. Effects must support the structure rather than dominate it.
+- In a matched visual sequence, keep the layout stable and change only the
+  structure required to express the new idea.
 
 ## Overlay construction
 
-- The current `1080 x 1920` vertical layout assigns the top `1080 x 744` region
-  to the webcam (`y = 0` through `743`) and the entire remaining `1080 x 1176`
-  region to the visual aid (`y = 744` through `1919`).
-- Generate final lower-screen visual assets at exactly `1080 x 1176` unless
+- The 4K vertical layout used after Episode 6 assigns the top `2160 x 1488`
+  region to the webcam (`y = 0` through `1487`) and the entire remaining
+  `2160 x 2352` region to the visual aid (`y = 1488` through `3839`).
+- Generate final lower-screen visual assets at exactly `2160 x 2352` unless
   that layout is explicitly revised. The asset must occupy the complete
   remaining vertical region, not float inside a smaller source box.
 - Design the content for that taller region rather than padding a wide card.
@@ -47,7 +63,7 @@ for the selected Retro Sunset clay system, reusable assets and pending placement
 
 ## Platform interface safety
 
-- A `1080 x 1920` canvas is not automatically portable across YouTube Shorts,
+- A `2160 x 3840` canvas is not automatically portable across YouTube Shorts,
   TikTok, and Instagram Reels. Each platform overlays different controls,
   captions, account metadata, and navigation on the video.
 - Record and export one universal vertical master whose essential content fits
@@ -63,7 +79,7 @@ for the selected Retro Sunset clay system, reusable assets and pending placement
 
 ## Platform-specific thumbnails and covers
 
-The universal `1080 x 1920` video master does not imply a universal thumbnail.
+The universal `2160 x 3840` video master does not imply a universal thumbnail.
 Generate and inspect a separate cover composition for every platform surface
 that accepts one. Preserve the same concept and brand grammar, but reflow the
 objects and typography for the destination ratio. Never obtain one platform's
@@ -71,18 +87,24 @@ cover by blindly resizing or cropping another platform's file.
 
 - **YouTube long-form:** `16:9`. Use `1280 x 720` at minimum for the current
   workflow; use a larger `16:9` source when available.
-- **YouTube Shorts:** `9:16`. Default to `1080 x 1920`; a larger `9:16` source
-  may be used. Keep the headline and primary visual near the center because
-  YouTube can present vertical content differently across discovery surfaces.
+- **YouTube Shorts:** `9:16`. After Episode 6, use `2160 x 3840` for the video
+  master and its full-frame visual sources. Keep the headline and primary
+  visual near the center because YouTube can present vertical content
+  differently across discovery surfaces.
 - **Instagram Reels:** compose to Instagram's recommended `420:654` (`1:1.55`)
   cover ratio, but export a higher-resolution equivalent for crisp technical
   graphics. The current default is `1080 x 1682`, not a literal `420 x 654`
-  raster. Instagram's desktop profile grid applies a centered `3:4` crop. On a
-  `1080 x 1682` cover, treat the middle `1080 x 1440` region as the grid-safe
-  area; approximately 121 pixels at both the top and bottom may disappear. All
-  headlines, complete diagrams, results, and brand marks must fit inside that
-  safe area. Do not reuse the YouTube Shorts `9:16` thumbnail unchanged. Inspect
-  the actual profile-grid crop in the upload preview before publishing. For the
+  raster. Do not confuse the recommended cover ratio with a guaranteed display
+  crop. Reel covers are cropped differently across the Reels surface, feed,
+  profile grid, devices, and account rollouts. Use the centered `1080 x 1080`
+  square, from approximately `y = 301` through `y = 1380`, as the conservative
+  cross-surface safe area. Everything outside it is nonessential background.
+  All headlines, complete diagrams, results, and brand marks must fit inside
+  that square. Do not reuse the YouTube Shorts `9:16` thumbnail unchanged.
+  Inspect the composer's actual `Profile grid` crop before publishing and treat
+  that preview as authoritative. A local crop simulation does not pass the
+  release gate. If the real composer preview has not been inspected, the cover
+  remains unverified. For the
   current series treatment, do not place the creator's face on Instagram Reel
   covers unless the learner explicitly asks to restore it; lead with the
   technical visual instead.
@@ -97,6 +119,31 @@ Every asset handoff must name both the platform and the intended surface in its
 filename, for example `thumbnail-youtube-shorts.png` and
 `cover-instagram-reel.png`. Before publication, verify the real composer or
 Studio preview rather than approving the source image in isolation.
+
+## Upload media filenames
+
+Never upload a master under an internal sequence name such as `short-05.mp4`,
+`episode-07-final.mov`, or `Timeline 01.mp4`. Before uploading to any platform,
+create a descriptive lowercase kebab-case filename that identifies:
+
+- the language or technical domain;
+- the central concept or problem; and
+- the content type or episode number when useful.
+
+Examples:
+
+```text
+cpp-cache-locality-row-column-scan-short.mp4
+cpp-autograd-chain-rule-computation-graph-episode-07.mp4
+cpp-unsigned-integer-overflow-check-short.mp4
+```
+
+Use the same descriptive basename across platforms when they receive the same
+master, unless a platform-specific edit materially changes the content. Keep
+the filename concise, accurate, and human-readable. Do not add unrelated search
+terms or assume the filename itself guarantees discoverability. Every
+`publishing.md` must state the exact upload filename for each selected platform,
+and the release gate must verify the real file before publication.
 
 ## Alignment and typography
 
@@ -126,7 +173,7 @@ Studio preview rather than approving the source image in isolation.
    a raster image generator to independently redraw elements that must match.
 4. Verify object dimensions and alignment, not merely visual similarity.
 5. Verify the semantic reading of containers, empty states, and values.
-6. Export an opaque `1080 x 1176` rectangular PNG for the current OBS layout
+6. Export an opaque `2160 x 2352` rectangular PNG for the current OBS layout
    unless different dimensions or transparency were explicitly chosen for a
    concrete reason.
 7. Inspect the final file at its intended phone-size scale before recording.
