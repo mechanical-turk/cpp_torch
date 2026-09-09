@@ -599,6 +599,9 @@ sample exists.
 
 ## Video visual assets
 
+- For Blender and animation work, read
+  `youtube-series/production/animations-playbook.md` for the selected clay style,
+  reusable elements, placement rules and numbered scene export workflow.
 - Follow `youtube-series/production/visual-asset-guidelines.md` for generated
   diagrams and OBS overlays.
 - Treat the video master and the platform cover files as different assets. One

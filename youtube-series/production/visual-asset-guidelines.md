@@ -3,6 +3,9 @@
 These rules govern generated diagrams and lower-screen overlays for *Deep
 Learning, All the Way Down*.
 
+For native Blender animations, also read the [Animations Playbook](animations-playbook.md)
+for the selected Retro Sunset clay system, reusable assets and pending placement corrections.
+
 ## Semantic consistency
 
 - Related concepts must use one consistent visual grammar. Do not vary shape,

@@ -11,3 +11,37 @@ __pycache__/
 
 # Private YouTube channel analytics
 /youtube-series/analytics/private/
+
+# Generated Blender scenes, renders, previews, audio, and reports
+/youtube-series/**/assets/blender*/**/*.png
+/youtube-series/**/assets/blender*/**/*.jpg
+/youtube-series/**/assets/blender*/**/*.jpeg
+/youtube-series/**/assets/blender*/**/*.exr
+/youtube-series/**/assets/blender*/**/*.blend
+/youtube-series/**/assets/blender*/**/*.mp4
+/youtube-series/**/assets/blender*/**/*.mov
+/youtube-series/**/assets/blender*/**/*.wav
+/youtube-series/**/assets/blender*/**/*.json
+
+# Blender runtime logs, automatic backups, and temporary outputs
+/youtube-series/**/assets/blender*/**/*.log
+/youtube-series/**/assets/blender*/**/*.blend[0-9]*
+/youtube-series/**/assets/blender*/**/*.tmp
+/youtube-series/**/assets/blender*/**/*.part
+
+# Disposable render workspaces and archived iteration copies
+/youtube-series/**/assets/blender*/**/_render/
+/youtube-series/**/assets/blender*/**/archive/
+
+# Contact sheets and extracted frames from the Short 06 Blender reviews
+/youtube-series/shorts/short-06-data-layout/assets/final-review-*/
+
+# Resolve runtime diagnostics from animation assembly
+/youtube-series/**/assets/resolve*/**/*-hang-sample.txt
+
+# Generated animation look-development images (keep prompts and source scripts)
+/youtube-series/shorts/short-06-data-layout/assets/retro-sunset-*/**/*.png
+/youtube-series/shorts/short-07-false-sharing/assets/clay-concept/*.png
+
+# Copied benchmark/script snapshots; canonical episode sources stay separate
+/youtube-series/shorts/short-07-false-sharing/assets/blender-clay-scenes/sources/
