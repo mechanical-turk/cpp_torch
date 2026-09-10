@@ -49,3 +49,6 @@ __pycache__/
 
 # Copied benchmark/script snapshots; canonical episode sources stay separate
 /youtube-series/shorts/short-07-false-sharing/assets/blender-clay-scenes/sources/
+
+# Local opencode agent config
+/opencode.json
