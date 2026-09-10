@@ -1,13 +1,11 @@
 # Short Upload Gate
 
-Required for new Shorts, Reels, and TikToks prepared from September 5, 2026
+Applies to new Shorts, Reels, and TikToks prepared from September 5, 2026
 onward, on every selected platform. Complete this gate before approving an
-upload or marking its publishing package ready. Existing published videos are
-not retroactively failed by this new rule.
-
-Review the exact final export. A script, cover image, editing timeline, or
-planned effect cannot establish a pass. This gate supplements the existing
-copy, technical accuracy, resolution, and platform crop checks.
+upload or marking its publishing package ready. Review the exact final export —
+a script, cover image, editing timeline, or planned effect cannot establish a
+pass. This gate supplements the existing copy, technical-accuracy, resolution,
+and platform-crop checks.
 
 ## Four required checks
 
@@ -24,19 +22,18 @@ copy, technical accuracy, resolution, and platform crop checks.
    An opening-only sticker does not pass. Each annotation needs a clear target
    and must preserve readability.
 3. **The complete export is dense, clear, and substantive.** Target 25-30
-   seconds, following S14 in the short-form playbook. There is no arbitrary word
-   cap or strict under-20-second cutoff. Measure the actual duration with
-   `ffprobe`, including all tails, and review the paced delivery and explanation.
-   Fail a rushed, hollow, repetitive, or unnecessarily padded edit. An export
-   outside the target requires a recorded pacing rationale, not automatic
-   rejection based only on seconds. Do not pad a complete shorter lesson.
+   seconds, following S14 in the short-form playbook. Measure the actual
+   duration with `ffprobe`, including all tails, and review the paced delivery
+   and explanation. Fail a rushed, hollow, repetitive, or unnecessarily padded
+   edit. An export outside the target requires a recorded pacing rationale, not
+   automatic rejection; do not pad a complete shorter lesson.
 4. **The presenter keeps the video visually active.** Review motion across the
    entire export, using playback or sufficiently dense sequential frames.
    Purposeful hand gestures and interesting presenter movement must recur
    throughout and support the explanation. A static talking head with only an
    opening gesture does not pass. Annotations alone cannot satisfy this check.
 
-## Benchmark verification prerequisite
+## Benchmark verification prerequisite (blocking)
 
 For a performance Short, the benchmark/production owner must verify the measured
 times, ratios, comparison conditions, and attribution before upload approval.
@@ -45,7 +42,7 @@ that narration, captions, and visuals agree. Missing or unsupported measurements
 hold release, not script approval. Script writers are responsible for accurate
 explanations and a clear evidence handoff, not running or verifying benchmarks.
 
-## Audio editing prerequisite
+## Audio editing prerequisite (blocking)
 
 Also complete the
 [CapCut audio editing checklist](../../youtube-series/production/short-form-playbook.md#capcut-audio-editing-checklist).
