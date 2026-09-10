@@ -106,7 +106,7 @@ cover by blindly resizing or cropping another platform's file.
   release gate. If the real composer preview has not been inspected, the cover
   remains unverified. For the
   current series treatment, do not place the creator's face on Instagram Reel
-  covers unless the learner explicitly asks to restore it; lead with the
+  covers unless the creator explicitly asks to restore it; lead with the
   technical visual instead.
 - **TikTok:** use the `9:16` master and deliberately select or embed a clean
   cover frame. Inspect its profile-grid preview and keep the primary subject and

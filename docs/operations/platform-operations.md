@@ -36,7 +36,7 @@
 
 - Use `make instagram-analytics-sync` for owned profile and Reel insights.
 - Keep credentials outside the repository and raw snapshots gitignored.
-- Treat the integration as read-only unless the learner explicitly expands it.
+- Treat the integration as read-only unless the creator explicitly expands it.
 - Do not put raw external URLs in Reel captions or first comments. Use the
   profile Links field or a Story sticker. A first comment should add technical
   value or invite a real response.
@@ -47,7 +47,7 @@
 - Keep credentials outside the repository and raw snapshots gitignored.
 - If the API is unavailable, label manual fallback values as manual and retain
   `null` as unknown.
-- Treat the integration as read-only unless the learner explicitly expands it.
+- Treat the integration as read-only unless the creator explicitly expands it.
 
 ## LinkedIn
 

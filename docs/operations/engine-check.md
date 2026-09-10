@@ -6,7 +6,7 @@ This is the procedure for `engine-check` and `run engine check`.
 
 1. Run `make analytics-sync` before forming an opinion.
 2. The default refresh may collect X account and follower data, but never
-   tweet-level metadata. Run `make x-post-analytics-sync` only when the learner
+   tweet-level metadata. Run `make x-post-analytics-sync` only when the creator
    explicitly requests X post performance.
 3. Read:
    - `docs/distribution-timeline.md`

@@ -1,6 +1,6 @@
 # Native performance analysis
 
-Required whenever the learner requests content performance analysis, including
+Required whenever the creator requests content performance analysis, including
 informal questions about why a post worked or stalled. This supplements API
 data; an API refresh alone does not complete the analysis.
 

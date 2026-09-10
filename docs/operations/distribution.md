@@ -15,7 +15,7 @@
 - Keep planned actions separate from completed events. Reschedule or cancel
   stale plans explicitly.
 - Do not clutter the ledger with internal tooling, OAuth work, asset creation,
-  or routine document maintenance unless it creates a learner action or blocker.
+  or routine document maintenance unless it creates a creator action or blocker.
 
 ## Cross-platform rules
 

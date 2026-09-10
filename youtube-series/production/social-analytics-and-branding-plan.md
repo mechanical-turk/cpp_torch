@@ -30,7 +30,7 @@ owned-post engagements, link clicks, and profile clicks.
 
 The permanent X collection boundary is **2026-08-13 at 9:10 AM Eastern Time**
 (`2026-08-13T13:10:00Z`). Never move it backward or retrieve the account's full
-history without explicit learner approval. This protects both privacy and API
+history without explicit creator approval. This protects both privacy and API
 credits.
 
 Next gate: inspect the Developer Console's actual charge for the bounded sync,
@@ -44,7 +44,7 @@ the `r_member_postAnalytics` permission. The development-tier application
 requires a verified organization, business email, website/domain, and associated
 LinkedIn Page. Approval may take time and is not guaranteed.
 
-Next gate: determine whether the learner already has the required organization,
+Next gate: determine whether the creator already has the required organization,
 domain email, website, and LinkedIn Page. If so, create a new LinkedIn developer
 application and apply for Community Management Development Tier access. If not,
 do not create placeholder business infrastructure merely to unlock analytics;

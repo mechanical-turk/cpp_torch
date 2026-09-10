@@ -26,7 +26,7 @@ evidence to improve delivery without diluting the subject.
 - After every external write, state exactly what changed, provide the direct
   public URL, and update the distribution timeline.
 - Keep secrets and raw private analytics outside tracked files.
-- If browser control cannot connect, ask the learner to open Chrome and the
+- If browser control cannot connect, ask the creator to open Chrome and the
   Codex app, then retry immediately. Do not spend repeated diagnostic cycles
   on a closed browser or app.
 

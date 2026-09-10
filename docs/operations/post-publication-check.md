@@ -1,6 +1,6 @@
 # Post-Publication Check
 
-Run this automatically whenever the learner reports, or the repository shows,
+Run this automatically whenever the creator reports, or the repository shows,
 that new content was published. Do not wait for `engine-check`.
 
 Use the live public post as the authority. Verify, as applicable:

@@ -4,7 +4,7 @@
 
 Accepted September 7, 2026. Applies from Episode 8 onward.
 Supersedes the closing-question and answer-comment requirements in
-[Decision 0007](0007-move-retrieval-answers-to-first-comment.md) and that portion
+[Decision 0010](0010-move-retrieval-answers-to-first-comment.md) and that portion
 of [Decision 0006](0006-record-shorts-separately.md).
 
 ## Context and decision

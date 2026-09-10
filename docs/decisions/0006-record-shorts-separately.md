@@ -30,7 +30,7 @@ The long-form learning loop is: concise opening, brief previous-episode recap
 and current destination, concept-to-code-to-verification, review, concise next
 setup, and retrieval questions as the final spoken content. Answers to those
 questions appear in the same episode's first pinned comment under
-[Decision 0007](0007-move-retrieval-answers-to-first-comment.md).
+[Decision 0010](0010-move-retrieval-answers-to-first-comment.md).
 
 ## Consequences
 
