@@ -155,3 +155,31 @@ file hashes and source-script consistency passed. Files are in
 `assets/blender-clay-scenes/final-v9/`; reports are `export-verification.json`
 and `final-verification.json`. This is an automated production completion
 record; preflight visual review is documented above.
+
+
+## 2026-09-10 — Animation playbook consolidated as the durable reference
+
+Creator requested that every animation decision be retained for future work.
+Reworked `youtube-series/production/animations-playbook.md` around the completed
+Short 07 final-v9 and approved hand-sculpted study. The active document now
+records exact clay geometry/shader settings, native camera/lights, palette,
+2160 × 2300 top placement, proportional full-master template check, Menlo 100
+inline alignment, visible code transition, minimal timings plus multiplier,
+causal weighted handoffs, merging packets, independent 40-frame bubbles,
+canonical duplication, numbered scene exports, direct episode-assets rendering,
+verified sample/cache/composite settings, Blender recovery, verification and
+scoped Git artifact handling.
+
+Separated active defaults from Short 06's historical offsets, older fonts,
+15-second ending, old rendering profile and superseded handoff timing. Preserved
+the entire previous playbook body unchanged in
+`youtube-series/production/animations-playbook-history-2026-09-09.md`, with an
+explicit historical-precedence notice and a link back to the active playbook.
+The existing AGENTS routing already points to the playbook and was left intact.
+
+Verified native camera/light/color-management values by opening final-v9 without
+rendering. All active-playbook local links resolve; the archived body matches
+the prior tracked playbook exactly. Pipeline and final-verification reports
+confirm all six clips and six previews completed September 9 at 19:28:13 EDT.
+No animation was rerendered and no Git commit or push was performed for this
+knowledge-base update.
