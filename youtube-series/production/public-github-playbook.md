@@ -14,17 +14,22 @@ Workspace alias: `aliases/02-screen-long-form`
   reached in the recording.
 - Git history is the authoritative code timeline. Do not replace it with the
   cleaner state imagined by a script.
-- Keep the README synchronized with the latest public episode, actual
-  capabilities, file layout, tested build commands, episode and commit links,
-  and next milestone.
+- For a routine episode README update, change only the episode table and add
+  the new episode summary. Include its actual source checkpoint hash and video
+  link, then retain a row for the next episode marked `*(Work in progress)*`.
+- Match the new summary to the existing summaries in length, paragraph count,
+  and link format. Do not expand it into a separate feature or status guide.
+- Preserve existing titles, headings, subheadings, wording, ordering, and
+  unrelated sections. Do not use an episode update as a general README rewrite.
+  Broader changes require a separate user request.
 - Do not claim future work, a production framework, a PyTorch replacement, or
   completed GPU support.
 - Compile and run every public entry point after release-facing code or README
   changes.
 - Confirm `HEAD` is pushed to `origin/main`, generated binaries are ignored, and
   the tree contains no accidental binaries or secrets.
-- When layout changes, update layout, build commands, capabilities, episode
-  table, and next milestone together.
+- When the user requests a repository-layout or build change, update only the
+  README sections directly affected by that change.
 - Apply `platform-copy-playbook.md` to README and repository social copy. Use
   accurate C++, machine learning, deep learning, and systems terms naturally.
 

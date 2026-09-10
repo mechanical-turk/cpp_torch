@@ -12,7 +12,11 @@ same visual family, scene structure, reusable objects and production discipline.
    own general semantic consistency, overlay format and master-resolution rules;
    this document supplies the Blender implementation and selected art direction.
 2. Read the **pending placement correction below before copying any scene**.
-3. Open the [current editable animation](../shorts/short-06-data-layout/assets/blender-clay-animation/cpp-data-layout-clay-animation.blend)
+3. For the latest approved surface and sculpture treatment, open the
+   [hand-sculpted clay reference](../shorts/short-07-false-sharing/assets/blender-clay-scenes/extreme-clay-study-v2/README.md).
+   Its native Blender scene establishes the stronger clay aesthetic selected on
+   September 9. Preserve the target episode's approved composition and motion.
+   For the original component system, open the [current editable animation](../shorts/short-06-data-layout/assets/blender-clay-animation/cpp-data-layout-clay-animation.blend)
    and inspect its [result still](../shorts/short-06-data-layout/assets/blender-clay-animation/stills/06-final-result.png).
    These contain the corrected repeated geometry, actual materials, camera and
    light rig. Reuse the native assets; do not reconstruct their appearance from
@@ -279,6 +283,37 @@ data invariants, **not fixed contents of every future animation**. New subjects
 must supply their own labels, counts, relationships and measured results.
 
 ## Materials and colors
+
+### Approved sculpted-clay upgrade
+
+The creator selected the September 9 [native hand-sculpted study](../shorts/short-07-false-sharing/assets/blender-clay-scenes/extreme-clay-study-v2/README.md)
+as the continuing aesthetic. Use its actual Blender geometry, shader nodes and
+light rig. The older material table below describes the original Short 06
+baseline; this approved sculpted treatment supersedes its smoother finish.
+
+- Build thick hand-rolled rims with broad, irregular thumb compression and a few
+  soft physical folds. Sculpture must affect silhouette and shading, rather than
+  relying only on a surface bump map.
+- Reuse one sculpted master mesh per family with linked duplicates and common
+  modifiers. Handmade geometry is not permission to change peer dimensions.
+- Use nonperiodic worked-clay smears, fine grain and restrained pigment variation;
+  matte roughness around 0.68–0.84, no clear coat, restrained specular and shallow
+  subsurface scattering preserve crisp studio definition.
+- Use softly beveled, raised physical lettering. Keep code and results as sharp,
+  unlit native glyphs with the approved syntax colors and safe-zone placement.
+- Retain warm directional key, cool edge separation and restrained fill. For the
+  current native scene, the approved key is 1650 W / size 2.2, edge strip 780 W /
+  size 1.1, fill 140 W. Copy the rig with its scene scale rather than applying
+  those wattages blindly to unrelated geometry.
+- When animated ownership colors feed a pigment ramp, animate both ramp colors
+  with the ownership state. Keying only the disconnected Principled Base Color
+  input would leave the visible material frozen.
+
+
+Handmade detail must read as physical clay. Concentric or radial-wave shader
+marks used as fingerprints were rejected because they looked like rendering
+glitches. Prefer broad irregular sculpted presses and nonperiodic surface
+smears; inspect these details at native resolution and phone size.
 
 These are the implemented reference settings, not flat sampled display colors.
 Hex colors are converted from sRGB to linear before use in Blender nodes.

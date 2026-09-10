@@ -451,3 +451,37 @@ Rotate among:
 - Public Episode 8 source/README synchronization, full audiovisual review
   and social composer previews remain incomplete. No code was committed,
   announcement scheduled, or additional publication created.
+
+
+## September 10, 2026: Episode 8 public README reconciled
+
+- Updated the public long-form README with Episode 8's watch link, its tensor
+  autograd and arithmetic backward scope, and the planned follow-up covering
+  sum/matmul backward, gradient checks, and linear regression training.
+- Clearly separated published video coverage from the source currently on
+  main. Episode 8's source checkpoint remains pending; no recording code or
+  editor settings were committed or changed by this README update.
+- Published README-only commit
+  [94abd59](https://github.com/mechanical-turk/deep-learning-all-the-way-down/commit/94abd59d52aaedc8747b5f9b1871a29e3187fbdd)
+  to main and verified the remote reference. Both published C++ entry points
+  compiled with Clang C++23 and passed their existing assertions.
+- [Public README](https://github.com/mechanical-turk/deep-learning-all-the-way-down#readme).
+
+## September 10, 2026: Episode 8 README correction and source checkpoint
+
+- Supersedes the preceding README update: reverted the broad wording and
+  heading changes from 94abd59 in
+  [d879c23](https://github.com/mechanical-turk/deep-learning-all-the-way-down/commit/d879c23).
+- Preserved the recorded main.cpp without edits in Episode 8 checkpoint
+  [7021cfe](https://github.com/mechanical-turk/deep-learning-all-the-way-down/commit/7021cfe).
+  Both C++ entry points and 48 finite-difference comparisons passed under
+  ASan/UBSan. The broader regression harness exposed an existing empty-tensor
+  broadcasting failure; no off-camera source fix was applied.
+- Published the minimal README correction in
+  [f24101e](https://github.com/mechanical-turk/deep-learning-all-the-way-down/commit/f24101e):
+  Episode 8's table row includes its source hash and watch link, Episode 9 is
+  marked Work in progress, and Episode 8 has a single-paragraph summary
+  matching the existing entries. All other README text is preserved.
+- Saved the creator's narrow README-update rule in the public GitHub
+  playbook. Verified origin/main at f24101e. Local editor settings remain
+  uncommitted and unchanged by this correction.

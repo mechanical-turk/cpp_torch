@@ -92,3 +92,66 @@ Completed the full native animation directly in `assets/blender-clay-scenes/fina
 Both code layouts retain four rows at consistent Menlo 100 font units, keeping `alignas(128)` inline with each atomic declaration inside the supplied safe zone. All-frame placement and structural checks remain clear. Visually reviewed the ordered handoff, changing code, lifted crossing, landing, benchmark and continued final activity. Encoded opening, padding, benchmark and last-frame samples retain sharp text, clay detail and clean numerals. Final illustrative values are 11 / 11 with both rising +1 bubbles active, while 244.52 ms → 44.19 ms and 5.5× faster remain visible.
 
 Production used the process-local Metal shader-cache workaround and render-session glyph meshes. Cached bases exclude numerals through a non-animated collection; their composition matched the full native reference. A native comparison verified the 32-sample/four-AO production profile before resuming; completed higher-sample frames were preserved and partial caches invalidated. The final worker and encoder completed successfully. README and STATUS now point to the completed revision 8 delivery. Previous revisions remain preserved; these are scene assets for the creator's edit, not a published master.
+
+
+## 2026-09-09 — Extreme handmade clay still study
+
+Creator requested one additional sample pushing the claymation aesthetic much further. Built and rendered `assets/blender-clay-scenes/extreme-clay-study/extreme-clay-sample-2160x2300.png` directly in the episode assets, using final revision 8 frame 551 and its approved inline code layout. The isolated study adds canonical hand-shaped rim deformation, pinched path pills, broad kneading, partial curved fingerprint impressions, pigment and roughness variation, restrained fine grain and stronger directional lighting. Early complete ring impressions were revised into tapered partial marks after preview inspection.
+
+The final native clay pass used 192 Cycles samples; the code pass used 64 and is pixel-identical to the approved frame 551 code pass. The image is opaque RGB at 2160 × 2300; image decode, checksum and essential-text bounds pass. Inspected the native composition and separate actual-template proof at full-master placement. Editable study, builder, compositor and verification remain beside the image. This is a still appearance experiment, not a replacement video, demonstrated motion/physics, or newly approved standing style. Existing revision 8 outputs remain unchanged.
+
+
+## 2026-09-09 — Radial artifacts removed; sculpted clay revision 2
+
+Creator rejected the extreme study's radial marks and requested a more pronounced clay look. Removed the fingerprint/radial shader entirely before rebuilding the geometry. Rendered `assets/blender-clay-scenes/extreme-clay-study-v2/hand-sculpted-clay-sample-2160x2300.png`: dense canonical lofts provide substantially fuller rolled crowns, irregular thumb compressions, displaced bulges and softened local folds. Physical letters have rounded raised depth. Surface shading uses nonperiodic pigment variation, smears and fine grain.
+
+The native 2160 × 2300 still uses 96 Cycles samples for clay and 64 for code. Visually inspected tray floors, rims, physical labels and the actual-template proof; the radial artifacts are absent. Linked counter and tray geometry assertions pass, essential text clears the guide, and the code pass is pixel-identical to approved frame 551. Image decode and checksum are recorded beside the editable study. Marked the earlier study superseded and added the radial-pattern rejection to the animations playbook. This remains a sample for review; completed videos are unchanged.
+
+
+## 2026-09-09 — Approved sculpted clay carried into the full animation
+
+The creator selected `extreme-clay-study-v2` as the ongoing aesthetic and
+explicitly requested rendering the entire animation in that treatment.
+
+Created `assets/blender-clay-scenes/final-v9/` directly under Short 07's assets.
+The native builder applies the approved rolled-rim geometry, broad thumb dents,
+soft folds, nonperiodic clay material and studio lights to revision 8's complete
+timeline. Both shader pigment-ramp colors animate with ownership. All physical
+letters/numerals use matching shallow raised bevels, including hidden alternate
+values and +1 bubbles. Shared canonical meshes preserve peer consistency.
+
+The 2160 × 2300 canvas, 24 fps, top placement in a 2160 × 3840 master, four-row
+inline-alignment code, 244.52 ms → 44.19 ms / 5.5× result, six clip boundaries
+and all choreography are retained. No title, caption or narration is added.
+Revision 8 and both still studies remain intact. The animation playbook now
+records this stronger sculpted treatment as the selected default.
+
+Preflight: all 864 frames pass essential-text bounds and structural motion
+checks. Minimum code/core gap is 66.95 px; minimum code-row gap is 50.80 px.
+Rendered and visually reviewed frames 37, 491, 551 and 625, including the actual
+supplied template over the full vertical master. Native frame 551 at the
+48-sample production setting matches the approved 96-sample study closely
+(mean channel difference 0.280/255); its code pass is pixel-identical. The new
+numeral-patch composition matches the full native clay frame (0.171/255 mean).
+
+The verified, unchanged 52 native typography states from revision 8 are reused;
+all clay and background imagery is rendered anew. Production uses 48 clay
+samples, 8 ground-AO samples, native Metal/Cycles, CPU glyph layers and exact
+held authored poses. No scaling or interpolated frames are used for native clips.
+
+The resumable supervisor was started in this package. Status at this entry:
+**rendering, not yet complete**. It writes each of six numbered native videos
+and matching previews as its frames finish, then validates decode, dimensions,
+frame count, duration, absence of audio, hashes and source consistency. See
+`_render/pipeline-status.json` and `export-verification.json` for current facts.
+
+
+## 2026-09-09 — Sculpted clay revision 9 render completed
+
+The render supervisor completed all six numbered 2160 × 2300 native clips and
+six 1080 × 1150 previews at 2026-09-09 19:28:13 EDT. All twelve files passed full
+decode, dimensions, frame counts, 24 fps, duration and no-audio checks. Current
+file hashes and source-script consistency passed. Files are in
+`assets/blender-clay-scenes/final-v9/`; reports are `export-verification.json`
+and `final-verification.json`. This is an automated production completion
+record; preflight visual review is documented above.
