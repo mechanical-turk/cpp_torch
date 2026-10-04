@@ -1,0 +1,16 @@
+00:00 Introduction
+00:21 Build a Linear module
+01:08 Initialize weights and bias
+02:07 Random weight helper
+03:54 Build a Tanh module
+04:38 Build the MLP
+06:39 Trace tensor shapes
+09:44 Collect model parameters
+11:59 Combine layer parameters
+12:52 Update every parameter
+14:46 Mutable tensor data
+15:58 Set up XOR training
+17:02 Build the training loop
+18:10 Compare predictions
+20:02 Run XOR and review results
+21:02 Recap

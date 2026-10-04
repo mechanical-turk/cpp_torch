@@ -131,6 +131,21 @@ the snapshot slider (including arrow keys) to inspect exact counts and times.
 The expandable values table lists every observation in the selected range.
 Close with the Close button, Escape, or a click outside the dialog.
 
+The expanded view also projects the latest count one week, one month and three
+months forward using four straight-line scenarios: trailing 1-week, 2-week and
+1-month average daily growth, plus average daily growth over the complete saved
+history. Until a complete trailing window exists, that
+scenario uses all available history and displays its actual number of recorded
+days. A dedicated projection plot keeps the 90-day horizon from compressing the
+historical chart. These are simple extrapolations for planning, not statistical
+forecasts.
+
+Opening an expanded audience chart fetches the current dashboard payload again.
+After `make analytics-sync` finishes, close and reopen a chart to use the new
+snapshots without restarting or reloading the dashboard page. Static dashboard
+assets are also served without browser caching so local code changes cannot
+leave an older projection implementation active.
+
 Ranges end at the latest saved observation, not the current clock. Expanding
 does not create finer source data; lines connect the existing snapshots.
 

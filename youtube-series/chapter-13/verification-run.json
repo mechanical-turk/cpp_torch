@@ -1,59 +1,115 @@
 {
-  "baseline": "c9918e8",
-  "destination": "b4d85fe40eaeaf041825249766a3da5885f5cb76",
-  "edits": 58,
-  "temporary_directory": "/var/folders/lg/tchx84rx5xx23zf_4lch60ww0000gn/T/dlatwd-ch13-041rufrs",
-  "recording_source_unchanged": true,
-  "script_sha256": "21b5ed773ab692d6393255eeb67020be81a664b83e64cb6e499bc1a36cf35e64",
-  "spoken_words": 1182,
+  "date": "2026-10-02T19:20:29.415Z",
+  "compiler": "Apple clang version 21.0.0 (clang-2100.1.1.101)",
+  "scriptSha256": "810da44c6ecef3344a10f77150f0db14a9d30654a02c09047fb74e745ddb862d",
+  "baselineSha256": "9b0d23f4e87fe88b5d8a9f46c1dda2a359e2a4f13bd7784eb4c2f4413e173ea7",
+  "finalSha256": "b58ca27507023b69d81069569ebdbebdee950a6508acb9a63debe4e0198c9f27",
+  "recordingSha256": "e8b4ed2ac32d965660cc6ba668fbaf7b236e9e77b05fd8746832e1818c23ef83",
+  "recordingMatchesBaseline": false,
+  "recordingUnchanged": true,
+  "edits": 13,
+  "displayedOutputLinesMatched": 38,
+  "narrationWords": 1150,
+  "gradientProbe": "PROBE initial_loss=2.30285 ln10=2.30259 activation_last_over_first=0.0153384 gradient_first_over_last=0.017437 per_layer=0.560766 weight_gradient_norm_deep=0.0136322 shallow=0.873172 shallow_over_deep=64.052 consecutive_gradient_cosine=0.492863",
+  "datasetDirectory": "/Users/keremkazan/Documents/Projects/Content HQ/aliases/02-screen-long-form/data",
+  "datasetFiles": [
+    {
+      "name": "train-images-idx3-ubyte",
+      "bytes": 47040016,
+      "sha256": "ba891046e6505d7aadcbbe25680a0738ad16aec93bde7f9b65e87a2fc25776db"
+    },
+    {
+      "name": "train-labels-idx1-ubyte",
+      "bytes": 60008,
+      "sha256": "65a50cbbf4e906d70832878ad85ccda5333a97f0f4c3dd2ef09a8a9eef7101c5"
+    },
+    {
+      "name": "t10k-images-idx3-ubyte",
+      "bytes": 7840016,
+      "sha256": "0fa7898d509279e482958e8ce81c8e77db3f2f8254e26661ceb7762c4d494ce7"
+    },
+    {
+      "name": "t10k-labels-idx1-ubyte",
+      "bytes": 10008,
+      "sha256": "ff7bcfd416de33731a308c3f266cc351222c34898ecbeaf847f06e48f7ec33f2"
+    }
+  ],
   "results": [
     {
-      "checkpoint": "baseline",
-      "compiled": true,
-      "executed": true,
+      "name": "baseline-result",
+      "flags": [
+        "-O2"
+      ],
+      "elapsedSeconds": 5.43,
       "output": "Test 1\nTest 2\nTest 3\nTest 4\nTest 5\nTest 6\nTest 7\nTest 8\nTest 9\nTest 10\nTest 11\nTest 12\nTest 13\nTest 14\nTest 15\nTest 16\nTest 17\nTest 18\nTest 19\nTest 20\nTest 21\nTest 22\nTest 23\nTest 24\nCorrect digit: 5\n0: 0.0442181, 0.103953\n1: -0.159012, 0.0848349\n2: 0.0984717, 0.109748\n3: 0.0236293, 0.101834\n4: 0.140448, 0.114453\n5: 0.0564882, 0.105236\n6: 0.0553336, 0.105115\n7: -0.0707921, 0.0926591\n8: -0.110113, 0.0890864\n9: -0.0662631, 0.0930797\nProbability total: 1 \nTraining epoch: 1/5\nEpoch 1 loss: 0.993942\n\nTraining epoch: 2/5\nEpoch 2 loss: 0.427191\n\nTraining epoch: 3/5\nEpoch 3 loss: 0.339903\n\nTraining epoch: 4/5\nEpoch 4 loss: 0.29868\n\nTraining epoch: 5/5\nEpoch 5 loss: 0.271741\n\nTest accuracy: 88.2% (1764/2000)\nSuccess!\n"
     },
     {
-      "checkpoint": "parent-mapping-complete",
-      "compiled": true,
-      "executed": false,
-      "output": ""
-    },
-    {
-      "checkpoint": "node-constructor-complete",
-      "compiled": true,
-      "executed": false,
-      "output": ""
-    },
-    {
-      "checkpoint": "logical-migration-complete",
-      "compiled": true,
-      "executed": true,
+      "name": "sequence-matches-mlp",
+      "flags": [
+        "-O2"
+      ],
+      "elapsedSeconds": 5.142,
       "output": "Test 1\nTest 2\nTest 3\nTest 4\nTest 5\nTest 6\nTest 7\nTest 8\nTest 9\nTest 10\nTest 11\nTest 12\nTest 13\nTest 14\nTest 15\nTest 16\nTest 17\nTest 18\nTest 19\nTest 20\nTest 21\nTest 22\nTest 23\nTest 24\nCorrect digit: 5\n0: 0.0442181, 0.103953\n1: -0.159012, 0.0848349\n2: 0.0984717, 0.109748\n3: 0.0236293, 0.101834\n4: 0.140448, 0.114453\n5: 0.0564882, 0.105236\n6: 0.0553336, 0.105115\n7: -0.0707921, 0.0926591\n8: -0.110113, 0.0890864\n9: -0.0662631, 0.0930797\nProbability total: 1 \nTraining epoch: 1/5\nEpoch 1 loss: 0.993942\n\nTraining epoch: 2/5\nEpoch 2 loss: 0.427191\n\nTraining epoch: 3/5\nEpoch 3 loss: 0.339903\n\nTraining epoch: 4/5\nEpoch 4 loss: 0.29868\n\nTraining epoch: 5/5\nEpoch 5 loss: 0.271741\n\nTest accuracy: 88.2% (1764/2000)\nSuccess!\n"
     },
     {
-      "checkpoint": "split-library-complete",
-      "output": "Internal ctest changing into directory: /private/var/folders/lg/tchx84rx5xx23zf_4lch60ww0000gn/T/dlatwd-ch13-041rufrs/build/debug\nTest project /private/var/folders/lg/tchx84rx5xx23zf_4lch60ww0000gn/T/dlatwd-ch13-041rufrs/build/debug\n      Start  1: TensorTest.Shape\n 1/41 Test  #1: TensorTest.Shape .......................................................   Passed    0.01 sec\n      Start  2: TensorTest.Storage\n 2/41 Test  #2: TensorTest.Storage .....................................................   Passed    0.01 sec\n      Start  3: TensorTest.Rank\n 3/41 Test  #3: TensorTest.Rank ........................................................   Passed    0.01 sec\n      Start  4: TensorTest.ElementCount\n 4/41 Test  #4: TensorTest.ElementCount ................................................   Passed    0.01 sec\n      Start  5: TensorTest.ScalarShape\n 5/41 Test  #5: TensorTest.ScalarShape .................................................   Passed    0.01 sec\n      Start  6: TensorTest.EmptyTensor\n 6/41 Test  #6: TensorTest.EmptyTensor .................................................   Passed    0.01 sec\n      Start  7: TensorTest.RejectsWrongStorage\n 7/41 Test  #7: TensorTest.RejectsWrongStorage .........................................   Passed    0.01 sec\n      Start  8: TensorTest.Indexing\n 8/41 Test  #8: TensorTest.Indexing ....................................................   Passed    0.01 sec\n      Start  9: TensorTest.RejectsWrongIndexRank\n 9/41 Test  #9: TensorTest.RejectsWrongIndexRank .......................................   Passed    0.01 sec\n      Start 10: TensorTest.RejectsOutOfBounds\n10/41 Test #10: TensorTest.RejectsOutOfBounds ..........................................   Passed    0.01 sec\n      Start 11: TensorTest.RejectsShapeOverflow\n11/41 Test #11: TensorTest.RejectsShapeOverflow ........................................   Passed    0.01 sec\n      Start 12: TensorTest.ZeroDimensionWithLargeExtent\n12/41 Test #12: TensorTest.ZeroDimensionWithLargeExtent ................................   Passed    0.01 sec\n      Start 13: TensorTest.ZeroDimensionBeforeOverflow\n13/41 Test #13: TensorTest.ZeroDimensionBeforeOverflow .................................   Passed    0.01 sec\n      Start 14: TensorTest.DimensionAccess\n14/41 Test #14: TensorTest.DimensionAccess .............................................   Passed    0.01 sec\n      Start 15: TensorTest.Mutation\n15/41 Test #15: TensorTest.Mutation ....................................................   Passed    0.01 sec\n      Start 16: TensorTest.ScalarIndexing\n16/41 Test #16: TensorTest.ScalarIndexing ..............................................   Passed    0.01 sec\n      Start 17: TensorTest.Sum\n17/41 Test #17: TensorTest.Sum .........................................................   Passed    0.01 sec\n      Start 18: TensorTest.Addition\n18/41 Test #18: TensorTest.Addition ....................................................   Passed    0.01 sec\n      Start 19: TensorTest.RejectsIncompatibleBroadcast\n19/41 Test #19: TensorTest.RejectsIncompatibleBroadcast ................................   Passed    0.01 sec\n      Start 20: TensorTest.Arithmetic\n20/41 Test #20: TensorTest.Arithmetic ..................................................   Passed    0.01 sec\n      Start 21: TensorTest.Dot\n21/41 Test #21: TensorTest.Dot .........................................................   Passed    0.01 sec\n      Start 22: TensorTest.LinearPrediction\n22/41 Test #22: TensorTest.LinearPrediction ............................................   Passed    0.01 sec\n      Start 23: AutogradTest.SharedInputReceivesBothContributions\n23/41 Test #23: AutogradTest.SharedInputReceivesBothContributions ......................   Passed    0.01 sec\n      Start 24: AutogradTest.RepeatedBackwardAccumulatesLeavesAndResetsIntermediates\n24/41 Test #24: AutogradTest.RepeatedBackwardAccumulatesLeavesAndResetsIntermediates ...   Passed    0.01 sec\n      Start 25: AutogradTest.BroadcastColumnAndRowAccumulateReusedEntries\n25/41 Test #25: AutogradTest.BroadcastColumnAndRowAccumulateReusedEntries ..............   Passed    0.01 sec\n      Start 26: AutogradTest.ScalarBiasReceivesEveryRow\n26/41 Test #26: AutogradTest.ScalarBiasReceivesEveryRow ................................   Passed    0.01 sec\n      Start 27: AutogradTest.RejectsNonScalarRoot\n27/41 Test #27: AutogradTest.RejectsNonScalarRoot ......................................   Passed    0.01 sec\n      Start 28: AutogradTest.GraphKeepsTemporaryParentsAlive\n28/41 Test #28: AutogradTest.GraphKeepsTemporaryParentsAlive ...........................   Passed    0.01 sec\n      Start 29: AutogradTest.ArithmeticMatchesFiniteDifferences\n29/41 Test #29: AutogradTest.ArithmeticMatchesFiniteDifferences ........................   Passed    0.01 sec\n      Start 30: AutogradTest.ExpAndLogMatchFiniteDifferences\n30/41 Test #30: AutogradTest.ExpAndLogMatchFiniteDifferences ...........................   Passed    0.01 sec\n      Start 31: AutogradTest.ActivationsMatchFiniteDifferences\n31/41 Test #31: AutogradTest.ActivationsMatchFiniteDifferences .........................   Passed    0.01 sec\n      Start 32: AutogradTest.ReductionsMatchFiniteDifferences\n32/41 Test #32: AutogradTest.ReductionsMatchFiniteDifferences ..........................   Passed    0.01 sec\n      Start 33: AutogradTest.MatmulBothOperandsMatchFiniteDifferences\n33/41 Test #33: AutogradTest.MatmulBothOperandsMatchFiniteDifferences ..................   Passed    0.01 sec\n      Start 34: AutogradTest.SoftmaxCrossEntropyMatchesFiniteDifferences\n34/41 Test #34: AutogradTest.SoftmaxCrossEntropyMatchesFiniteDifferences ...............   Passed    0.01 sec\n      Start 35: AutogradTest.SoftmaxNormalizesEachRow\n35/41 Test #35: AutogradTest.SoftmaxNormalizesEachRow ..................................   Passed    0.01 sec\n      Start 36: AutogradTest.RejectsInvalidLogAndZeroDivision\n36/41 Test #36: AutogradTest.RejectsInvalidLogAndZeroDivision ..........................   Passed    0.01 sec\n      Start 37: AutogradTest.EachParentKeepsItsOwnMultiAxisBroadcastMapping\n37/41 Test #37: AutogradTest.EachParentKeepsItsOwnMultiAxisBroadcastMapping ............   Passed    0.01 sec\n      Start 38: TrainingTest.ParametersReferToTheActualLayerStorage\n38/41 Test #38: TrainingTest.ParametersReferToTheActualLayerStorage ....................   Passed    0.01 sec\n      Start 39: TrainingTest.MlpCollectsBothLayers\n39/41 Test #39: TrainingTest.MlpCollectsBothLayers .....................................   Passed    0.01 sec\n      Start 40: TrainingTest.GradientStepUpdatesParameters\n40/41 Test #40: TrainingTest.GradientStepUpdatesParameters .............................   Passed    0.01 sec\n      Start 41: TrainingTest.LearnsXorWithoutDatasetFiles\n41/41 Test #41: TrainingTest.LearnsXorWithoutDatasetFiles ..............................   Passed    0.18 sec\n\n100% tests passed, 0 tests failed out of 41\n\nTotal Test time (real) =   0.72 sec\n"
+      "name": "deeper-four",
+      "flags": [
+        "-O2"
+      ],
+      "elapsedSeconds": 5.452,
+      "output": "Test 1\nTest 2\nTest 3\nTest 4\nTest 5\nTest 6\nTest 7\nTest 8\nTest 9\nTest 10\nTest 11\nTest 12\nTest 13\nTest 14\nTest 15\nTest 16\nTest 17\nTest 18\nTest 19\nTest 20\nTest 21\nTest 22\nTest 23\nTest 24\nCorrect digit: 5\n0: 0.00333646, 0.100737\n1: 0.00750402, 0.101158\n2: -0.0148043, 0.0989264\n3: -0.012212, 0.0991832\n4: -0.00671352, 0.0997301\n5: -0.0164986, 0.098759\n6: 0.00218747, 0.100622\n7: -0.00936304, 0.0994662\n8: 0.012078, 0.101622\n9: -0.00605388, 0.0997959\nProbability total: 1 \nTraining epoch: 1/5\nEpoch 1 loss: 1.777\n\nTraining epoch: 2/5\nEpoch 2 loss: 0.741658\n\nTraining epoch: 3/5\nEpoch 3 loss: 0.450117\n\nTraining epoch: 4/5\nEpoch 4 loss: 0.342193\n\nTraining epoch: 5/5\nEpoch 5 loss: 0.278237\n\nTest accuracy: 89.25% (1785/2000)\nSuccess!\n"
     },
     {
-      "example": "xor",
-      "output": "Loss: 0.779 -> 0.000\na b prediction target\n0.000 0.000 0.000 0.000\n0.000 1.000 1.000 1.000\n1.000 0.000 1.000 1.000\n1.000 1.000 0.000 0.000\n"
+      "name": "deep-plain",
+      "flags": [
+        "-O2"
+      ],
+      "elapsedSeconds": 5.924,
+      "output": "Test 1\nTest 2\nTest 3\nTest 4\nTest 5\nTest 6\nTest 7\nTest 8\nTest 9\nTest 10\nTest 11\nTest 12\nTest 13\nTest 14\nTest 15\nTest 16\nTest 17\nTest 18\nTest 19\nTest 20\nTest 21\nTest 22\nTest 23\nTest 24\nCorrect digit: 5\n0: 0.000762624, 0.100027\n1: 0.00103241, 0.100054\n2: 0.00117745, 0.100069\n3: -0.00114828, 0.0998361\n4: 0.000248567, 0.0999757\n5: 0.00229504, 0.100181\n6: 0.00137779, 0.100089\n7: 0.000422098, 0.0999931\n8: -0.00182507, 0.0997686\n9: 0.000566678, 0.100008\nProbability total: 1 \nTraining epoch: 1/5\nEpoch 1 loss: 2.30029\n\nTraining epoch: 2/5\nEpoch 2 loss: 2.24043\n\nTraining epoch: 3/5\nEpoch 3 loss: 1.64858\n\nTraining epoch: 4/5\nEpoch 4 loss: 1.22419\n\nTraining epoch: 5/5\nEpoch 5 loss: 1.03331\n\nTest accuracy: 63.85% (1277/2000)\nSuccess!\n"
     },
     {
-      "example": "regression",
-      "output": "x relu sigmoid\n-2 0 0.119203 -0.964028\n-1 0 0.268941 -0.761594\n0 0 0.5 0\n1 1 0.731059 0.761594\n2 2 0.880797 0.964028\nWeight: 2 \nBias: 1 \nWeight: 2 \nBias: 1 \n"
+      "name": "deep-lr-double",
+      "flags": [
+        "-O2"
+      ],
+      "elapsedSeconds": 6.037,
+      "output": "Test 1\nTest 2\nTest 3\nTest 4\nTest 5\nTest 6\nTest 7\nTest 8\nTest 9\nTest 10\nTest 11\nTest 12\nTest 13\nTest 14\nTest 15\nTest 16\nTest 17\nTest 18\nTest 19\nTest 20\nTest 21\nTest 22\nTest 23\nTest 24\nCorrect digit: 5\n0: 0.000762624, 0.100027\n1: 0.00103241, 0.100054\n2: 0.00117745, 0.100069\n3: -0.00114828, 0.0998361\n4: 0.000248567, 0.0999757\n5: 0.00229504, 0.100181\n6: 0.00137779, 0.100089\n7: 0.000422098, 0.0999931\n8: -0.00182507, 0.0997686\n9: 0.000566678, 0.100008\nProbability total: 1 \nTraining epoch: 1/5\nEpoch 1 loss: 2.2759\n\nTraining epoch: 2/5\nEpoch 2 loss: 1.55947\n\nTraining epoch: 3/5\nEpoch 3 loss: 1.15181\n\nTraining epoch: 4/5\nEpoch 4 loss: 0.808903\n\nTraining epoch: 5/5\nEpoch 5 loss: 0.617169\n\nTest accuracy: 82.9% (1658/2000)\nSuccess!\n"
     },
     {
-      "example": "scalar_autograd",
-      "output": "Success!\n"
+      "name": "deep-lr-large",
+      "flags": [
+        "-O2"
+      ],
+      "elapsedSeconds": 5.946,
+      "output": "Test 1\nTest 2\nTest 3\nTest 4\nTest 5\nTest 6\nTest 7\nTest 8\nTest 9\nTest 10\nTest 11\nTest 12\nTest 13\nTest 14\nTest 15\nTest 16\nTest 17\nTest 18\nTest 19\nTest 20\nTest 21\nTest 22\nTest 23\nTest 24\nCorrect digit: 5\n0: 0.000762624, 0.100027\n1: 0.00103241, 0.100054\n2: 0.00117745, 0.100069\n3: -0.00114828, 0.0998361\n4: 0.000248567, 0.0999757\n5: 0.00229504, 0.100181\n6: 0.00137779, 0.100089\n7: 0.000422098, 0.0999931\n8: -0.00182507, 0.0997686\n9: 0.000566678, 0.100008\nProbability total: 1 \nTraining epoch: 1/5\nEpoch 1 loss: 2.06921\n\nTraining epoch: 2/5\nEpoch 2 loss: 1.75652\n\nTraining epoch: 3/5\nEpoch 3 loss: 1.74619\n\nTraining epoch: 4/5\nEpoch 4 loss: 1.95282\n\nTraining epoch: 5/5\nEpoch 5 loss: 2.25084\n\nTest accuracy: 10.45% (209/2000)\nSuccess!\n"
     },
     {
-      "example": "mnist",
-      "output": "Correct digit: 5\n0: 0.0442181, 0.103953\n1: -0.159012, 0.0848349\n2: 0.0984717, 0.109748\n3: 0.0236293, 0.101834\n4: 0.140448, 0.114453\n5: 0.0564882, 0.105236\n6: 0.0553336, 0.105115\n7: -0.0707921, 0.0926591\n8: -0.110113, 0.0890864\n9: -0.0662631, 0.0930797\nProbability total: 1 \nTraining epoch: 1/5\nEpoch 1 loss: 0.993942\n\nTraining epoch: 2/5\nEpoch 2 loss: 0.427191\n\nTraining epoch: 3/5\nEpoch 3 loss: 0.339903\n\nTraining epoch: 4/5\nEpoch 4 loss: 0.29868\n\nTraining epoch: 5/5\nEpoch 5 loss: 0.271741\n\nTest accuracy: 88.2% (1764/2000)\n"
+      "name": "deep-decay",
+      "flags": [
+        "-O2"
+      ],
+      "elapsedSeconds": 6.064,
+      "output": "Test 1\nTest 2\nTest 3\nTest 4\nTest 5\nTest 6\nTest 7\nTest 8\nTest 9\nTest 10\nTest 11\nTest 12\nTest 13\nTest 14\nTest 15\nTest 16\nTest 17\nTest 18\nTest 19\nTest 20\nTest 21\nTest 22\nTest 23\nTest 24\nCorrect digit: 5\n0: 0.000762624, 0.100027\n1: 0.00103241, 0.100054\n2: 0.00117745, 0.100069\n3: -0.00114828, 0.0998361\n4: 0.000248567, 0.0999757\n5: 0.00229504, 0.100181\n6: 0.00137779, 0.100089\n7: 0.000422098, 0.0999931\n8: -0.00182507, 0.0997686\n9: 0.000566678, 0.100008\nProbability total: 1 \nTraining epoch: 1/5\nEpoch 1 loss: 2.06921\n\nTraining epoch: 2/5\nEpoch 2 loss: 1.47342\n\nTraining epoch: 3/5\nEpoch 3 loss: 1.06257\n\nTraining epoch: 4/5\nEpoch 4 loss: 0.862743\n\nTraining epoch: 5/5\nEpoch 5 loss: 0.757728\n\nTest accuracy: 70.35% (1407/2000)\nSuccess!\n"
     },
     {
-      "checkpoint": "sanitizers",
-      "output": "Test project /private/var/folders/lg/tchx84rx5xx23zf_4lch60ww0000gn/T/dlatwd-ch13-041rufrs/build/sanitizers\n      Start  1: TensorTest.Shape\n 1/41 Test  #1: TensorTest.Shape .......................................................   Passed    0.08 sec\n      Start  2: TensorTest.Storage\n 2/41 Test  #2: TensorTest.Storage .....................................................   Passed    0.08 sec\n      Start  3: TensorTest.Rank\n 3/41 Test  #3: TensorTest.Rank ........................................................   Passed    0.08 sec\n      Start  4: TensorTest.ElementCount\n 4/41 Test  #4: TensorTest.ElementCount ................................................   Passed    0.08 sec\n      Start  5: TensorTest.ScalarShape\n 5/41 Test  #5: TensorTest.ScalarShape .................................................   Passed    0.08 sec\n      Start  6: TensorTest.EmptyTensor\n 6/41 Test  #6: TensorTest.EmptyTensor .................................................   Passed    0.08 sec\n      Start  7: TensorTest.RejectsWrongStorage\n 7/41 Test  #7: TensorTest.RejectsWrongStorage .........................................   Passed    0.08 sec\n      Start  8: TensorTest.Indexing\n 8/41 Test  #8: TensorTest.Indexing ....................................................   Passed    0.08 sec\n      Start  9: TensorTest.RejectsWrongIndexRank\n 9/41 Test  #9: TensorTest.RejectsWrongIndexRank .......................................   Passed    0.08 sec\n      Start 10: TensorTest.RejectsOutOfBounds\n10/41 Test #10: TensorTest.RejectsOutOfBounds ..........................................   Passed    0.08 sec\n      Start 11: TensorTest.RejectsShapeOverflow\n11/41 Test #11: TensorTest.RejectsShapeOverflow ........................................   Passed    0.08 sec\n      Start 12: TensorTest.ZeroDimensionWithLargeExtent\n12/41 Test #12: TensorTest.ZeroDimensionWithLargeExtent ................................   Passed    0.08 sec\n      Start 13: TensorTest.ZeroDimensionBeforeOverflow\n13/41 Test #13: TensorTest.ZeroDimensionBeforeOverflow .................................   Passed    0.08 sec\n      Start 14: TensorTest.DimensionAccess\n14/41 Test #14: TensorTest.DimensionAccess .............................................   Passed    0.08 sec\n      Start 15: TensorTest.Mutation\n15/41 Test #15: TensorTest.Mutation ....................................................   Passed    0.08 sec\n      Start 16: TensorTest.ScalarIndexing\n16/41 Test #16: TensorTest.ScalarIndexing ..............................................   Passed    0.08 sec\n      Start 17: TensorTest.Sum\n17/41 Test #17: TensorTest.Sum .........................................................   Passed    0.08 sec\n      Start 18: TensorTest.Addition\n18/41 Test #18: TensorTest.Addition ....................................................   Passed    0.08 sec\n      Start 19: TensorTest.RejectsIncompatibleBroadcast\n19/41 Test #19: TensorTest.RejectsIncompatibleBroadcast ................................   Passed    0.08 sec\n      Start 20: TensorTest.Arithmetic\n20/41 Test #20: TensorTest.Arithmetic ..................................................   Passed    0.08 sec\n      Start 21: TensorTest.Dot\n21/41 Test #21: TensorTest.Dot .........................................................   Passed    0.08 sec\n      Start 22: TensorTest.LinearPrediction\n22/41 Test #22: TensorTest.LinearPrediction ............................................   Passed    0.08 sec\n      Start 23: AutogradTest.SharedInputReceivesBothContributions\n23/41 Test #23: AutogradTest.SharedInputReceivesBothContributions ......................   Passed    0.08 sec\n      Start 24: AutogradTest.RepeatedBackwardAccumulatesLeavesAndResetsIntermediates\n24/41 Test #24: AutogradTest.RepeatedBackwardAccumulatesLeavesAndResetsIntermediates ...   Passed    0.08 sec\n      Start 25: AutogradTest.BroadcastColumnAndRowAccumulateReusedEntries\n25/41 Test #25: AutogradTest.BroadcastColumnAndRowAccumulateReusedEntries ..............   Passed    0.08 sec\n      Start 26: AutogradTest.ScalarBiasReceivesEveryRow\n26/41 Test #26: AutogradTest.ScalarBiasReceivesEveryRow ................................   Passed    0.08 sec\n      Start 27: AutogradTest.RejectsNonScalarRoot\n27/41 Test #27: AutogradTest.RejectsNonScalarRoot ......................................   Passed    0.08 sec\n      Start 28: AutogradTest.GraphKeepsTemporaryParentsAlive\n28/41 Test #28: AutogradTest.GraphKeepsTemporaryParentsAlive ...........................   Passed    0.08 sec\n      Start 29: AutogradTest.ArithmeticMatchesFiniteDifferences\n29/41 Test #29: AutogradTest.ArithmeticMatchesFiniteDifferences ........................   Passed    0.08 sec\n      Start 30: AutogradTest.ExpAndLogMatchFiniteDifferences\n30/41 Test #30: AutogradTest.ExpAndLogMatchFiniteDifferences ...........................   Passed    0.09 sec\n      Start 31: AutogradTest.ActivationsMatchFiniteDifferences\n31/41 Test #31: AutogradTest.ActivationsMatchFiniteDifferences .........................   Passed    0.08 sec\n      Start 32: AutogradTest.ReductionsMatchFiniteDifferences\n32/41 Test #32: AutogradTest.ReductionsMatchFiniteDifferences ..........................   Passed    0.08 sec\n      Start 33: AutogradTest.MatmulBothOperandsMatchFiniteDifferences\n33/41 Test #33: AutogradTest.MatmulBothOperandsMatchFiniteDifferences ..................   Passed    0.08 sec\n      Start 34: AutogradTest.SoftmaxCrossEntropyMatchesFiniteDifferences\n34/41 Test #34: AutogradTest.SoftmaxCrossEntropyMatchesFiniteDifferences ...............   Passed    0.08 sec\n      Start 35: AutogradTest.SoftmaxNormalizesEachRow\n35/41 Test #35: AutogradTest.SoftmaxNormalizesEachRow ..................................   Passed    0.08 sec\n      Start 36: AutogradTest.RejectsInvalidLogAndZeroDivision\n36/41 Test #36: AutogradTest.RejectsInvalidLogAndZeroDivision ..........................   Passed    0.08 sec\n      Start 37: AutogradTest.EachParentKeepsItsOwnMultiAxisBroadcastMapping\n37/41 Test #37: AutogradTest.EachParentKeepsItsOwnMultiAxisBroadcastMapping ............   Passed    0.08 sec\n      Start 38: TrainingTest.ParametersReferToTheActualLayerStorage\n38/41 Test #38: TrainingTest.ParametersReferToTheActualLayerStorage ....................   Passed    0.08 sec\n      Start 39: TrainingTest.MlpCollectsBothLayers\n39/41 Test #39: TrainingTest.MlpCollectsBothLayers .....................................   Passed    0.08 sec\n      Start 40: TrainingTest.GradientStepUpdatesParameters\n40/41 Test #40: TrainingTest.GradientStepUpdatesParameters .............................   Passed    0.08 sec\n      Start 41: TrainingTest.LearnsXorWithoutDatasetFiles\n41/41 Test #41: TrainingTest.LearnsXorWithoutDatasetFiles ..............................   Passed    0.64 sec\n\n100% tests passed, 0 tests failed out of 41\n\nTotal Test time (real) =   4.32 sec\n"
+      "name": "sequence-checks",
+      "flags": [
+        "-O1",
+        "-g",
+        "-fsanitize=address,undefined"
+      ],
+      "elapsedSeconds": 4.248,
+      "output": "PROBE initial_loss=2.30285 ln10=2.30259 activation_last_over_first=0.0153384 gradient_first_over_last=0.017437 per_layer=0.560766 weight_gradient_norm_deep=0.0136322 shallow=0.873172 shallow_over_deep=64.052 consecutive_gradient_cosine=0.492863\n61 finite-difference checks; Sequence equals MLP, handles, shapes: PASS\n"
+    },
+    {
+      "name": "final-sanitized",
+      "flags": [
+        "-O1",
+        "-g",
+        "-fsanitize=address,undefined"
+      ],
+      "elapsedSeconds": 30.765,
+      "output": "Test 1\nTest 2\nTest 3\nTest 4\nTest 5\nTest 6\nTest 7\nTest 8\nTest 9\nTest 10\nTest 11\nTest 12\nTest 13\nTest 14\nTest 15\nTest 16\nTest 17\nTest 18\nTest 19\nTest 20\nTest 21\nTest 22\nTest 23\nTest 24\nCorrect digit: 5\n0: 0.000762624, 0.100027\n1: 0.00103241, 0.100054\n2: 0.00117745, 0.100069\n3: -0.00114828, 0.0998361\n4: 0.000248567, 0.0999757\n5: 0.00229504, 0.100181\n6: 0.00137779, 0.100089\n7: 0.000422098, 0.0999931\n8: -0.00182507, 0.0997686\n9: 0.000566678, 0.100008\nProbability total: 1 \nTraining epoch: 1/5\nEpoch 1 loss: 2.06921\n\nTraining epoch: 2/5\nEpoch 2 loss: 1.47342\n\nTraining epoch: 3/5\nEpoch 3 loss: 1.06257\n\nTraining epoch: 4/5\nEpoch 4 loss: 0.862743\n\nTraining epoch: 5/5\nEpoch 5 loss: 0.757728\n\nTest accuracy: 70.35% (1407/2000)\nSuccess!\n"
     }
   ]
 }

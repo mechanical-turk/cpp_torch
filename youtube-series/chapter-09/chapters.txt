@@ -1,0 +1,18 @@
+00:00 Introduction
+00:18 Linear forward pass
+01:14 Training and gradients
+02:21 Reset parameter gradients
+03:13 Preserve leaf gradients
+04:41 Gradient descent step
+05:54 Index the weight column
+06:44 Update weights and bias
+07:33 Build the training loop
+09:32 Matmul backward
+10:33 Parents and dimensions
+11:28 Map matrix indices
+12:44 Dot products and gradients
+14:31 Apply the product rule
+15:53 Sum backward
+16:52 Fit a straight line
+18:38 Run linear regression
+19:14 Recap

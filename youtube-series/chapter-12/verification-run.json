@@ -1,0 +1,114 @@
+{
+  "date": "2026-09-15T17:13:42.930Z",
+  "compiler": "Apple clang version 21.0.0 (clang-2100.1.1.101)",
+  "scriptSha256": "51e537f822f50ab6444a850b1f9007fb51f601651de12965000e9a2cf9b847a6",
+  "readerSha256": "ad72a510b7876dbcf09916ec24007ca0e0f26e1d4c77de8643b323169569dab8",
+  "baselineSha256": "a5d35d9b934b88c47037f6ec3093cf3e30aabe80672cec03ccf855d8c30a32af",
+  "recordingSha256": "a942a8fb3c84df39a2aa6f718337645f21d3f066d055a8c5acef91ed386d9a6a",
+  "edits": 22,
+  "recordingUnchanged": true,
+  "recordingMatchesBaseline": false,
+  "temporary": "/var/folders/lg/tchx84rx5xx23zf_4lch60ww0000gn/T/dlatwd-ch12-5YKkvB",
+  "datasetDirectory": "/Users/keremkazan/Documents/Projects/Content HQ/aliases/02-screen-long-form/data",
+  "datasetFiles": [
+    {
+      "name": "train-images-idx3-ubyte",
+      "bytes": 47040016,
+      "sha256": "ba891046e6505d7aadcbbe25680a0738ad16aec93bde7f9b65e87a2fc25776db"
+    },
+    {
+      "name": "train-labels-idx1-ubyte",
+      "bytes": 60008,
+      "sha256": "65a50cbbf4e906d70832878ad85ccda5333a97f0f4c3dd2ef09a8a9eef7101c5"
+    },
+    {
+      "name": "t10k-images-idx3-ubyte",
+      "bytes": 7840016,
+      "sha256": "0fa7898d509279e482958e8ce81c8e77db3f2f8254e26661ceb7762c4d494ce7"
+    },
+    {
+      "name": "t10k-labels-idx1-ubyte",
+      "bytes": 10008,
+      "sha256": "ff7bcfd416de33731a308c3f266cc351222c34898ecbeaf847f06e48f7ec33f2"
+    }
+  ],
+  "accuracy": "Test accuracy: 88.200% (1764/2000)",
+  "results": [
+    {
+      "name": "baseline",
+      "flags": [
+        "-O1",
+        "-g",
+        "-fsanitize=address,undefined"
+      ],
+      "elapsedSeconds": 2.959,
+      "output": "Test 1\nTest 2\nTest 3\nTest 4\nTest 5\nTest 6\nTest 7\nTest 8\nTest 9\nTest 10\nTest 11\nTest 12\nTest 13\nTest 14\nTest 15\nTest 16\nTest 17\nTest 18\nTest 19\nTest 20\nTest 21\nTest 22\nTest 23\nTest 24\nWeight: 2 \nBias: 1 \nx relu sigmoid\n-2 0 0.119203 -0.964028\n-1 0 0.268941 -0.761594\n0 0 0.5 0\n1 1 0.731059 0.761594\n2 2 0.880797 0.964028\nWeight: 2 \nBias: 1 \nLoss: 0.779 -> 0.000\na b prediction target\n0.000 0.000 0.000 0.000\n0.000 1.000 1.000 1.000\n1.000 0.000 1.000 1.000\n1.000 1.000 0.000 0.000\nSuccess!\n"
+    },
+    {
+      "name": "image-scores",
+      "flags": [
+        "-O1",
+        "-g",
+        "-fsanitize=address,undefined"
+      ],
+      "elapsedSeconds": 2.796,
+      "output": "Test 1\nTest 2\nTest 3\nTest 4\nTest 5\nTest 6\nTest 7\nTest 8\nTest 9\nTest 10\nTest 11\nTest 12\nTest 13\nTest 14\nTest 15\nTest 16\nTest 17\nTest 18\nTest 19\nTest 20\nTest 21\nTest 22\nTest 23\nTest 24\nWeight: 2 \nBias: 1 \nx relu sigmoid\n-2 0 0.119203 -0.964028\n-1 0 0.268941 -0.761594\n0 0 0.5 0\n1 1 0.731059 0.761594\n2 2 0.880797 0.964028\nWeight: 2 \nBias: 1 \nLoss: 0.779 -> 0.000\na b prediction target\n0.000 0.000 0.000 0.000\n0.000 1.000 1.000 1.000\n1.000 0.000 1.000 1.000\n1.000 1.000 0.000 0.000\nCorrect digit: 5\nUntrained digit scores:\n0: 0.044\n1: -0.159\n2: 0.098\n3: 0.024\n4: 0.140\n5: 0.056\n6: 0.055\n7: -0.071\n8: -0.110\n9: -0.066\nSuccess!\n"
+    },
+    {
+      "name": "exp-complete",
+      "flags": [
+        "-O1",
+        "-g",
+        "-fsanitize=address,undefined"
+      ],
+      "elapsedSeconds": 2.824,
+      "output": "Test 1\nTest 2\nTest 3\nTest 4\nTest 5\nTest 6\nTest 7\nTest 8\nTest 9\nTest 10\nTest 11\nTest 12\nTest 13\nTest 14\nTest 15\nTest 16\nTest 17\nTest 18\nTest 19\nTest 20\nTest 21\nTest 22\nTest 23\nTest 24\nWeight: 2 \nBias: 1 \nx relu sigmoid\n-2 0 0.119203 -0.964028\n-1 0 0.268941 -0.761594\n0 0 0.5 0\n1 1 0.731059 0.761594\n2 2 0.880797 0.964028\nWeight: 2 \nBias: 1 \nLoss: 0.779 -> 0.000\na b prediction target\n0.000 0.000 0.000 0.000\n0.000 1.000 1.000 1.000\n1.000 0.000 1.000 1.000\n1.000 1.000 0.000 0.000\nCorrect digit: 5\ndigit score exp\n0 0.044 1.045\n1 -0.159 0.853\n2 0.098 1.103\n3 0.024 1.024\n4 0.140 1.151\n5 0.056 1.058\n6 0.055 1.057\n7 -0.071 0.932\n8 -0.110 0.896\n9 -0.066 0.936\nSuccess!\n"
+    },
+    {
+      "name": "softmax-complete",
+      "flags": [
+        "-O1",
+        "-g",
+        "-fsanitize=address,undefined"
+      ],
+      "elapsedSeconds": 2.835,
+      "output": "Test 1\nTest 2\nTest 3\nTest 4\nTest 5\nTest 6\nTest 7\nTest 8\nTest 9\nTest 10\nTest 11\nTest 12\nTest 13\nTest 14\nTest 15\nTest 16\nTest 17\nTest 18\nTest 19\nTest 20\nTest 21\nTest 22\nTest 23\nTest 24\nWeight: 2 \nBias: 1 \nx relu sigmoid\n-2 0 0.119203 -0.964028\n-1 0 0.268941 -0.761594\n0 0 0.5 0\n1 1 0.731059 0.761594\n2 2 0.880797 0.964028\nWeight: 2 \nBias: 1 \nLoss: 0.779 -> 0.000\na b prediction target\n0.000 0.000 0.000 0.000\n0.000 1.000 1.000 1.000\n1.000 0.000 1.000 1.000\n1.000 1.000 0.000 0.000\nCorrect digit: 5\ndigit score probability\n0 0.044 0.104\n1 -0.159 0.085\n2 0.098 0.110\n3 0.024 0.102\n4 0.140 0.114\n5 0.056 0.105\n6 0.055 0.105\n7 -0.071 0.093\n8 -0.110 0.089\n9 -0.066 0.093\nProbability total: 1.000\nSuccess!\n"
+    },
+    {
+      "name": "loss-complete",
+      "flags": [
+        "-O1",
+        "-g",
+        "-fsanitize=address,undefined"
+      ],
+      "elapsedSeconds": 2.793,
+      "output": "Test 1\nTest 2\nTest 3\nTest 4\nTest 5\nTest 6\nTest 7\nTest 8\nTest 9\nTest 10\nTest 11\nTest 12\nTest 13\nTest 14\nTest 15\nTest 16\nTest 17\nTest 18\nTest 19\nTest 20\nTest 21\nTest 22\nTest 23\nTest 24\nWeight: 2 \nBias: 1 \nx relu sigmoid\n-2 0 0.119203 -0.964028\n-1 0 0.268941 -0.761594\n0 0 0.5 0\n1 1 0.731059 0.761594\n2 2 0.880797 0.964028\nWeight: 2 \nBias: 1 \nLoss: 0.779 -> 0.000\na b prediction target\n0.000 0.000 0.000 0.000\n0.000 1.000 1.000 1.000\n1.000 0.000 1.000 1.000\n1.000 1.000 0.000 0.000\nCorrect digit: 5\ndigit score probability\n0 0.044 0.104\n1 -0.159 0.085\n2 0.098 0.110\n3 0.024 0.102\n4 0.140 0.114\n5 0.056 0.105\n6 0.055 0.105\n7 -0.071 0.093\n8 -0.110 0.089\n9 -0.066 0.093\nProbability total: 1.000\nSuccess!\n"
+    },
+    {
+      "name": "trained-mnist",
+      "flags": [
+        "-O2"
+      ],
+      "elapsedSeconds": 5.255,
+      "output": "Test 1\nTest 2\nTest 3\nTest 4\nTest 5\nTest 6\nTest 7\nTest 8\nTest 9\nTest 10\nTest 11\nTest 12\nTest 13\nTest 14\nTest 15\nTest 16\nTest 17\nTest 18\nTest 19\nTest 20\nTest 21\nTest 22\nTest 23\nTest 24\nWeight: 2 \nBias: 1 \nx relu sigmoid\n-2 0 0.119203 -0.964028\n-1 0 0.268941 -0.761594\n0 0 0.5 0\n1 1 0.731059 0.761594\n2 2 0.880797 0.964028\nWeight: 2 \nBias: 1 \nLoss: 0.779 -> 0.000\na b prediction target\n0.000 0.000 0.000 0.000\n0.000 1.000 1.000 1.000\n1.000 0.000 1.000 1.000\n1.000 1.000 0.000 0.000\nCorrect digit: 5\ndigit score probability\n0 0.044 0.104\n1 -0.159 0.085\n2 0.098 0.110\n3 0.024 0.102\n4 0.140 0.114\n5 0.056 0.105\n6 0.055 0.105\n7 -0.071 0.093\n8 -0.110 0.089\n9 -0.066 0.093\nProbability total: 1.000\nTraining epoch 1/5\n\r  2048/10000 images | mean loss: 1.828    \r  4096/10000 images | mean loss: 1.466    \r  6144/10000 images | mean loss: 1.232    \r  8192/10000 images | mean loss: 1.087    \r  10000/10000 images | mean loss: 0.994    \nEpoch 1 loss: 0.994\nTraining epoch 2/5\n\r  2048/10000 images | mean loss: 0.506    \r  4096/10000 images | mean loss: 0.460    \r  6144/10000 images | mean loss: 0.440    \r  8192/10000 images | mean loss: 0.430    \r  10000/10000 images | mean loss: 0.427    \nEpoch 2 loss: 0.427\nTraining epoch 3/5\n\r  2048/10000 images | mean loss: 0.380    \r  4096/10000 images | mean loss: 0.346    \r  6144/10000 images | mean loss: 0.338    \r  8192/10000 images | mean loss: 0.336    \r  10000/10000 images | mean loss: 0.340    \nEpoch 3 loss: 0.340\nTraining epoch 4/5\n\r  2048/10000 images | mean loss: 0.330    \r  4096/10000 images | mean loss: 0.299    \r  6144/10000 images | mean loss: 0.294    \r  8192/10000 images | mean loss: 0.293    \r  10000/10000 images | mean loss: 0.299    \nEpoch 4 loss: 0.299\nTraining epoch 5/5\n\r  2048/10000 images | mean loss: 0.300    \r  4096/10000 images | mean loss: 0.270    \r  6144/10000 images | mean loss: 0.266    \r  8192/10000 images | mean loss: 0.266    \r  10000/10000 images | mean loss: 0.272    \nEpoch 5 loss: 0.272\nSuccess!\n"
+    },
+    {
+      "name": "evaluated-mnist",
+      "flags": [
+        "-O2"
+      ],
+      "elapsedSeconds": 5.334,
+      "output": "Test 1\nTest 2\nTest 3\nTest 4\nTest 5\nTest 6\nTest 7\nTest 8\nTest 9\nTest 10\nTest 11\nTest 12\nTest 13\nTest 14\nTest 15\nTest 16\nTest 17\nTest 18\nTest 19\nTest 20\nTest 21\nTest 22\nTest 23\nTest 24\nWeight: 2 \nBias: 1 \nx relu sigmoid\n-2 0 0.119203 -0.964028\n-1 0 0.268941 -0.761594\n0 0 0.5 0\n1 1 0.731059 0.761594\n2 2 0.880797 0.964028\nWeight: 2 \nBias: 1 \nLoss: 0.779 -> 0.000\na b prediction target\n0.000 0.000 0.000 0.000\n0.000 1.000 1.000 1.000\n1.000 0.000 1.000 1.000\n1.000 1.000 0.000 0.000\nCorrect digit: 5\ndigit score probability\n0 0.044 0.104\n1 -0.159 0.085\n2 0.098 0.110\n3 0.024 0.102\n4 0.140 0.114\n5 0.056 0.105\n6 0.055 0.105\n7 -0.071 0.093\n8 -0.110 0.089\n9 -0.066 0.093\nProbability total: 1.000\nTraining epoch 1/5\n\r  2048/10000 images | mean loss: 1.828    \r  4096/10000 images | mean loss: 1.466    \r  6144/10000 images | mean loss: 1.232    \r  8192/10000 images | mean loss: 1.087    \r  10000/10000 images | mean loss: 0.994    \nEpoch 1 loss: 0.994\nTraining epoch 2/5\n\r  2048/10000 images | mean loss: 0.506    \r  4096/10000 images | mean loss: 0.460    \r  6144/10000 images | mean loss: 0.440    \r  8192/10000 images | mean loss: 0.430    \r  10000/10000 images | mean loss: 0.427    \nEpoch 2 loss: 0.427\nTraining epoch 3/5\n\r  2048/10000 images | mean loss: 0.380    \r  4096/10000 images | mean loss: 0.346    \r  6144/10000 images | mean loss: 0.338    \r  8192/10000 images | mean loss: 0.336    \r  10000/10000 images | mean loss: 0.340    \nEpoch 3 loss: 0.340\nTraining epoch 4/5\n\r  2048/10000 images | mean loss: 0.330    \r  4096/10000 images | mean loss: 0.299    \r  6144/10000 images | mean loss: 0.294    \r  8192/10000 images | mean loss: 0.293    \r  10000/10000 images | mean loss: 0.299    \nEpoch 4 loss: 0.299\nTraining epoch 5/5\n\r  2048/10000 images | mean loss: 0.300    \r  4096/10000 images | mean loss: 0.270    \r  6144/10000 images | mean loss: 0.266    \r  8192/10000 images | mean loss: 0.266    \r  10000/10000 images | mean loss: 0.272    \nEpoch 5 loss: 0.272\nTest accuracy: 88.200% (1764/2000)\nSuccess!\n"
+    },
+    {
+      "name": "loss-and-batch-checks",
+      "flags": [
+        "-O1",
+        "-g",
+        "-fsanitize=address,undefined"
+      ],
+      "elapsedSeconds": 0.713,
+      "output": "57 finite-difference checks; stability, accumulation, batches, data and accuracy: PASS\n"
+    }
+  ]
+}

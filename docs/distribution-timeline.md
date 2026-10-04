@@ -485,3 +485,228 @@ Rotate among:
 - Saved the creator's narrow README-update rule in the public GitHub
   playbook. Verified origin/main at f24101e. Local editor settings remain
   uncommitted and unchanged by this correction.
+
+## September 10, 2026: Short 7 editing completed
+
+- Creator reported completing Short 7 and then supplying a corrected export.
+  The current `cpp-false-sharing-cache-line-padding.mp4`, modified at 3:20 PM ET,
+  is 2160 x 3840, 30 fps and 31.6 seconds. This is a production milestone,
+  not a publication report.
+- [Publishing package](../youtube-series/shorts/short-07-false-sharing/publishing.md)
+  contains YouTube, Instagram, TikTok and X copy and first comments.
+- One caption occurrence still reads `CASH LINE` at 29.03 seconds in the new
+  file. Final audio and platform cover/crop checks remain pending. No release
+  was scheduled and no public post or comment was created.
+
+## September 11, 2026: Engine check and Short 7 publication reconciliation
+
+- Supersedes September 10's preparation-only status: [Short 7 on YouTube](https://www.youtube.com/watch?v=sh7xuOwlSus)
+  published September 10 at **5:30:01 PM ET**. [Instagram Reel](https://www.instagram.com/reel/DdJcy6si2Tt/)
+  published September 11 at **8:51:20 AM ET**, verified by the owned APIs.
+- YouTube has the 31.6-second, 130,285,936-byte export. The local master was
+  replaced after publication and is now 28.733333 seconds and 118,249,351 bytes.
+  Its new hash requires a fresh upload gate; prior media checks cannot transfer.
+  Instagram's exact uploaded revision is unknown. No deletion/reupload occurred.
+- At approximately 1:05 PM ET, the default refresh recorded YouTube 109
+  subscribers, Instagram 271 followers, X 232, TikTok 23 and GitHub 5 stars.
+  LinkedIn remains the older manual 760. Short 7 had 432 public YouTube views
+  at audit and 9,193 Instagram views at refresh; these are different publication
+  ages, not a matched-age comparison. No X post metadata was pulled.
+- Added Short 7's 17 missing researched YouTube backend tags after a dry run.
+  Later read-back confirmed the tags; title and description were preserved.
+  No comment was posted and no pin reminder was issued.
+- All 15 in-scope YouTube videos have correct playlist membership. All eight
+  long-form descriptions have valid chapters. Episode 8's public source/README
+  remain synchronized with GitHub at f24101e; both public C++ programs pass.
+- Episode 8 X/LinkedIn announcement URLs and Short 7 X/TikTok publication
+  remain unconfirmed. Current TikTok provider/public counts show only Shorts
+  3-6. Check existing posts before creating any duplicate.
+- Browser page control timed out after one Studio reacquisition. Asked the
+  creator to open Chrome and Codex. Related videos, fresh native playback/crops,
+  Studio restrictions and remaining end-screen checks are explicitly incomplete.
+- The newer Episode 8 Reddit draft proposes September 13, 12:30 PM ET,
+  superseding the older release package's defer. No post was scheduled.
+- [Detailed audit and remaining actions](../youtube-series/analytics/reports/2026-09-11-engine-check.md).
+
+## September 14, 2026: Episode 9 release and engine check
+
+- [Episode 9](https://www.youtube.com/watch?v=h3p_rkzDPys) published at
+  **9:00:22 AM ET**, confirmed by the API. Public, 4K processing complete,
+  23 backend tags and complete-series playlist membership verified. Local
+  3840x2160 master matches the uploaded filename and 3,055,424,617-byte size.
+- Around 2:00 PM ET, added 18 caption-derived chapters through the API and
+  verified the saved description. Saved Newest-first comment sorting in
+  Studio; comments remain On/Anyone with existing Basic moderation.
+- Published Episode 9's recorded code in [656f826](https://github.com/mechanical-turk/deep-learning-all-the-way-down/commit/656f826ae857aa45c0f2ee7235f3654aa0597019)
+  and its README episode row/summary in [2c1b9f9](https://github.com/mechanical-turk/deep-learning-all-the-way-down/commit/2c1b9f9908f37432528681a13c4acac3e4ba0025).
+  Verified remote main and both program runs; Episode 10 is work in progress.
+- Chrome disconnected before end-screen inspection. Subscribe/playlist end
+  screen and full public playback remain unverified. The optional technical
+  comment remains a draft; none was posted. X/LinkedIn announcement URLs are
+  unconfirmed, not assumed missing or newly published.
+- Default refresh: YouTube 129 subscribers, Instagram 369 followers, X 233,
+  TikTok 26 and GitHub 5 stars. No tweet-level X data was requested.
+- [Full audit](../youtube-series/analytics/reports/2026-09-14-engine-check.md).
+
+## September 14, 2026: Short 7 TikTok publication identified
+
+- Phyllo now indexes [Short 7 on TikTok](https://www.tiktok.com/@mechaturka/video/7684647347833326879),
+  superseding September 11's unconfirmed status. Its published_at is
+  September 12 at 13:56:49 without a timezone suffix; exact ET conversion is
+  unverified. Provider snapshot: 4,922 views, 84 likes, 12 comments, four shares.
+- Native playback/crop/audio and exact uploaded-file identity remain unverified.
+  No upload, replacement or comment was performed. X publication is still
+  unconfirmed. Existing Short upload-gate gaps remain recorded in its package.
+
+## September 14, 2026: Chapter 10 source checkpoint pushed
+
+- At the creator's request, pushed the recorded activation functions and
+  nonlinear regression code to the public long-form repository in
+  [2846756](https://github.com/mechanical-turk/deep-learning-all-the-way-down/commit/2846756092647df3e617021d3a468c07615317f4).
+- Added the Chapter 10 code link/summary and Chapter 11 work-in-progress row
+  in [1535f54](https://github.com/mechanical-turk/deep-learning-all-the-way-down/commit/1535f54abcf3fd69ead294167709d7c7b6ecd3d5).
+  Chapter 10's video link remains pending. Verified remote main equals this
+  commit; both C++ entry points compile and pass.
+- Preserved recording code exactly. Chapter 11's proposed implementation was
+  not applied to main.cpp. Local .gitignore and editor settings remain untouched.
+- Content HQ was not pushed: its public remote is 22 commits behind local
+  history, including internal analytics. Chapter 10/11 preparation files remain
+  local; publishing that broader history requires a separate scope decision.
+
+## September 15, 2026: Chapter 11 source checkpoint and engine check
+
+- Pushed recorded Chapter 11 code in
+  [e4dffe6](https://github.com/mechanical-turk/deep-learning-all-the-way-down/commit/e4dffe6eb00688bdfdd7728f94764b5be0996445)
+  and its minimal README update/Chapter 12 WIP row in
+  [a1ea701](https://github.com/mechanical-turk/deep-learning-all-the-way-down/commit/a1ea701ff0ec4b5656c3a579620837e0fc5a5567).
+  Verified remote main and both program runs. No Chapter 12 code was pushed.
+- Default refresh: YouTube 130, Instagram 373, X 233, TikTok 26, GitHub 5 stars.
+  All 16 series uploads have tags and playlist membership; all nine long-form
+  descriptions have valid chapters. Episode 9 remains the latest public episode.
+- Browser control could not connect to Chrome. End-screen/playback and other
+  Studio-only checks remain unverified. Requested Chrome/Codex reconnection.
+  No comment or announcement was posted; missing URLs remain unconfirmed.
+- [Full audit](../youtube-series/analytics/reports/2026-09-15-engine-check.md).
+- Chapter 12 preparation now uses a supplied separate MNIST reader, with a
+  maximum 30-second overview. Model, loss, training and evaluation stay in the
+  recording script. The helper is staged locally beside main.cpp, uncommitted.
+
+## September 17, 2026: Episode 12 library checkpoint pushed
+
+- At the creator's request, preserved the recorded MNIST implementation in
+  [c9918e8](https://github.com/mechanical-turk/deep-learning-all-the-way-down/commit/c9918e8605fbc178d8a7d3d8063ae036fcfcb50b),
+  including the reader, checksum-verified downloader and dataset setup notes.
+  Downloaded dataset files and generated binaries were not committed.
+- Updated the Episode 12 table row and summary, and marked Episode 13's library,
+  GoogleTest and CMake cleanup as work in progress in
+  [a3baf7e](https://github.com/mechanical-turk/deep-learning-all-the-way-down/commit/a3baf7ee044860c4929eeba5c20d0fcf6a43630d).
+  Video URL remains pending verification; no upload status inferred.
+- Both public C++ programs compiled and ran successfully. MNIST reproduced
+  88.2% accuracy (1764/2000); all four local dataset checksums passed.
+  Verified remote main matches local HEAD a3baf7e.
+- Left unrelated root .gitignore and .vscode/settings.json edits uncommitted.
+  No Episode 13 implementation or refactor was applied.
+
+## September 20, 2026: Episode 11 private upload setup
+
+- Started the authorized Chrome upload of Episode 11 as private, without scheduling or publishing: https://www.youtube.com/watch?v=Jiqc8jW1skM
+- Studio edit page: https://studio.youtube.com/video/Jiqc8jW1skM/edit
+- Source export is `aliases/04-final-cuts/ep11/0915.mp4`, 3840x2160, 22:04.025, 4,313,097,171 bytes. Created a hard link named `cpp-neural-network-modules-mlp-xor-from-scratch.mp4` for the upload, retaining the original.
+- Entered the package title, description and 22 tags; selected the complete-series playlist, English and Newest comment sorting. Confirmed not made for kids, Science & Technology, Comments On/Anyone and existing Basic moderation.
+- Saved playlist and Subscribe end-screen elements, currently covering the final 20 seconds (21:44-22:04). Creator should review placement against the ending.
+- Selected Private and clicked Save. Last visible transfer status was 89%, with Saved as private shown. Browser completion verification and one reconnection both timed out; upload completion, processing and checks remain unverified. Kept the upload tab marked for handoff.
+- No Chapter 11 custom thumbnail was found. Thumbnail, caption-derived chapters and final playback review remain pending. No public post, comment or schedule was created.
+
+## September 22, 2026: Episodes 10 and 11 chapter timestamps published
+
+- Confirmed the latest two DLATWD uploads through the owned-channel API:
+  [Episode 10](https://www.youtube.com/watch?v=D_DiZpaKwr0), public since
+  September 17 at 11:30:23 AM ET, and
+  [Episode 11](https://www.youtube.com/watch?v=Jiqc8jW1skM), public since
+  September 21 at 11:30:07 AM ET. Both report processed status.
+- Downloaded their English automatic caption tracks, compared the recorded
+  transitions with their scripts, and added 14 and 16 chapters respectively.
+  Both begin with 00:00 Introduction and end with Recap; no chapter exceeds
+  five minutes, and labels meet the 28-character/five-word limits.
+- Inspected dry-run diffs, updated only the chapter blocks in the existing
+  descriptions, and fetched both descriptions again to verify exact matches.
+  Captions, chapter files and boundary reviews are saved beside each episode.
+- This was a targeted API timestamp update, not a full engine check. Native
+  playback, end-screen rendering and comment UI remain unverified here. No
+  comment, schedule or announcement was created.
+
+## September 24, 2026: GitHub video links synchronized
+
+- Verified public Chapter 10 and 11 URLs through the YouTube API and linked
+  both in the README table and episode summaries. Chapter 12 remains video
+  pending; no upload was returned in the latest channel uploads.
+- Renamed only the table's Episode header to Chapter, as requested.
+- Pushed README-only commit
+  [c090e12](https://github.com/mechanical-turk/deep-learning-all-the-way-down/commit/c090e122c8aea0fd069f20e8539514995df135ff)
+  to main and verified the remote hash. Both public C++ entry points compiled
+  and ran successfully; MNIST reached 88.2% (1764/2000).
+- Used a separate docs worktree from origin/main to avoid publishing the
+  unrelated local 516f66e wip commit. Recording checkout remains unchanged;
+  its local main and remote main now have separate unmerged commits.
+
+## September 24, 2026: Episode 12 uploaded privately
+
+- Uploaded the final 3840x2160, 30 fps, 25:13.244 export as
+  [Episode 12](https://www.youtube.com/watch?v=12MUX0SD4lc).
+  [Studio edit page](https://studio.youtube.com/video/12MUX0SD4lc/edit).
+- Read-back confirms private visibility, no publishAt, the package title and
+  description, all 22 tags, English, Education, not made for kids and exactly
+  one complete-series playlist membership. No publication or schedule set.
+- Kept the original export and created a descriptive hard link. File identity
+  and full error-free ffmpeg decode recorded in chapter-12/distribution.md.
+- YouTube processing remains in progress; English automatic captions are not
+  serving. Chapters and 2160p playback verification must follow processing.
+- No Episode 12 thumbnail was found. Requested its path. Chrome control
+  returned a stuck Studio menu with screenshot unavailable, so end-screen and
+  comment UI setup could not be completed. Requested foreground Chrome/Codex.
+- Initial API upload disabled subscriber notification. Before publication,
+  check/enable Studio's subscriptions-feed notification option if available.
+  Future private uploads retain the existing true setting; privacy itself
+  prevents public release. This video remains private pending creator review.
+- No author comment, X/LinkedIn announcement, Reddit post or public README
+  video link was posted. Distribution.md holds the conditional follow-through.
+
+## October 3, 2026: Chapter 13 source and artifacts pushed
+
+- Pushed the recorded Layer/Sequence implementation, deeper ReLU network,
+  learning rate decay and the two activation plots to public main:
+  [source checkpoint dc29a21](https://github.com/mechanical-turk/deep-learning-all-the-way-down/commit/dc29a21f43e32992f81958d94d3a506eb5d1ca36).
+- Both public C++ entry points compiled and ran. The final MNIST example
+  reached 91.95% (1839/2000), loss 0.120646 after ten epochs.
+- [README commit 2c80785](https://github.com/mechanical-turk/deep-learning-all-the-way-down/commit/2c8078579fa26b62cc17e3554953ebf1a80d53fb)
+  records Chapter 13, retains Chapter 14 as work in progress, and links the
+  API-verified public Chapter 12 video. Remote main hash verified.
+- Kept the recording checkout and unrelated local WIP commit untouched.
+  Chapter 13 upload is in progress with private visibility and no schedule.
+
+## October 3, 2026: Chapter 13 private upload completed
+
+- Uploaded the 3840x2160, 34:09.333 final export as
+  [Chapter 13](https://www.youtube.com/watch?v=ASoqjGVOUKc).
+  [Studio edit page](https://studio.youtube.com/video/ASoqjGVOUKc/edit).
+- API read-back confirms private visibility, no schedule, exact package title
+  and description, all 21 tags and not made for kids. Added to the complete
+  series playlist and verified exactly one membership.
+- Processing remains in progress and no caption tracks are available.
+  Approved thumbnail, recording-derived chapters, 2160p native playback,
+  end screens and comment UI checks remain pending before public release.
+- Saved the package, descriptive upload filename and SHA-256 in
+  chapter-13/publishing.md. No social announcement or comment was posted.
+
+## October 3, 2026: Chapter 13 replacement upload
+
+- Creator rejected the prior edit. Uploaded the new `ep13/out.mp4` export:
+  3840x2160, 31:20.344, 5,209,074,542 bytes. Its SHA-256 is
+  `fa59bfa7dd996a0a391bd71faab4b3b9b098d74de13bed7b3f18eea52f5dea6a`.
+- New [video](https://www.youtube.com/watch?v=yonurmbDkbM) and
+  [Studio edit page](https://studio.youtube.com/video/yonurmbDkbM/edit).
+  API verified private, unscheduled, exact title/description and all 21 tags.
+  Added to the complete-series playlist. Processing remains in progress.
+- Supersedes ASoqjGVOUKc. No deletion or public release performed. Updated
+  publishing.md to use the replacement file and URL; no GitHub changes needed
+  for this replacement-upload task.

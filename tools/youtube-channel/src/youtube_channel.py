@@ -952,12 +952,14 @@ def command_upload(args: argparse.Namespace) -> int:
     if not video_path.is_file():
         raise RuntimeError(f"Video file does not exist: {video_path}")
 
-    publish_at = datetime.fromisoformat(args.publish_at.replace("Z", "+00:00"))
-    if publish_at.tzinfo is None:
-        raise ValueError("--publish-at must include a UTC offset")
-    publish_at = publish_at.astimezone(UTC)
-    if publish_at <= datetime.now(UTC):
-        raise ValueError("--publish-at must be in the future")
+    publish_at = None
+    if args.publish_at:
+        publish_at = datetime.fromisoformat(args.publish_at.replace("Z", "+00:00"))
+        if publish_at.tzinfo is None:
+            raise ValueError("--publish-at must include a UTC offset")
+        publish_at = publish_at.astimezone(UTC)
+        if publish_at <= datetime.now(UTC):
+            raise ValueError("--publish-at must be in the future")
 
     package = publishing_package(package_path)
     snippet = {
@@ -970,19 +972,21 @@ def command_upload(args: argparse.Namespace) -> int:
     }
     status = {
         "privacyStatus": "private",
-        "publishAt": publish_at.isoformat().replace("+00:00", "Z"),
         "selfDeclaredMadeForKids": False,
         "embeddable": True,
         "publicStatsViewable": True,
     }
 
+    if publish_at is not None:
+        status["publishAt"] = publish_at.isoformat().replace("+00:00", "Z")
+
     print(f"Video: {video_path}")
     print(f"Title: {snippet['title']}")
-    print(f"Scheduled publication: {status['publishAt']}")
+    print(f"Publication: {status.get('publishAt', 'private, unscheduled')}")
     print(f"Category: {args.category_id}")
     print(f"Tags: {len(package['tags'])}")
     if not args.apply:
-        print("Dry run only. Re-run with `--apply` to upload and schedule it.")
+        print("Dry run only. Re-run with `--apply` to upload with these settings.")
         return 0
 
     services = build_services(authorize())
@@ -1000,7 +1004,7 @@ def command_upload(args: argparse.Namespace) -> int:
     video_id = response.get("id")
     if not video_id:
         raise RuntimeError("YouTube upload completed without returning a video ID")
-    print(f"Video uploaded and scheduled: {video_id}")
+    print(f"Video uploaded: {video_id}; publication: {status.get('publishAt', 'private, unscheduled')}")
     print(f"Studio: https://studio.youtube.com/video/{video_id}/edit")
     return 0
 
@@ -1102,13 +1106,14 @@ def parser() -> argparse.ArgumentParser:
     thumbnail.set_defaults(handler=command_thumbnail)
 
     upload = commands.add_parser(
-        "upload", help="Upload and schedule a video from a publishing package"
+        "upload", help="Upload privately or schedule from a publishing package"
     )
     upload.add_argument("--file", required=True)
     upload.add_argument("--package", required=True)
-    upload.add_argument(
+    visibility = upload.add_mutually_exclusive_group(required=True)
+    visibility.add_argument("--private", action="store_true", help="Keep private without scheduling")
+    visibility.add_argument(
         "--publish-at",
-        required=True,
         help="RFC 3339 publication time with a UTC offset",
     )
     upload.add_argument("--category-id", default="28")

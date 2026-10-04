@@ -6,25 +6,36 @@ checklist. Keep its pacing and evidence separate from the Shorts playbook.
 
 ## Required script-writing workflow
 
-Every new or rewritten long-form script must contain these sections in order,
-without requiring a separate critique request. Put the descriptive proposed
-MP4 filename above them.
+Every new or rewritten long-form script must go through the following steps
+in order, without requiring a separate critique request. Keep their artifacts
+separate so the recording document stays easy to follow:
 
-1. **Checklist plan:** explain how this draft will attempt every item L01-L16.
+- `script.md`: descriptive MP4 filename, episode title, concise recording
+  directions, `>` narration, exact code edits and expected on-screen output.
+- `keyword-research.md`: dated SEO research and spoken-keyword map.
+- `script-review.md`: checklist plan, source/scope notes, checklist audit,
+  critique, score, verification references and editorial rationale. Link the
+  script and keyword research here. Do not put this material in `script.md`.
+
+1. **Keyword and SEO analysis, before drafting:** complete the research and
+   spoken-keyword map below before writing narration or live-coding beats.
+   Save the episode-specific record as `keyword-research.md` and link it from
+   `script-review.md`. Publishing-time research does not replace this step.
+2. **Checklist plan:** in `script-review.md`, explain how this draft will attempt every item L01-L16.
    Use one concise row per ID with the actual intended beat, visual, code,
    evidence, or known risk. Identify the opening promise, first useful action,
    first payoff, and the capability gained in each section. Intention is not
    proof of compliance.
-2. **Script:** one canonical draft, with `>` marking only spoken narration.
-   Keep code, estimated timecodes, scene directions, and review notes outside
-   narration. Use the episode structure below.
-3. **Checklist audit:** assess that exact draft against every L01-L16 item.
+3. **Script:** one canonical draft, with `>` marking only spoken narration.
+   Keep code, estimated timecodes and scene directions outside narration.
+   Use the episode structure below; keep review notes in `script-review.md`.
+4. **Checklist audit:** in `script-review.md`, assess that exact draft against every L01-L16 item.
    Give status, a specific beat or evidence reference, awarded points, and a
    repair for each shortfall. Do not copy the plan and call it an audit.
-4. **Critique:** prioritize the biggest obstacles to viewer understanding,
+5. **Critique:** in `script-review.md`, prioritize the biggest obstacles to viewer understanding,
    useful progress, and trust. Explain their consequences and the next repair.
    Do not invent faults or add cosmetic revisions to inflate an iteration count.
-5. **Final score:** calculate the score out of 100 and give the decision
+6. **Final score:** in `script-review.md`, calculate the score out of 100 and give the decision
    `advance`, `rework`, or `hold` using the rubric below.
 
 For a requested fragment, preserve scope and recorded material. Audit the
@@ -43,11 +54,57 @@ checks and recalculate the score for the actual delivered draft.
   what viewers actually received.
 - Respect the live-build format. Do not invent finished code or final output for
   an opening when it did not exist during recording.
+- Build the episode's core machine-learning implementation on camera. Routine
+  dataset file parsing may be supplied in a separate, inspectable file when it
+  is not the lesson. Explain its inputs, outputs and normalization in no more
+  than 30 seconds, then show how its data enters the Tensor and training loop.
+  Chapter 12 uses this approach for mnist_reader.hpp. Do not build a general
+  Dataset/DataLoader abstraction until that abstraction is itself the topic.
+  Do not hide model, loss, gradient, training or evaluation code in the helper.
+  Keep support code narrow and explicitly identify it as supplied. Separate
+  production regression checks may remain outside the recording, but must not
+  supply hidden implementation. Never use "done off screen" to bridge missing
+  lesson code.
 - Keep uncommitted content ideas in `youtube-series/content-ideas.md`, separate
   from active scripts and release packages.
 - Give new examples meaningful names such as `predictions` and `targets`.
   Do not carry numbered test variables such as `pred_23` into new lessons.
   Initialize a fresh example explicitly when historical test setup is irrelevant.
+
+## Pre-script keyword and SEO analysis
+
+Before writing any new episode script:
+
+1. Read the preceding episode's actual ending and current code. Establish what
+   this episode will deliver, and which attractive search phrases would overpromise.
+2. Research YouTube search language for that specific subject. Prefer owned
+   search/traffic data when available, then current search suggestions and
+   comparable videos. Use official documentation or original educational sources
+   to check terminology. Do not invent query volume, competition, rankings or
+   keyword effectiveness from a few search results.
+3. Save a dated `keyword-research.md` with sources, observed wording, candidate
+   phrases, one primary phrase, a short supporting set, rejected terms and
+   unavailable evidence. Existing relevant data may be used without triggering
+   an unrequested analytics refresh.
+4. Map the selected words to actual spoken moments: the opening promise, the
+   code or calculation that introduces each concept, and the recap. Record the
+   intended natural sentence or use, not just a list for the description.
+   Name the concrete subject early when it helps the viewer, and pronounce
+   abbreviations in useful ordinary terms, for example mean squared error
+   before using MSE.
+5. Write the script around the problem and code progression. Use the chosen
+   terminology where the viewer needs it. Do not add a keyword roll call, repeat
+   phrases for density, slow the cold open, or force unrelated topics into speech.
+6. Before approving the script, audit the actual `>` narration against the map.
+   Keywords present only in headings, code, production notes or future upload
+   metadata do not count as recorded speech. Remove unsupported promises and
+   repair unnatural phrasing. A written audit is not proof of the final transcript;
+   recheck the captions after recording.
+
+This is a recording requirement, not only a publishing requirement. Spoken
+terminology should make the lesson clear and searchable; no claim is made that
+repeating a term causes higher ranking. Follow the separate platform-copy
+playbook when researching and writing the later public package.
 
 ## Long-form script checklist
 
@@ -62,13 +119,64 @@ Weights express editorial priorities, not measured contributions to retention.
   against its captions and code; explain any necessary scope change. The
   title's promise must match the lesson, not a more ambitious future episode.
 
+  **Curiosity gap:** establish one concrete question, surprising behavior, or
+  unresolved engineering problem that gives viewers a reason to keep watching.
+  Make clear what they already understand and what they will discover by
+  following the implementation. Answer the question through visible progress
+  and a real payoff. Do not hide prerequisite context, delay useful work, or
+  manufacture suspense around a trivial answer. Long-form lessons should
+  deliver intermediate answers rather than withhold everything until the end.
+
+  **Unique service proposition:** identify the specific value this episode
+  provides beyond naming its topic. What will viewers build, understand, or
+  learn to diagnose here, and why is our implementation worth following?
+  Express that value through the concrete promise and opening code or visual,
+  not a sales pitch or an unsupported claim that nobody else teaches it.
+  "From scratch" alone is insufficient; name the useful capability or insight
+  the viewer gains by seeing the machinery built and explained.
+
+  In the pre-script checklist plan, write down the curiosity question, its
+  payoff, and the episode's distinctive viewer benefit. Audit the actual
+  opening for all three, not just the planning notes. Combine them naturally
+  with the quick reassurance in L02; do not stack three introductory speeches.
+
 - [ ] **L02 | Clear cold opening | 10 points.**
+  **Thumbnail-title-opening alignment:** the thumbnail, video title, and first
+  five seconds must communicate the same subject and promise. Immediately
+  name the title's core subject and say what we are doing in one short, natural
+  sentence, so viewers know they clicked the right video. This is quick
+  reassurance, not a separate introduction: do not recite the series name,
+  episode number, full SEO title, or a roadmap. Begin the relevant code or
+  visual action alongside that sentence, then continue directly into the work.
+  Display the video's topic title in writing within the first five seconds,
+  ideally from the first frame, so muted autoplay and hover-preview viewers
+  can immediately tell what we are doing. Use the same topic wording as the
+  published title; the series suffix and episode number need not occupy the
+  overlay. Keep the text readable at preview size and visible long enough to
+  read. Overlay it on the relevant code or visual without obscuring the work;
+  do not insert a separate title card or delay the first useful action.
+  During review, compare the thumbnail, title, first frame, and first five
+  seconds of narration together. A viewer should recognize the promised
+  content without waiting for context later in the intro. If packaging is not
+  final yet, keep this alignment check pending and repeat it before recording
+  approval and release; do not claim it passed from the script alone.
+
   Do the first sentence and first frame point to the same understandable need?
   Put meaningful subject and stakes before setup. Begin with relevant existing
   code, a real failure, a calculation, or a concise narrated visual. No greeting,
   series premise, roadmap, recap, previous answers, or setup commands. Supply
   only the prerequisite a new viewer needs for this action. A visual is optional
   and must explain faster than code; no silent slideshow or repeated titles.
+  Ease the viewer into the subject: name the concrete object or situation
+  before referring to its limitation. A cold open must establish context and
+  sell the core idea together. Do not begin with "this model", "this result",
+  or an unexplained failure when the viewer has not yet been shown what it is.
+  Use a brief, understandable observation or example to establish the subject,
+  connect it to the interesting problem, then introduce the change we will
+  build. This is necessary orientation, not a series recap or a long preface.
+  Review the first spoken lines as someone who has just opened this video:
+  can they identify what we are discussing, why it matters, and what they will
+  learn without having watched another episode?
 
 - [ ] **L03 | Useful action immediately | 8 points.**
   Does the beat after the promise start changing, running, or deriving something
@@ -78,6 +186,29 @@ Weights express editorial priorities, not measured contributions to retention.
   movement, imports, and ceremonial typing do not count as meaningful progress.
 
 - [ ] **L04 | First payoff within one minute | 8 points.**
+  **Time to value:** measure elapsed time from the first frame to the first
+  useful thing the viewer actually receives: an insight, an explanation that
+  resolves something, a meaningful code improvement, or a demonstrated result.
+  A promise of future value, topic announcement, cursor movement, or unexplained
+  code typing does not count. Useful action (L03) and delivered value are
+  separate checks; beginning to code is not automatically the first payoff.
+
+  Balance **context, curiosity, and time to value**. Supply only enough context
+  to understand the immediate problem, establish a concrete question worth
+  following, and deliver a useful piece of the answer quickly. Give additional
+  context when the next step needs it instead of front-loading prerequisites.
+  Keep a worthwhile larger question open while resolving smaller questions
+  along the way. Do not preserve curiosity by withholding an early answer the
+  viewer needs, or chase speed by leaving viewers unable to follow the code.
+
+  In the opening plan, identify the minimum necessary context, curiosity
+  question, first value delivered, and estimated timestamp. Ask of every
+  introductory sentence: does the viewer need this before that first value?
+  Move unnecessary setup later or remove it. During rehearsal and final-edit
+  review, record the actual time to value and what made that moment useful.
+  Treat one minute as an outer review target, not an allowance to fill with
+  setup; aim to deliver value as soon as the subject permits.
+
   Name the observable first payoff and how we reach it by about 1:00. It may be
   a useful code path, worked result, or demonstrated behavior, not necessarily
   the completed feature. Do not fabricate finished output before a live build,
@@ -99,6 +230,10 @@ Weights express editorial priorities, not measured contributions to retention.
   machinery. Explain as the important code appears. No separate theory primer
   unless theory is the episode's subject; no declaration-then-definition detour
   when an inline implementation is the natural next step.
+  Before each substantive code edit, include a brief spoken explanation of
+  what we are about to build and why we need it here. Then narrate the decisions
+  while typing. An unspoken location note or a paragraph after the code does
+  not satisfy this requirement; use the sequence under Spoken delivery check.
   Write the final validation logic when it is already known. Do not introduce
   a temporary whitelist merely to match unfinished code and replace it later.
   Label incomplete recording stages instead of adding disposable scaffolding.
@@ -106,6 +241,9 @@ Weights express editorial priorities, not measured contributions to retention.
   First demonstrate the supported behavior; introduce an unsupported-path
   check when the viewer can see what is supported and what the failure would
   disrupt. Code that belongs early in a function need not be taught first.
+  Implement each operation's forward and backward paths together before its
+  first run. Do not stage a predictable failure from a deliberately missing
+  implementation just to motivate writing the code we already planned.
 
 - [ ] **L07 | Essential reasoning survives the edit | 8 points.**
   Can viewers explain why the important lines work, rather than only copy them?
@@ -156,6 +294,10 @@ Weights express editorial priorities, not measured contributions to retention.
   visible code as you would to someone sitting beside you; connect reasons and
   consequences naturally. Do not add filler, fake informality or exaggerated
   enthusiasm to simulate a human voice.
+  Audit the spoken track without headings, code, or production notes. The
+  listener must still understand what prompted each edit and why we moved to
+  the next function. Check both section boundaries and sentence-to-sentence
+  continuity; grammatical sentences alone do not establish a coherent lesson.
 
 - [ ] **L11a | Target runtime | included in L11's 5 points.**
   Target a final edited runtime of 10 to 15 minutes. Episode 7 at 23:39
@@ -192,11 +334,13 @@ Weights express editorial priorities, not measured contributions to retention.
   them altered, and make any resulting continuity issue explicit.
 
 - [ ] **L15 | Accurate subject and SEO handoff | 2 points.**
-  Identify the primary subject phrase and accurate supporting search terms.
-  Keep the title, promise, and actual implemented scope aligned. Follow the
-  copy/SEO playbook for public filenames, titles, and other copy; candidate
-  keywords alone are not SEO approval. Route the later publishing package to
-  its own checklist rather than treating a script score as publishing approval.
+  Was the dated keyword and SEO analysis completed before script drafting, with
+  sources and an explicit spoken-keyword map? Check the exact narration for
+  the selected terms at useful moments, not just headings or descriptions.
+  Keep title, promise and implemented scope aligned, and reject keyword stuffing
+  or unnatural delivery. Missing pre-script research requires rework regardless
+  of the total score. Follow the copy/SEO playbook for later public fields;
+  script research does not approve the publishing package.
 
 - [ ] **L16 | Evidence limits and honest review | 2 points.**
   Cite the relevant long-form evidence and name any technique borrowed from
@@ -216,6 +360,29 @@ Weights express editorial priorities, not measured contributions to retention.
 
 ### Spoken delivery check
 
+- Use this sequence for each substantive coding section:
+  **explain the immediate need and intended change -> write while narrating
+  the decisions -> interpret the result when it adds something new**.
+  The preview should normally take one or two connected sentences. Give the
+  viewer enough to anticipate the code without explaining the whole function
+  twice. During typing, explain how we carry out the promised change, using
+  the line currently on screen. Do not save the explanation until after a
+  large code block or read a completed function as an abstract summary.
+- Keep the reasoning in the `>` narration. Headings, location labels and
+  director notes can orient the presenter but cannot supply a missing spoken
+  transition. A routine include or simple rename may share the preview of the
+  substantive change it belongs to; it does not need a separate speech.
+- Check each transition by asking: what did the viewer just learn, what does
+  that make us want to do, and does the next spoken sentence express that
+  connection? Resolve missing reasoning before polishing wording. Do not
+  paste "so", "now", or "that's why" onto an unrelated new topic.
+- When switching subjects, carry the viewer from the visible result to a
+  concrete reason for considering the next subject, then name the next action.
+  A property comparison alone is not a transition: explain why the difference
+  matters here before introducing another function or concept. For alternatives,
+  explain the different need without pretending the previous solution failed.
+  Read the last spoken passage and the next section's opening together; revise
+  them until the change of subject makes sense without the section heading.
 - Verbal sections must sound natural and human throughout: vocabulary, cadence,
   rhythm, transitions and sentence structure. Technical accuracy does not excuse
   narration that reads like API documentation or an abstract summary.
@@ -226,6 +393,9 @@ Weights express editorial priorities, not measured contributions to retention.
   Neither choppy fragments nor forced casual language satisfies this check.
 - Preserve the causal explanation. Do not shorten a sentence until the viewer
   can no longer understand why the code exists.
+- Explain decisions and consequences, not a spoken transcription of operands,
+  coefficients or index expressions. Leave readable arithmetic on screen unless
+  working through it answers the viewer's immediate question.
 - Tie each section to the need left by the previous one. Explain what we can
   do now, what is still missing, and why the next edit addresses it. Use "so",
   "but", "because" and "and that's why" where they express the actual connection;
@@ -260,6 +430,19 @@ Weights express editorial priorities, not measured contributions to retention.
   retain pacing/voice risk when delivery has not been tested by the presenter.
 
 ### Literal code edits
+
+For an explicitly approved **commit-review episode**, replace literal
+Before/After blocks with small verified commits in a separate workspace.
+Each script segment must name its real commit hash, files, exact diff command,
+and the few hunks to explain. Show declarations and definitions in the same
+checkpoint, including caller/build changes needed to keep it runnable. Explain
+the need before showing the diff and the consequence while reviewing it.
+Do not read every moved line aloud. Keep replay commands and full verification
+in a separate checkpoint guide. Never apply checkpoints to the recording
+checkout until requested, and check its current state before cherry-picking:
+partially recorded work may already contain a migration. This exception also
+applies to L08 and the live-build requirement when the creator chooses this
+format; it does not authorize hidden implementation in normal coding episodes.
 
 - For every edit, show **Before** and **After** in code fences. A location label
   can help navigation but must never substitute for the code itself.
@@ -351,7 +534,7 @@ Retain half-points. Never remove items from the denominator or silently use N/A.
 For fragment work, label the total provisional and do not present it as the
 whole episode's score.
 
-**Mandatory checks: L01-L08, L12, and L13.** A misleading promise, delayed
+**Mandatory checks: L01-L08, L12, L13, and L15.** A misleading promise, delayed
 useful work, broken progression, missing explanation, or incomplete lesson
 cannot be averaged away by good formatting.
 
@@ -369,7 +552,7 @@ authorizes release or predicts performance.
 
 Finish with `Score: X/100. Decision: advance/rework/hold.` State the most
 important remaining weakness before that line. The audit and critique stay
-outside read-aloud narration.
+in `script-review.md`, outside the recording script.
 
 ## Evidence and transfer boundaries
 

@@ -12,6 +12,8 @@ from pathlib import Path
 from youtube_channel import (
     analytics_start_date,
     command_package,
+    command_upload,
+    parser,
     description_with_chapters,
     desired_video_snippet,
     publishing_package,
@@ -24,6 +26,20 @@ from youtube_channel import (
 
 
 class PublishingPackageTest(unittest.TestCase):
+    def test_private_upload_has_no_schedule(self) -> None:
+        with tempfile.NamedTemporaryFile(suffix=".mp4") as media:
+            args = parser().parse_args(["upload", "--file", media.name,
+                                       "--package", "unused.md", "--private", "--apply"])
+            service = MagicMock()
+            service.youtube.videos.return_value.insert.return_value.next_chunk.return_value = (None, {"id": "test"})
+            package = {"title": "Title", "description": "Description", "tags": ["C++"]}
+            with patch("youtube_channel.publishing_package", return_value=package), patch("youtube_channel.authorize"), patch("youtube_channel.build_services", return_value=service), redirect_stdout(StringIO()):
+                command_upload(args)
+            call = service.youtube.videos.return_value.insert.call_args.kwargs
+            self.assertEqual(call["body"]["status"]["privacyStatus"], "private")
+            self.assertNotIn("publishAt", call["body"]["status"])
+            self.assertTrue(call["notifySubscribers"])
+
     def test_comment_is_optional(self) -> None:
         document = "## Final title\nTitle\n\n## YouTube description\nDescription\n\n## Suggested tags\nC++\n"
         with tempfile.TemporaryDirectory() as directory:

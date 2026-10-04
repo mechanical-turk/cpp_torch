@@ -269,3 +269,14 @@ Append-only. These entries preserve the observations previously mixed into
 - Resume at Short 3 Overview. Capture its lower diagnostics and retention,
   then Short 2, Short 5 audience, TikTok, YouTube Studio and remaining native
   platform insights. The all-platform native collection is still incomplete.
+
+### 2026-09-11: Instagram account growth and conditional projection
+
+- Instagram API refresh at 3:24 PM ET returned 285 followers. Account follower
+  counts and trajectory do not require iPhone Mirroring.
+- Added 131 net followers since September 4, up 85.1% over 7.176 days, averaging
+  18.255 per day. Growth is burst-driven rather than steadily exponential.
+- Sustaining that pace would reach 1,000 around October 20. This is a conditional
+  linear scenario, not a forecast or confidence interval. Illustrative 10/day
+  and 30/day scenarios reach the milestone around November 22 and October 5.
+- Full evidence and reproducible chart: [trajectory report](../../youtube-series/analytics/reports/2026-09-11-instagram-follower-trajectory.md).

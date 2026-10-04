@@ -1,0 +1,32 @@
+{
+  "startingSourceSha256": "9884bdafa86a39e330fa8581879001fcd226a25396f4112e919f8576d995a125",
+  "scriptSha256": "40f474785ead800b4ed332e10af280598fa9414692866bada0600aaee810bd21",
+  "replaySha256": "6afde63a171c0106d9b45b484c1ab2ed68a17a1def76c92c7881c9a85057348d",
+  "edits": 20,
+  "checkpoints": [
+    {
+      "name": "baseline",
+      "output": "Test 1\nTest 2\nTest 3\nTest 4\nTest 5\nTest 6\nTest 7\nTest 8\nTest 9\nTest 10\nTest 11\nTest 12\nTest 13\nTest 14\nTest 15\nTest 16\nTest 17\nTest 18\nTest 19\nTest 20\nTest 21\nTest 22\nTest 23\nTest 24\nWeight: 2 \nBias: 1 \nSuccess!\n"
+    },
+    {
+      "name": "relu-complete",
+      "output": "Test 1\nTest 2\nTest 3\nTest 4\nTest 5\nTest 6\nTest 7\nTest 8\nTest 9\nTest 10\nTest 11\nTest 12\nTest 13\nTest 14\nTest 15\nTest 16\nTest 17\nTest 18\nTest 19\nTest 20\nTest 21\nTest 22\nTest 23\nTest 24\nx relu\n-2 0\n-1 0\n0 0\n1 1\n2 2\nWeight: 2 \nBias: 1 \nSuccess!\n"
+    },
+    {
+      "name": "sigmoid-complete",
+      "output": "Test 1\nTest 2\nTest 3\nTest 4\nTest 5\nTest 6\nTest 7\nTest 8\nTest 9\nTest 10\nTest 11\nTest 12\nTest 13\nTest 14\nTest 15\nTest 16\nTest 17\nTest 18\nTest 19\nTest 20\nTest 21\nTest 22\nTest 23\nTest 24\nx relu sigmoid\n-2 0 0.119203\n-1 0 0.268941\n0 0 0.5\n1 1 0.731059\n2 2 0.880797\nWeight: 2 \nBias: 1 \nSuccess!\n"
+    },
+    {
+      "name": "activations-complete",
+      "output": "Test 1\nTest 2\nTest 3\nTest 4\nTest 5\nTest 6\nTest 7\nTest 8\nTest 9\nTest 10\nTest 11\nTest 12\nTest 13\nTest 14\nTest 15\nTest 16\nTest 17\nTest 18\nTest 19\nTest 20\nTest 21\nTest 22\nTest 23\nTest 24\nx relu sigmoid tanh\n-2 0 0.119203 -0.964028\n-1 0 0.268941 -0.761594\n0 0 0.5 0\n1 1 0.731059 0.761594\n2 2 0.880797 0.964028\nWeight: 2 \nBias: 1 \nSuccess!\n"
+    },
+    {
+      "name": "nonlinear-training",
+      "output": "Test 1\nTest 2\nTest 3\nTest 4\nTest 5\nTest 6\nTest 7\nTest 8\nTest 9\nTest 10\nTest 11\nTest 12\nTest 13\nTest 14\nTest 15\nTest 16\nTest 17\nTest 18\nTest 19\nTest 20\nTest 21\nTest 22\nTest 23\nTest 24\nx relu sigmoid tanh\n-2 0 0.119203 -0.964028\n-1 0 0.268941 -0.761594\n0 0 0.5 0\n1 1 0.731059 0.761594\n2 2 0.880797 0.964028\nWeight: 2 \nBias: 1 \nx prediction target\n-1 -0.761594 -0.761594\n0 0.761594 0.761594\n1 0.995055 0.995055\nSuccess!\n"
+    },
+    {
+      "name": "activation-gradient-checks",
+      "output": "activation gradient checks: PASS\n"
+    }
+  ]
+}

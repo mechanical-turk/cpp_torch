@@ -30,6 +30,15 @@ package. This replaces the stale pre-upload draft, not the recorded video.
 
 ## Release facts
 
+September 11 reconciliation: source checkpoint and public README are now
+current at Episode 8 checkpoint `7021cfe` and README commit `f24101e`; remote
+main agrees and both C++ entry points pass. The older source-pending statements
+below are superseded. X/LinkedIn publication remains unconfirmed, not verified
+absent. The newer [Reddit draft](../forum-announcements/reddit-episode-08.md)
+proposes September 13 at 12:30 PM ET, superseding the earlier defer. Studio
+page control remains blocked; no new Checking/end-screen clearance is claimed.
+See the [current audit](../analytics/reports/2026-09-11-engine-check.md).
+
 - Public episode: https://www.youtube.com/watch?v=RXCeVnhjHCQ
 - Published: **September 8, 2026, 11:30:21 AM ET**, verified by API.
 - Exact upload filename: `cpp-tensor-autograd-elementwise-backpropagation.mp4`
@@ -301,7 +310,7 @@ not search volume or predicted engagement.
 | P12 | PARTIAL | 1.5/3 | Public, 2160p, playlist, comments/Newest and required end-screen elements verified. Checking unresolved; no clean end-screen tail. |
 | P13 | PARTIAL | 2/4 | Downloaded ASR and 17 valid chapters applied. Full caption-word audit and chapter-player rendering remain open. |
 | P14 | PASS | 3/3 | Dated proposal derives from actual publication; no fabricated scheduled announcements. |
-| P15 | FAIL | 0/2 | Local code is uncommitted and README is behind. Complete source review and publish the intended checkpoint before calling it current. |
+| P15 | PASS | 2/2 | September 11: public Episode 8 checkpoint 7021cfe and README f24101e are synchronized with remote main; both entry points compile and pass. Unpublished Episode 9 examples stay separate. |
 | P16 | PASS | 2/2 | Known URLs, plain-text blocks, preserved parser headings and non-parser comment candidate. |
 | P17 | PASS | 2/2 | Every item scored against evidence; unknowns not treated as completed. |
 | P18 | PASS | 2/2 | Checks and follow-through recorded; no implied automatic social posts. |
@@ -312,7 +321,7 @@ The X announcement now follows Episode 7's structure and includes the missing
 C++/tensor-autograd search terms. It is a text improvement, not proof of a fully
 passed discovery gate: native X research and composer preview remain blocked.
 
-The public code checkpoint remains behind the episode. YouTube checks are
+The public code checkpoint is now synchronized. YouTube checks are
 recorded as unresolved, but the creator has set them aside for this copy
 handoff. The 25:54 edit also still exceeds our new target. Narrow
 future lessons before recording rather than rushing explanations. These facts
@@ -320,7 +329,11 @@ do not justify deleting a working public upload.
 
 ## Final score
 
-**Score: 69.5/100 (69.5/100 applicable). Decision: copy handoff complete; full package clearance remains partial.**
+**Score: 71.5/100 (71.5/100 applicable). Decision: copy handoff complete; full package clearance remains partial.**
+
+Limited September 11 re-audit: P15 gained two points for the verified public
+source/README correction. Other preparation scores are retained, not freshly
+revalidated against Studio or social composers.
 
 X/LinkedIn text revised; research/preview follow-ups remain. YouTube is already
 public, not “waiting for an upload.” No announcement or first-comment candidate

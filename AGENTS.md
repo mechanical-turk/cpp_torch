@@ -19,6 +19,10 @@ evidence to improve delivery without diluting the subject.
 - Never invent a publication, timestamp, URL, metric, code state, or completed
   task. Mark unavailable evidence unknown.
 - Preserve user changes and unrelated dirty-tree work.
+- Keep `script.md` ready for recording: narration, scene directions, exact code
+  edits, and the descriptive media filename only. Put checklist plans, audits,
+  critique, scores, and editorial rationale in `script-review.md`; keep keyword
+  research in `keyword-research.md`. Still perform every required review step.
 - Perform routine authorized, non-destructive operations directly. Ask before
   expanding authority or taking destructive action.
 - Before posting a comment or reply, inspect existing account-authored comments
@@ -39,8 +43,9 @@ in that route.
 | --- | --- |
 | Any public title, description, caption, comment, post, profile text, alt text, tag set, hashtag set, or upload filename | `youtube-series/production/platform-copy-playbook.md` |
 | Create, rewrite, review, or approve a `publishing.md` | `youtube-series/production/publishing-playbook.md` and its applicable source playbooks; require checklist plan first, publishing content, checklist audit, critique, and final score |
-| Long-form planning, scripting, review, or packaging | `youtube-series/production/long-form-playbook.md`; every new or rewritten script requires its L01-L16 checklist plan, script, audit, critique, and final score |
-| Short, Reel, TikTok, or vertical-video planning and scripting | `youtube-series/production/short-form-playbook.md`; follow its required checklist plan, script, item-by-item audit, critique, and final score |
+| Long-form planning, scripting, review, or packaging | `youtube-series/production/long-form-playbook.md`; complete keyword research and L01-L16 review workflow; keep the recording script and supporting review in separate files |
+| DaVinci Resolve editing, date-ordered assembly, speech cuts, dialogue cleanup, playback speed, or final video export | `youtube-series/production/edit-playbook.md`; also read the resolution and visual-asset standards it links; preserve the creator's latest manual edit |
+| Short, Reel, TikTok, or vertical-video planning and scripting | `youtube-series/production/short-form-playbook.md`; complete its checklist plan, audit, critique, and score in `script-review.md`; reserve `script.md` for recording |
 | Blender or animation work | `youtube-series/production/animations-playbook.md` |
 | Short, Reel, or TikTok final-export review, upload approval, or release readiness | `docs/operations/short-upload-gate.md`; `youtube-series/production/platform-copy-playbook.md` |
 | Thumbnail, diagram, overlay, banner, cover, crop, or export | `youtube-series/production/visual-asset-guidelines.md`; for YouTube long-form thumbnails also read `youtube-series/production/youtube-thumbnail-research.md`; for resolution read `youtube-series/production/video-resolution-standard.md` |

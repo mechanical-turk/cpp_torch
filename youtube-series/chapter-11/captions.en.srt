@@ -1,0 +1,2040 @@
+1
+00:00:00,080 --> 00:00:05,440
+Take a look at these four rows. These
+
+2
+00:00:02,639 --> 00:00:08,240
+four rows represent exor one when the
+
+3
+00:00:05,440 --> 00:00:09,760
+inputs differ and then zero when they
+
+4
+00:00:08,240 --> 00:00:12,400
+match.
+
+5
+00:00:09,760 --> 00:00:15,040
+No single straight boundary can separate
+
+6
+00:00:12,400 --> 00:00:18,080
+the ones from the zeros. Today we are
+
+7
+00:00:15,040 --> 00:00:21,520
+going to train a small neural network in
+
+8
+00:00:18,080 --> 00:00:23,600
+C++ to do exactly this with layers that
+
+9
+00:00:21,520 --> 00:00:26,320
+we can reuse. So the first order of
+
+10
+00:00:23,600 --> 00:00:32,559
+business today is creating a reusable
+
+11
+00:00:26,320 --> 00:00:34,880
+module. So let's go up to MSE loss and
+
+12
+00:00:32,559 --> 00:00:37,760
+this is a good place to start a new
+
+13
+00:00:34,880 --> 00:00:40,000
+class. We're going to call this class
+
+14
+00:00:37,760 --> 00:00:42,960
+linear and this is going to represent a
+
+15
+00:00:40,000 --> 00:00:45,200
+reusable and configurable linear layer.
+
+16
+00:00:42,960 --> 00:00:48,160
+The linear layer is going to have a
+
+17
+00:00:45,200 --> 00:00:51,360
+single forward pass which will return a
+
+18
+00:00:48,160 --> 00:00:53,520
+tensor and it's going to take inputs and
+
+19
+00:00:51,360 --> 00:00:55,280
+it's going to be a cost function and
+
+20
+00:00:53,520 --> 00:00:58,239
+it's going to return the matrix
+
+21
+00:00:55,280 --> 00:00:59,920
+multiplication of inputs with weights
+
+22
+00:00:58,239 --> 00:01:02,640
+and then it's going to broadcast the
+
+23
+00:00:59,920 --> 00:01:04,720
+bias through addition and these are
+
+24
+00:01:02,640 --> 00:01:08,560
+going to be available in the form of
+
+25
+00:01:04,720 --> 00:01:11,040
+private variables like this. Now to
+
+26
+00:01:08,560 --> 00:01:14,320
+create a linear layer, we will supply
+
+27
+00:01:11,040 --> 00:01:16,400
+its input and output sizes and then the
+
+28
+00:01:14,320 --> 00:01:19,200
+constructor will allocate the matching
+
+29
+00:01:16,400 --> 00:01:21,280
+tensors and then we will keep the biases
+
+30
+00:01:19,200 --> 00:01:23,360
+at zero. But we can't really use
+
+31
+00:01:21,280 --> 00:01:25,520
+identical weights because it would make
+
+32
+00:01:23,360 --> 00:01:28,240
+the hidden units produce the same values
+
+33
+00:01:25,520 --> 00:01:29,920
+and receive the same updates. So instead
+
+34
+00:01:28,240 --> 00:01:31,280
+we will give them different random
+
+35
+00:01:29,920 --> 00:01:33,840
+weights so they can learn different
+
+36
+00:01:31,280 --> 00:01:37,040
+features independent from each other. So
+
+37
+00:01:33,840 --> 00:01:40,240
+let's create a public constructor and
+
+38
+00:01:37,040 --> 00:01:43,119
+let's pass the in features, the out
+
+39
+00:01:40,240 --> 00:01:45,680
+features and also a random seed. And
+
+40
+00:01:43,119 --> 00:01:48,240
+using these we're going to create the
+
+41
+00:01:45,680 --> 00:01:50,079
+weights. This is going to be a function
+
+42
+00:01:48,240 --> 00:01:52,720
+that we're going to write in a second.
+
+43
+00:01:50,079 --> 00:01:56,000
+But it's going to take in features, out
+
+44
+00:01:52,720 --> 00:01:58,960
+features, and random. And then the bias
+
+45
+00:01:56,000 --> 00:02:01,920
+is going to take the out features at its
+
+46
+00:01:58,960 --> 00:02:04,799
+size. And then the data is going to be
+
+47
+00:02:01,920 --> 00:02:06,799
+just standard vector of size out
+
+48
+00:02:04,799 --> 00:02:09,119
+features and they're all going to be
+
+49
+00:02:06,799 --> 00:02:10,800
+initialized at zero. Okay. So now let's
+
+50
+00:02:09,119 --> 00:02:13,520
+write this helper, the random weight
+
+51
+00:02:10,800 --> 00:02:16,560
+helper. We can put this right here as a
+
+52
+00:02:13,520 --> 00:02:18,640
+static helper and its only job is
+
+53
+00:02:16,560 --> 00:02:20,640
+returning random weights based on the
+
+54
+00:02:18,640 --> 00:02:22,800
+dimensions supplied as well as the
+
+55
+00:02:20,640 --> 00:02:25,599
+random number generator. So we're going
+
+56
+00:02:22,800 --> 00:02:28,000
+to have in features, we're going to have
+
+57
+00:02:25,599 --> 00:02:31,599
+the out features, and we're going to
+
+58
+00:02:28,000 --> 00:02:34,560
+have a reference to our random number
+
+59
+00:02:31,599 --> 00:02:37,360
+generator. So this function will create
+
+60
+00:02:34,560 --> 00:02:40,800
+the weight matrix, and it needs one
+
+61
+00:02:37,360 --> 00:02:43,360
+value for every input output connection.
+
+62
+00:02:40,800 --> 00:02:45,440
+So we're going to sample around zero
+
+63
+00:02:43,360 --> 00:02:47,599
+with the range scaled by the number of
+
+64
+00:02:45,440 --> 00:02:50,959
+inputs. So larger layers don't start
+
+65
+00:02:47,599 --> 00:02:52,560
+with unnecessarily large values. So
+
+66
+00:02:50,959 --> 00:02:55,440
+let's create the limit based on this
+
+67
+00:02:52,560 --> 00:02:57,440
+rule. We are going to take the
+
+68
+00:02:55,440 --> 00:03:00,480
+multiplicative inverse of the square
+
+69
+00:02:57,440 --> 00:03:03,280
+root of the number of integers. So we're
+
+70
+00:03:00,480 --> 00:03:05,440
+going to static cast to double the in
+
+71
+00:03:03,280 --> 00:03:07,680
+features and that's going to give us our
+
+72
+00:03:05,440 --> 00:03:11,200
+limit. And then we're going to use this
+
+73
+00:03:07,680 --> 00:03:14,159
+in uniform real distribution of doubles
+
+74
+00:03:11,200 --> 00:03:17,599
+and we will create our distribution by
+
+75
+00:03:14,159 --> 00:03:19,040
+passing minus limit and limit. So it's
+
+76
+00:03:17,599 --> 00:03:21,599
+going to be a random number between
+
+77
+00:03:19,040 --> 00:03:24,560
+these based on uniform distribution. And
+
+78
+00:03:21,599 --> 00:03:27,360
+then we're going to create our values
+
+79
+00:03:24,560 --> 00:03:29,519
+which are going to be offsiz in features
+
+80
+00:03:27,360 --> 00:03:31,360
+times out features. And then we're going
+
+81
+00:03:29,519 --> 00:03:34,640
+to iterate through them. And we're going
+
+82
+00:03:31,360 --> 00:03:37,599
+to say the value is going to be equal to
+
+83
+00:03:34,640 --> 00:03:39,519
+a new random value picked from this
+
+84
+00:03:37,599 --> 00:03:43,200
+distribution. And then we're going to
+
+85
+00:03:39,519 --> 00:03:46,239
+return a tensor of size in features by
+
+86
+00:03:43,200 --> 00:03:49,519
+out features. And the values are going
+
+87
+00:03:46,239 --> 00:03:51,519
+to be the standard move of the values. I
+
+88
+00:03:49,519 --> 00:03:54,400
+realize I have a typo here. It's
+
+89
+00:03:51,519 --> 00:03:57,840
+supposed to be random weights. So now we
+
+90
+00:03:54,400 --> 00:04:00,640
+have a very powerful tool. We are now
+
+91
+00:03:57,840 --> 00:04:02,480
+able to stack multiple linear layers.
+
+92
+00:04:00,640 --> 00:04:04,720
+But again, for a more expressive and
+
+93
+00:04:02,480 --> 00:04:08,799
+useful deep neural network, we need
+
+94
+00:04:04,720 --> 00:04:12,239
+nonlinearity. So let's pick 10H into
+
+95
+00:04:08,799 --> 00:04:14,720
+another reusable layer. So let's go down
+
+96
+00:04:12,239 --> 00:04:16,880
+right after the linear layer. Let's
+
+97
+00:04:14,720 --> 00:04:19,919
+create a much simpler strct and let's
+
+98
+00:04:16,880 --> 00:04:23,600
+call it tan tanh. And this two is going
+
+99
+00:04:19,919 --> 00:04:25,600
+to have a single forward function. It's
+
+100
+00:04:23,600 --> 00:04:28,160
+going to have the same signature. It
+
+101
+00:04:25,600 --> 00:04:30,240
+will take an immutable reference to the
+
+102
+00:04:28,160 --> 00:04:32,160
+inputs and then it will be a con
+
+103
+00:04:30,240 --> 00:04:34,639
+function and it will return the forward
+
+104
+00:04:32,160 --> 00:04:36,160
+pass. So in this case it's going to be
+
+105
+00:04:34,639 --> 00:04:38,320
+inputs.10h
+
+106
+00:04:36,160 --> 00:04:40,320
+and we add the semicolon here and we're
+
+107
+00:04:38,320 --> 00:04:42,400
+done. So now we have the primitives we
+
+108
+00:04:40,320 --> 00:04:45,520
+need to be able to put together a hidden
+
+109
+00:04:42,400 --> 00:04:49,120
+linear layer 10h and an output linear
+
+110
+00:04:45,520 --> 00:04:52,800
+layer. So let's put that combination in
+
+111
+00:04:49,120 --> 00:04:54,560
+an MLP class which stands for multilayer
+
+112
+00:04:52,800 --> 00:04:58,639
+perceptron.
+
+113
+00:04:54,560 --> 00:05:00,960
+So now let's do class MLP and then let's
+
+114
+00:04:58,639 --> 00:05:03,440
+start with the public constructor. So
+
+115
+00:05:00,960 --> 00:05:06,639
+this is going to take the in features.
+
+116
+00:05:03,440 --> 00:05:08,320
+It's going to take the hidden features
+
+117
+00:05:06,639 --> 00:05:11,759
+and then it's going to take the out
+
+118
+00:05:08,320 --> 00:05:14,400
+features and it will need its own random
+
+119
+00:05:11,759 --> 00:05:16,320
+number generator and it will be using
+
+120
+00:05:14,400 --> 00:05:18,160
+these to initialize a few private
+
+121
+00:05:16,320 --> 00:05:19,840
+variables. So let's just set them first.
+
+122
+00:05:18,160 --> 00:05:22,160
+We're going to have a linear layer,
+
+123
+00:05:19,840 --> 00:05:24,080
+hidden layer, we're going to have an
+
+124
+00:05:22,160 --> 00:05:26,080
+activation layer, and then we're going
+
+125
+00:05:24,080 --> 00:05:29,360
+to have an output layer. And then the
+
+126
+00:05:26,080 --> 00:05:31,840
+constructor can initialize these. So
+
+127
+00:05:29,360 --> 00:05:34,240
+hidden will take the in features, the
+
+128
+00:05:31,840 --> 00:05:36,720
+out features and the random number
+
+129
+00:05:34,240 --> 00:05:39,840
+generator. The output can take the
+
+130
+00:05:36,720 --> 00:05:41,039
+hidden features, the out features and
+
+131
+00:05:39,840 --> 00:05:44,160
+this is actually supposed to take the
+
+132
+00:05:41,039 --> 00:05:45,919
+hidden features because right hidden
+
+133
+00:05:44,160 --> 00:05:48,080
+just maps to output and then output is
+
+134
+00:05:45,919 --> 00:05:50,639
+the output and then we can pass the
+
+135
+00:05:48,080 --> 00:05:53,520
+random number generator directly here.
+
+136
+00:05:50,639 --> 00:05:55,440
+And 10H doesn't need member variable
+
+137
+00:05:53,520 --> 00:05:57,520
+initialization. So we're actually good
+
+138
+00:05:55,440 --> 00:05:59,840
+here. And then the most important thing
+
+139
+00:05:57,520 --> 00:06:02,240
+is the forward function. So we're going
+
+140
+00:05:59,840 --> 00:06:05,759
+to have a no discard and then we're
+
+141
+00:06:02,240 --> 00:06:09,280
+going to have tensor forward and then an
+
+142
+00:06:05,759 --> 00:06:11,759
+immutable reference to the inputs mark
+
+143
+00:06:09,280 --> 00:06:14,319
+it as const. And then now we're going to
+
+144
+00:06:11,759 --> 00:06:17,919
+pass our inputs through these layers. So
+
+145
+00:06:14,319 --> 00:06:21,280
+we're going to have tensor hidden and
+
+146
+00:06:17,919 --> 00:06:22,800
+it's going to call activation.forward
+
+147
+00:06:21,280 --> 00:06:25,199
+which will take the result of
+
+148
+00:06:22,800 --> 00:06:27,440
+hidden.forward forward which takes the
+
+149
+00:06:25,199 --> 00:06:29,600
+inputs and then the output layer can
+
+150
+00:06:27,440 --> 00:06:31,039
+take the result of the hidden layer. So
+
+151
+00:06:29,600 --> 00:06:33,039
+what's happening here is first we're
+
+152
+00:06:31,039 --> 00:06:35,280
+running the hidden layer. We're then
+
+153
+00:06:33,039 --> 00:06:37,039
+passing it into the activation layer and
+
+154
+00:06:35,280 --> 00:06:39,120
+then finally the output layer is taking
+
+155
+00:06:37,039 --> 00:06:42,319
+the activation layer and creating the
+
+156
+00:06:39,120 --> 00:06:45,039
+final output. So now let's think about
+
+157
+00:06:42,319 --> 00:06:47,360
+our XR function again. This is our
+
+158
+00:06:45,039 --> 00:06:50,240
+target function. Let's think about the
+
+159
+00:06:47,360 --> 00:06:52,960
+way it looks. So first of all, every row
+
+160
+00:06:50,240 --> 00:06:56,960
+has two features and there are four of
+
+161
+00:06:52,960 --> 00:07:02,240
+them. So the entire universe of inputs
+
+162
+00:06:56,960 --> 00:07:05,840
+is actually expressible by a 4x2 tensor.
+
+163
+00:07:02,240 --> 00:07:07,840
+So the input rows are going to be 4x2.
+
+164
+00:07:05,840 --> 00:07:10,240
+And then let's take a look at the
+
+165
+00:07:07,840 --> 00:07:11,680
+output. Let's forget about linear and
+
+166
+00:07:10,240 --> 00:07:14,160
+activation for a second and let's think
+
+167
+00:07:11,680 --> 00:07:17,199
+about the output. So the job of the
+
+168
+00:07:14,160 --> 00:07:21,120
+output is mapping these two features
+
+169
+00:07:17,199 --> 00:07:23,680
+into a single final output. So it is a
+
+170
+00:07:21,120 --> 00:07:27,280
+tensor the shape and let's say dot here
+
+171
+00:07:23,680 --> 00:07:29,199
+to show that more is coming and then the
+
+172
+00:07:27,280 --> 00:07:30,960
+output is going to have well we know
+
+173
+00:07:29,199 --> 00:07:32,960
+that at the end it's going to be one
+
+174
+00:07:30,960 --> 00:07:35,919
+because we're mapping everything down to
+
+175
+00:07:32,960 --> 00:07:37,360
+one. This part is not clear right now.
+
+176
+00:07:35,919 --> 00:07:40,000
+And then let's think about the hidden
+
+177
+00:07:37,360 --> 00:07:42,319
+layer. So the hidden layer is going to
+
+178
+00:07:40,000 --> 00:07:46,400
+do something with the inputs. The inputs
+
+179
+00:07:42,319 --> 00:07:49,120
+are a 4x2 matrix. So it must be a 2x
+
+180
+00:07:46,400 --> 00:07:51,599
+something. That something turns out is
+
+181
+00:07:49,120 --> 00:07:54,319
+totally up to us. And the result of this
+
+182
+00:07:51,599 --> 00:07:57,280
+matrix multiplication is going to be 4
+
+183
+00:07:54,319 --> 00:08:00,160
+by something. So suppose we pick four.
+
+184
+00:07:57,280 --> 00:08:02,800
+Suppose this is actually four. In that
+
+185
+00:08:00,160 --> 00:08:06,240
+case the output of the first hidden
+
+186
+00:08:02,800 --> 00:08:09,280
+layer is going to be a 4x4 tensor. And
+
+187
+00:08:06,240 --> 00:08:10,960
+then tanh as you recall does not change
+
+188
+00:08:09,280 --> 00:08:13,520
+the shape of its input. it just
+
+189
+00:08:10,960 --> 00:08:17,199
+maintains it. So the result of 10h is
+
+190
+00:08:13,520 --> 00:08:19,840
+also going to be a 4x4 tensor. And then
+
+191
+00:08:17,199 --> 00:08:23,759
+finally the output layer is supposed to
+
+192
+00:08:19,840 --> 00:08:26,720
+take the output of 10h and then produce
+
+193
+00:08:23,759 --> 00:08:29,039
+this question mark by one tensor. But
+
+194
+00:08:26,720 --> 00:08:31,919
+because it's matrix multiplication, we
+
+195
+00:08:29,039 --> 00:08:35,279
+know that its last part must match the
+
+196
+00:08:31,919 --> 00:08:37,519
+sorry its first dimension must match the
+
+197
+00:08:35,279 --> 00:08:40,320
+last dimension of the previous layer. So
+
+198
+00:08:37,519 --> 00:08:41,760
+it begins with four. And because it's
+
+199
+00:08:40,320 --> 00:08:44,320
+supposed to reduce everything down to a
+
+200
+00:08:41,760 --> 00:08:46,959
+single value, we know that it's supposed
+
+201
+00:08:44,320 --> 00:08:50,640
+to be a 4x1. And then finally, we have
+
+202
+00:08:46,959 --> 00:08:53,440
+our 4x1 outcome, which means that once
+
+203
+00:08:50,640 --> 00:08:56,080
+the input passes through our layer, in
+
+204
+00:08:53,440 --> 00:08:59,279
+this case, there are four of them. It's
+
+205
+00:08:56,080 --> 00:09:01,680
+supposed to assign a single outcome for
+
+206
+00:08:59,279 --> 00:09:04,160
+every single one. So the output will
+
+207
+00:09:01,680 --> 00:09:06,000
+represent four rows and their mapped
+
+208
+00:09:04,160 --> 00:09:08,720
+outcome. Now, let me clean this up a
+
+209
+00:09:06,000 --> 00:09:12,399
+little bit. So first we have a 2x4
+
+210
+00:09:08,720 --> 00:09:15,120
+linear layer. Then we have our 10H
+
+211
+00:09:12,399 --> 00:09:17,760
+layer. Let me put this here. Let me
+
+212
+00:09:15,120 --> 00:09:20,080
+align them. And then we have another
+
+213
+00:09:17,760 --> 00:09:22,160
+linear layer. And this is our output
+
+214
+00:09:20,080 --> 00:09:25,279
+layer. And just like that we have
+
+215
+00:09:22,160 --> 00:09:28,800
+obtained the entire life cycle of our
+
+216
+00:09:25,279 --> 00:09:31,680
+input. The input rows come in as 4x2.
+
+217
+00:09:28,800 --> 00:09:34,160
+The hidden layer explodes them to 4x4.
+
+218
+00:09:31,680 --> 00:09:35,920
+They pass through 10H unchanged in terms
+
+219
+00:09:34,160 --> 00:09:38,480
+of their shape. And then finally the
+
+220
+00:09:35,920 --> 00:09:41,760
+output layer finalizes them into a 44 by
+
+221
+00:09:38,480 --> 00:09:44,480
+one. So now for every input which there
+
+222
+00:09:41,760 --> 00:09:47,440
+were four of them we have an output. So
+
+223
+00:09:44,480 --> 00:09:50,320
+at this point we can call forward to get
+
+224
+00:09:47,440 --> 00:09:52,399
+the predictions and we also know how to
+
+225
+00:09:50,320 --> 00:09:55,279
+calculate the loss and we also know how
+
+226
+00:09:52,399 --> 00:09:57,200
+to calculate backward and we can compute
+
+227
+00:09:55,279 --> 00:10:00,080
+the gradients but there's still
+
+228
+00:09:57,200 --> 00:10:01,760
+something missing and that is going to
+
+229
+00:10:00,080 --> 00:10:05,440
+be something related to the gradient
+
+230
+00:10:01,760 --> 00:10:07,279
+step. So as you recall our training loop
+
+231
+00:10:05,440 --> 00:10:09,519
+needs to clear the old gradients with
+
+232
+00:10:07,279 --> 00:10:12,720
+zero grat before each step and then use
+
+233
+00:10:09,519 --> 00:10:15,200
+gradient step to update the values
+
+234
+00:10:12,720 --> 00:10:17,440
+afterward. And in the previous examples
+
+235
+00:10:15,200 --> 00:10:20,240
+in the previous episodes the specific
+
+236
+00:10:17,440 --> 00:10:22,720
+tensors that needed autograd and zerog
+
+237
+00:10:20,240 --> 00:10:24,560
+were hardcoded inside the loops because
+
+238
+00:10:22,720 --> 00:10:26,320
+we already knew exactly what they were.
+
+239
+00:10:24,560 --> 00:10:28,560
+You know a single weight tensor and a
+
+240
+00:10:26,320 --> 00:10:30,560
+single bias that's very easy to manage
+
+241
+00:10:28,560 --> 00:10:32,720
+and we can just hardcode it and we're
+
+242
+00:10:30,560 --> 00:10:35,839
+done. But that is no longer the case
+
+243
+00:10:32,720 --> 00:10:38,560
+here because the particular tensors that
+
+244
+00:10:35,839 --> 00:10:41,279
+require zero grad and the gradient step
+
+245
+00:10:38,560 --> 00:10:44,079
+are now buried deep inside these modules
+
+246
+00:10:41,279 --> 00:10:47,440
+that we just created. And now we need to
+
+247
+00:10:44,079 --> 00:10:51,120
+make them more discoverable. So let's
+
+248
+00:10:47,440 --> 00:10:53,760
+give the model a parameters method that
+
+249
+00:10:51,120 --> 00:10:56,880
+returns these tensors in a list. So that
+
+250
+00:10:53,760 --> 00:11:00,720
+is going to say hey I'm a module and
+
+251
+00:10:56,880 --> 00:11:04,000
+here are the particular tensors that I
+
+252
+00:11:00,720 --> 00:11:07,360
+mark as my parameters and these require
+
+253
+00:11:04,000 --> 00:11:10,959
+zero grad and the gradient step. So
+
+254
+00:11:07,360 --> 00:11:13,120
+let's start with the linear module which
+
+255
+00:11:10,959 --> 00:11:15,360
+in this parameters method will return
+
+256
+00:11:13,120 --> 00:11:17,680
+the weight and the bias and then we will
+
+257
+00:11:15,360 --> 00:11:21,360
+combine the list from both layers in
+
+258
+00:11:17,680 --> 00:11:24,320
+MLP. So let's go to the linear layer.
+
+259
+00:11:21,360 --> 00:11:28,000
+Let's create a new public function and
+
+260
+00:11:24,320 --> 00:11:30,240
+let's say tensor sorry standard vector
+
+261
+00:11:28,000 --> 00:11:34,000
+tensor parameters and this is going to
+
+262
+00:11:30,240 --> 00:11:36,160
+return weight and bias. Now you will
+
+263
+00:11:34,000 --> 00:11:39,040
+recognize that we're returning the
+
+264
+00:11:36,160 --> 00:11:41,519
+actual tensor by copy but behind the
+
+265
+00:11:39,040 --> 00:11:44,320
+scenes the tensor node that is behind
+
+266
+00:11:41,519 --> 00:11:47,279
+that tensor is a shared pointer. So this
+
+267
+00:11:44,320 --> 00:11:50,079
+is yes a copy in the wrapping shell that
+
+268
+00:11:47,279 --> 00:11:54,160
+is the tensor but at the end of the day
+
+269
+00:11:50,079 --> 00:11:56,320
+the actual centralized tensor node cores
+
+270
+00:11:54,160 --> 00:11:58,959
+are going to be the the things that get
+
+271
+00:11:56,320 --> 00:12:02,000
+the gradient step and the zero grad. Now
+
+272
+00:11:58,959 --> 00:12:05,120
+let's go to MLP. I'm going to delete
+
+273
+00:12:02,000 --> 00:12:08,480
+this and then let's return another
+
+274
+00:12:05,120 --> 00:12:11,200
+standard vector here. By the way I may
+
+275
+00:12:08,480 --> 00:12:14,639
+have forgotten to mark this as const. So
+
+276
+00:12:11,200 --> 00:12:17,120
+let's just do that back here. Vector
+
+277
+00:12:14,639 --> 00:12:19,120
+tensor again. We're going to say
+
+278
+00:12:17,120 --> 00:12:20,880
+parameters. And then this one is going
+
+279
+00:12:19,120 --> 00:12:22,880
+to be a little bit bit more involved
+
+280
+00:12:20,880 --> 00:12:25,200
+because it will need to combine the
+
+281
+00:12:22,880 --> 00:12:27,120
+parameters of both layers. So it's going
+
+282
+00:12:25,200 --> 00:12:29,600
+to be result and then it's going to be
+
+283
+00:12:27,120 --> 00:12:31,839
+first hidden.parameters and then let's
+
+284
+00:12:29,600 --> 00:12:33,920
+get the parameters from the output layer
+
+285
+00:12:31,839 --> 00:12:35,839
+through output.parameters
+
+286
+00:12:33,920 --> 00:12:38,880
+and then we're going to insert these
+
+287
+00:12:35,839 --> 00:12:41,920
+onto the result vi result.insert insert
+
+288
+00:12:38,880 --> 00:12:45,279
+and we will give result.end end and
+
+289
+00:12:41,920 --> 00:12:48,079
+output begin and output.end.
+
+290
+00:12:45,279 --> 00:12:50,480
+So this will copy the output parameters
+
+291
+00:12:48,079 --> 00:12:52,720
+to the end of the result vector and then
+
+292
+00:12:50,480 --> 00:12:56,079
+we can just return result here. So now
+
+293
+00:12:52,720 --> 00:12:59,760
+let's use this list to update the model.
+
+294
+00:12:56,079 --> 00:13:01,279
+Let's go to our gradient step function.
+
+295
+00:12:59,760 --> 00:13:03,839
+I'm going to delete the comments here
+
+296
+00:13:01,279 --> 00:13:06,639
+too. So this function takes the weight
+
+297
+00:13:03,839 --> 00:13:09,279
+and bias separately and then updates
+
+298
+00:13:06,639 --> 00:13:11,920
+each one. But with two layers, we have
+
+299
+00:13:09,279 --> 00:13:13,839
+four tensors to update. So we will need
+
+300
+00:13:11,920 --> 00:13:15,360
+to add a version that accepts the whole
+
+301
+00:13:13,839 --> 00:13:17,519
+list.
+
+302
+00:13:15,360 --> 00:13:20,000
+So instead of passing the weights and
+
+303
+00:13:17,519 --> 00:13:22,000
+the bias directly, we're going to pass a
+
+304
+00:13:20,000 --> 00:13:25,040
+single standard vector here. And it's
+
+305
+00:13:22,000 --> 00:13:28,160
+going to take a reference to a vector of
+
+306
+00:13:25,040 --> 00:13:30,000
+tensors called parameters. And then it
+
+307
+00:13:28,160 --> 00:13:32,560
+will need to loop through them to update
+
+308
+00:13:30,000 --> 00:13:34,240
+all of them one by one. And then let me
+
+309
+00:13:32,560 --> 00:13:36,000
+comment this out because we need a
+
+310
+00:13:34,240 --> 00:13:37,279
+little bit of a different loop here. The
+
+311
+00:13:36,000 --> 00:13:39,120
+loop is going to look something like
+
+312
+00:13:37,279 --> 00:13:41,120
+this where we're going to look at every
+
+313
+00:13:39,120 --> 00:13:43,040
+single tensor as a parameter as we're
+
+314
+00:13:41,120 --> 00:13:45,360
+looping over the parameters and then
+
+315
+00:13:43,040 --> 00:13:47,839
+we're going to run the actual step here.
+
+316
+00:13:45,360 --> 00:13:50,079
+So inside this loop, we need to update
+
+317
+00:13:47,839 --> 00:13:52,720
+every number in the current tensor and
+
+318
+00:13:50,079 --> 00:13:55,279
+the weights and biases use the same
+
+319
+00:13:52,720 --> 00:13:57,760
+formula which is subtract the gradient
+
+320
+00:13:55,279 --> 00:13:59,760
+times the learning rate. We can
+
+321
+00:13:57,760 --> 00:14:01,920
+basically apply it to each entry in the
+
+322
+00:13:59,760 --> 00:14:04,240
+underlying array without working out row
+
+323
+00:14:01,920 --> 00:14:06,800
+and column coordinates.
+
+324
+00:14:04,240 --> 00:14:10,560
+So as this loop is running on the first
+
+325
+00:14:06,800 --> 00:14:13,040
+pass the parameter will refer to the
+
+326
+00:14:10,560 --> 00:14:14,800
+hidden layers weight matrix. We need to
+
+327
+00:14:13,040 --> 00:14:17,199
+update every weight in that matrix
+
+328
+00:14:14,800 --> 00:14:19,360
+before the loop moves on to the biases
+
+329
+00:14:17,199 --> 00:14:23,199
+and then the output layers weights and
+
+330
+00:14:19,360 --> 00:14:25,680
+biases will follow. But here we update
+
+331
+00:14:23,199 --> 00:14:28,240
+weights and biases separately. But both
+
+332
+00:14:25,680 --> 00:14:30,800
+lines are subtracting the gradient times
+
+333
+00:14:28,240 --> 00:14:33,680
+the learning rate. So we can use one
+
+334
+00:14:30,800 --> 00:14:36,079
+inner loop to apply that update to every
+
+335
+00:14:33,680 --> 00:14:38,320
+value in whichever tensor we're visiting
+
+336
+00:14:36,079 --> 00:14:40,480
+because each tensor at the end of the
+
+337
+00:14:38,320 --> 00:14:43,600
+day already stores its values in a flat
+
+338
+00:14:40,480 --> 00:14:46,000
+vector the data vector. So we should
+
+339
+00:14:43,600 --> 00:14:49,360
+just use that instead of this at
+
+340
+00:14:46,000 --> 00:14:52,240
+workound. So let's go to our tensor
+
+341
+00:14:49,360 --> 00:14:53,760
+class and then let's go to our data
+
+342
+00:14:52,240 --> 00:14:56,880
+function.
+
+343
+00:14:53,760 --> 00:14:59,120
+Here we have a problem. We want to just
+
+344
+00:14:56,880 --> 00:15:01,920
+directly modify this vector but it's
+
+345
+00:14:59,120 --> 00:15:04,639
+marked as const and this is the first
+
+346
+00:15:01,920 --> 00:15:08,320
+time we actually benefit from exposing
+
+347
+00:15:04,639 --> 00:15:10,480
+the data vector as a non-const vector.
+
+348
+00:15:08,320 --> 00:15:13,680
+So I am going to remove the const
+
+349
+00:15:10,480 --> 00:15:15,760
+markers and we can now go back to our
+
+350
+00:15:13,680 --> 00:15:17,920
+gradient step function. So we're going
+
+351
+00:15:15,760 --> 00:15:20,720
+to just add a loop here. We're going to
+
+352
+00:15:17,920 --> 00:15:24,160
+say for every single element in the data
+
+353
+00:15:20,720 --> 00:15:26,079
+I just realized I have a typo here. So
+
+354
+00:15:24,160 --> 00:15:29,120
+parameter.mnoml we're basically
+
+355
+00:15:26,079 --> 00:15:32,639
+iterating through every single piece of
+
+356
+00:15:29,120 --> 00:15:35,519
+data in the parameter and then we are
+
+357
+00:15:32,639 --> 00:15:37,839
+directly updating the gradient without
+
+358
+00:15:35,519 --> 00:15:39,519
+having to do this workound.
+
+359
+00:15:37,839 --> 00:15:42,720
+But we can basically take this and then
+
+360
+00:15:39,519 --> 00:15:44,959
+we can say parameter data at index
+
+361
+00:15:42,720 --> 00:15:46,800
+should get learning rate times
+
+362
+00:15:44,959 --> 00:15:49,199
+parameter.grad
+
+363
+00:15:46,800 --> 00:15:51,920
+at index. And now we don't need to do
+
+364
+00:15:49,199 --> 00:15:53,759
+this one way for weights and then
+
+365
+00:15:51,920 --> 00:15:55,759
+another for bias.
+
+366
+00:15:53,759 --> 00:15:58,160
+And plus, now we can just update all
+
+367
+00:15:55,759 --> 00:16:00,800
+parameters all at once.
+
+368
+00:15:58,160 --> 00:16:04,000
+So now let's just use this new and
+
+369
+00:16:00,800 --> 00:16:06,959
+improved gradient step to train XOR for
+
+370
+00:16:04,000 --> 00:16:08,800
+real. So let's go to main. And then I'm
+
+371
+00:16:06,959 --> 00:16:10,160
+going to create another fun little
+
+372
+00:16:08,800 --> 00:16:12,800
+function here. And I'm going to call
+
+373
+00:16:10,160 --> 00:16:15,519
+this train XOR. And I'm going to copy
+
+374
+00:16:12,800 --> 00:16:18,399
+and paste the inputs and the targets. So
+
+375
+00:16:15,519 --> 00:16:21,120
+just like the original example, which
+
+376
+00:16:18,399 --> 00:16:23,680
+was this, let me comment it out. We now
+
+377
+00:16:21,120 --> 00:16:27,680
+have these in the tensor format and then
+
+378
+00:16:23,680 --> 00:16:32,079
+the expected outputs are 0 1 1 0. So now
+
+379
+00:16:27,680 --> 00:16:34,160
+let's set up our MLP. First we need a
+
+380
+00:16:32,079 --> 00:16:37,040
+random number generator. We're going to
+
+381
+00:16:34,160 --> 00:16:40,560
+pass 42 as our seed and then we're going
+
+382
+00:16:37,040 --> 00:16:42,639
+to have our model.
+
+383
+00:16:40,560 --> 00:16:45,600
+It's going to have two input features
+
+384
+00:16:42,639 --> 00:16:48,000
+and then four hidden features and then
+
+385
+00:16:45,600 --> 00:16:49,360
+one output feature. And then it's going
+
+386
+00:16:48,000 --> 00:16:51,839
+to also take the random number
+
+387
+00:16:49,360 --> 00:16:55,040
+generator. And now let's obtain the
+
+388
+00:16:51,839 --> 00:16:56,480
+parameters. So standard vector tensor
+
+389
+00:16:55,040 --> 00:16:58,079
+parameters is going to be
+
+390
+00:16:56,480 --> 00:16:59,440
+model.parameters.
+
+391
+00:16:58,079 --> 00:17:01,920
+And these are the guys that we're going
+
+392
+00:16:59,440 --> 00:17:05,039
+to be running autograd sorry zero grad
+
+393
+00:17:01,920 --> 00:17:06,559
+and gradient step on. Now before we
+
+394
+00:17:05,039 --> 00:17:08,319
+change any weights, let's record the
+
+395
+00:17:06,559 --> 00:17:10,319
+loss so we can compare it with the
+
+396
+00:17:08,319 --> 00:17:12,880
+trained result. And then we will repeat
+
+397
+00:17:10,319 --> 00:17:16,799
+the training step 5,000 times using all
+
+398
+00:17:12,880 --> 00:17:19,520
+four examples each time. So let's have a
+
+399
+00:17:16,799 --> 00:17:21,839
+initial loss here using MSE loss. I'm
+
+400
+00:17:19,520 --> 00:17:25,039
+going to do model.forward
+
+401
+00:17:21,839 --> 00:17:27,439
+of inputs and then targets and the value
+
+402
+00:17:25,039 --> 00:17:29,919
+is going to be at
+
+403
+00:17:27,439 --> 00:17:33,120
+this is how we obtain the scaler and
+
+404
+00:17:29,919 --> 00:17:35,440
+then we can do the training loop. So
+
+405
+00:17:33,120 --> 00:17:37,919
+we're going to start at step zero. We're
+
+406
+00:17:35,440 --> 00:17:39,360
+going to go up to 5,000 and then the
+
+407
+00:17:37,919 --> 00:17:41,520
+first thing we're going to do is go
+
+408
+00:17:39,360 --> 00:17:43,600
+through every single parameter. So we're
+
+409
+00:17:41,520 --> 00:17:46,720
+going to have tensor parameter
+
+410
+00:17:43,600 --> 00:17:49,760
+parameters and then we're going to call
+
+411
+00:17:46,720 --> 00:17:51,520
+parameter.zero zero grad on every single
+
+412
+00:17:49,760 --> 00:17:53,600
+parameter that we care about. Then we
+
+413
+00:17:51,520 --> 00:17:55,200
+can obtain our predictions by calling
+
+414
+00:17:53,600 --> 00:17:57,360
+model.forward.
+
+415
+00:17:55,200 --> 00:17:59,840
+We pass the inputs. Then we get the
+
+416
+00:17:57,360 --> 00:18:02,960
+loss. We pass predictions and the
+
+417
+00:17:59,840 --> 00:18:05,200
+targets. Then we call loss.backward.
+
+418
+00:18:02,960 --> 00:18:06,880
+And then we call gradient step. We pass
+
+419
+00:18:05,200 --> 00:18:10,320
+the parameters and the learning rate.
+
+420
+00:18:06,880 --> 00:18:12,880
+Let's just hardcode it at 0.1. So the
+
+421
+00:18:10,320 --> 00:18:15,039
+loop ends with a weight update. So let's
+
+422
+00:18:12,880 --> 00:18:18,240
+just make predictions once more to see
+
+423
+00:18:15,039 --> 00:18:20,160
+the result of that final step. So let's
+
+424
+00:18:18,240 --> 00:18:22,799
+just print them beside the targets along
+
+425
+00:18:20,160 --> 00:18:24,640
+with the loss before and after training.
+
+426
+00:18:22,799 --> 00:18:26,880
+Compute the predictions one more time.
+
+427
+00:18:24,640 --> 00:18:28,799
+Tensor predictions. I'm going to pass
+
+428
+00:18:26,880 --> 00:18:31,200
+model.forward.
+
+429
+00:18:28,799 --> 00:18:32,640
+So I have my predictions now. And then
+
+430
+00:18:31,200 --> 00:18:34,960
+I'm going to write a bunch of see outs
+
+431
+00:18:32,640 --> 00:18:38,240
+here. So I want to use a little bit of
+
+432
+00:18:34,960 --> 00:18:41,840
+nicer formatting here. So let's do set
+
+433
+00:18:38,240 --> 00:18:43,760
+precision three. And then let's do loss.
+
+434
+00:18:41,840 --> 00:18:46,080
+I'm going to pass the initial loss first
+
+435
+00:18:43,760 --> 00:18:49,840
+and then let's see what it is after
+
+436
+00:18:46,080 --> 00:18:52,320
+training and I can do at empty curly to
+
+437
+00:18:49,840 --> 00:18:56,320
+get the scaler and then let's do a new
+
+438
+00:18:52,320 --> 00:18:58,480
+line here and then let's do a table and
+
+439
+00:18:56,320 --> 00:19:01,039
+let's loop over every single prediction
+
+440
+00:18:58,480 --> 00:19:03,760
+and what it was supposed to be. So size
+
+441
+00:19:01,039 --> 00:19:06,000
+t starting from row all the way up to
+
+442
+00:19:03,760 --> 00:19:09,200
+all of them. So this will loop through
+
+443
+00:19:06,000 --> 00:19:11,600
+every single sample and then we can get
+
+444
+00:19:09,200 --> 00:19:14,080
+the first row or rather the first value
+
+445
+00:19:11,600 --> 00:19:16,720
+in the row, the second value and the
+
+446
+00:19:14,080 --> 00:19:20,400
+last value in the row, the associated
+
+447
+00:19:16,720 --> 00:19:23,039
+prediction and the expected target. So
+
+448
+00:19:20,400 --> 00:19:25,679
+what we want to see is if we actually
+
+449
+00:19:23,039 --> 00:19:28,559
+trained, we would want to see these two
+
+450
+00:19:25,679 --> 00:19:30,960
+values actually match. So now let's
+
+451
+00:19:28,559 --> 00:19:34,880
+actually go down and right under train
+
+452
+00:19:30,960 --> 00:19:36,559
+curve let's call our train XR function.
+
+453
+00:19:34,880 --> 00:19:38,720
+But before we can actually run this code
+
+454
+00:19:36,559 --> 00:19:40,720
+we need to fix something that we broke
+
+455
+00:19:38,720 --> 00:19:42,799
+which is gradient step. We have two
+
+456
+00:19:40,720 --> 00:19:45,039
+functions and train nonlinear regression
+
+457
+00:19:42,799 --> 00:19:47,840
+that we're calling the gradient step
+
+458
+00:19:45,039 --> 00:19:49,760
+with weights and bias directly but
+
+459
+00:19:47,840 --> 00:19:52,960
+instead they should be using the new
+
+460
+00:19:49,760 --> 00:19:55,600
+vector convention. So we're going to
+
+461
+00:19:52,960 --> 00:19:57,520
+create this impromptu vector here with
+
+462
+00:19:55,600 --> 00:19:59,280
+bias and then we're going to pass it
+
+463
+00:19:57,520 --> 00:20:02,559
+directly and we're going to use the same
+
+464
+00:19:59,280 --> 00:20:05,919
+pattern right here. So now let's go back
+
+465
+00:20:02,559 --> 00:20:07,840
+down here and then we can compile and
+
+466
+00:20:05,919 --> 00:20:10,960
+rerun. And now you can see the
+
+467
+00:20:07,840 --> 00:20:14,400
+prediction and target matched exactly
+
+468
+00:20:10,960 --> 00:20:17,520
+every single time. And another important
+
+469
+00:20:14,400 --> 00:20:20,880
+detail here is that our loss began at
+
+470
+00:20:17,520 --> 00:20:22,480
+779 and then it converged to zero. Now
+
+471
+00:20:20,880 --> 00:20:25,280
+clearly this is not how you're supposed
+
+472
+00:20:22,480 --> 00:20:27,440
+to do a proper production deep learning
+
+473
+00:20:25,280 --> 00:20:30,000
+model because we had no separation
+
+474
+00:20:27,440 --> 00:20:32,240
+between our training set and eval set or
+
+475
+00:20:30,000 --> 00:20:34,080
+validation set. But this is after all
+
+476
+00:20:32,240 --> 00:20:37,120
+just a toy example and it's supposed to
+
+477
+00:20:34,080 --> 00:20:40,159
+demonstrate the power of a multi-layer
+
+478
+00:20:37,120 --> 00:20:43,200
+perceptron because now it was able to
+
+479
+00:20:40,159 --> 00:20:46,720
+just with a handful of weights. If you
+
+480
+00:20:43,200 --> 00:20:50,880
+recall a 2x4 for the hidden layer and
+
+481
+00:20:46,720 --> 00:20:54,080
+then a 4x one for the output layer. So a
+
+482
+00:20:50,880 --> 00:20:57,039
+total of 12 weights and then two biases.
+
+483
+00:20:54,080 --> 00:20:59,760
+So basically 14 parameters is able to
+
+484
+00:20:57,039 --> 00:21:02,720
+accurately and correctly represent this
+
+485
+00:20:59,760 --> 00:21:05,840
+rather complex and interesting function.
+
+486
+00:21:02,720 --> 00:21:09,360
+All right time. So we built linear and
+
+487
+00:21:05,840 --> 00:21:11,200
+10h modules. We are calling down modules
+
+488
+00:21:09,360 --> 00:21:14,000
+purely by convention because they have
+
+489
+00:21:11,200 --> 00:21:17,120
+the forward method and then we connected
+
+490
+00:21:14,000 --> 00:21:21,200
+them into an MLP and we trained that MLP
+
+491
+00:21:17,120 --> 00:21:22,960
+to learn exor and now our autograd
+
+492
+00:21:21,200 --> 00:21:25,039
+engine can still compute gradients but
+
+493
+00:21:22,960 --> 00:21:27,200
+the new modules let us assemble the
+
+494
+00:21:25,039 --> 00:21:29,280
+network and collect its parameters for
+
+495
+00:21:27,200 --> 00:21:31,120
+training in a more targeted fashion. So
+
+496
+00:21:29,280 --> 00:21:33,200
+now we're a lot more intentional in the
+
+497
+00:21:31,120 --> 00:21:35,440
+way we're picking the parameters. In the
+
+498
+00:21:33,200 --> 00:21:38,159
+next episode, we're going to use Emnest
+
+499
+00:21:35,440 --> 00:21:40,559
+to recognize handwritten digits. We're
+
+500
+00:21:38,159 --> 00:21:43,840
+going to feed images into a larger
+
+501
+00:21:40,559 --> 00:21:46,080
+network, train it in mini batches, and
+
+502
+00:21:43,840 --> 00:21:48,400
+then measure its accuracy on separate
+
+503
+00:21:46,080 --> 00:21:51,200
+test examples in the setup that
+
+504
+00:21:48,400 --> 00:21:53,840
+resembles a production deep learning
+
+505
+00:21:51,200 --> 00:21:55,520
+setup much more closely. And then we
+
+506
+00:21:53,840 --> 00:21:59,280
+will also introduce a classification
+
+507
+00:21:55,520 --> 00:22:01,039
+loss for the 10 possible digits.
+
+508
+00:21:59,280 --> 00:22:03,200
+So that brings us to the end of this
+
+509
+00:22:01,039 --> 00:22:05,520
+episode. Thanks for watching and I will
+
+510
+00:22:03,200 --> 00:22:05,520
+see you next
+

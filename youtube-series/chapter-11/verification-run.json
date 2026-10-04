@@ -1,0 +1,72 @@
+{
+  "baselineSha256": "d265c7d5f3fd59e1c1e695c87fd0f8db82b57c696f65e5cb46d16de6b183687d",
+  "recordingSha256": "0d40f48051b9672e8afec9251ef404c3c79eed510c23862dca34e7cb378b4c1d",
+  "recordingMatchesBaseline": false,
+  "scriptSha256": "b633a8846794acca5fbe126f55cc3d50a7094079613182ab444e9774a394502e",
+  "resultSha256": "5c1e4c86fdba6a5c49ac3b8b7b90110f28dab47917d886afdc492ea084074a4e",
+  "literalEdits": 17,
+  "compiler": "Apple clang version 21.0.0 (clang-2100.1.1.101)",
+  "results": [
+    {
+      "name": "baseline",
+      "flags": [
+        "-O1",
+        "-g",
+        "-fsanitize=address,undefined"
+      ],
+      "output": "Test 1\nTest 2\nTest 3\nTest 4\nTest 5\nTest 6\nTest 7\nTest 8\nTest 9\nTest 10\nTest 11\nTest 12\nTest 13\nTest 14\nTest 15\nTest 16\nTest 17\nTest 18\nTest 19\nTest 20\nTest 21\nTest 22\nTest 23\nTest 24\nWeight: 2 \nBias: 1 \nx relu sigmoid\n-2 0 0.119203 -0.964028\n-1 0 0.268941 -0.761594\n0 0 0.5 0\n1 1 0.731059 0.761594\n2 2 0.880797 0.964028\nWeight: 2 \nBias: 1 \nSuccess!\n"
+    },
+    {
+      "name": "linear-module",
+      "flags": [
+        "-O1",
+        "-g",
+        "-fsanitize=address,undefined"
+      ],
+      "output": "Test 1\nTest 2\nTest 3\nTest 4\nTest 5\nTest 6\nTest 7\nTest 8\nTest 9\nTest 10\nTest 11\nTest 12\nTest 13\nTest 14\nTest 15\nTest 16\nTest 17\nTest 18\nTest 19\nTest 20\nTest 21\nTest 22\nTest 23\nTest 24\nWeight: 2 \nBias: 1 \nx relu sigmoid\n-2 0 0.119203 -0.964028\n-1 0 0.268941 -0.761594\n0 0 0.5 0\n1 1 0.731059 0.761594\n2 2 0.880797 0.964028\nWeight: 2 \nBias: 1 \nSuccess!\n"
+    },
+    {
+      "name": "composed-network",
+      "flags": [
+        "-O1",
+        "-g",
+        "-fsanitize=address,undefined"
+      ],
+      "output": "Test 1\nTest 2\nTest 3\nTest 4\nTest 5\nTest 6\nTest 7\nTest 8\nTest 9\nTest 10\nTest 11\nTest 12\nTest 13\nTest 14\nTest 15\nTest 16\nTest 17\nTest 18\nTest 19\nTest 20\nTest 21\nTest 22\nTest 23\nTest 24\nWeight: 2 \nBias: 1 \nx relu sigmoid\n-2 0 0.119203 -0.964028\n-1 0 0.268941 -0.761594\n0 0 0.5 0\n1 1 0.731059 0.761594\n2 2 0.880797 0.964028\nWeight: 2 \nBias: 1 \nSuccess!\n"
+    },
+    {
+      "name": "parameter-updates",
+      "flags": [
+        "-O1",
+        "-g",
+        "-fsanitize=address,undefined"
+      ],
+      "output": "Test 1\nTest 2\nTest 3\nTest 4\nTest 5\nTest 6\nTest 7\nTest 8\nTest 9\nTest 10\nTest 11\nTest 12\nTest 13\nTest 14\nTest 15\nTest 16\nTest 17\nTest 18\nTest 19\nTest 20\nTest 21\nTest 22\nTest 23\nTest 24\nWeight: 2 \nBias: 1 \nx relu sigmoid\n-2 0 0.119203 -0.964028\n-1 0 0.268941 -0.761594\n0 0 0.5 0\n1 1 0.731059 0.761594\n2 2 0.880797 0.964028\nWeight: 2 \nBias: 1 \nSuccess!\n"
+    },
+    {
+      "name": "trained-xor",
+      "flags": [
+        "-O1",
+        "-g",
+        "-fsanitize=address,undefined"
+      ],
+      "output": "Test 1\nTest 2\nTest 3\nTest 4\nTest 5\nTest 6\nTest 7\nTest 8\nTest 9\nTest 10\nTest 11\nTest 12\nTest 13\nTest 14\nTest 15\nTest 16\nTest 17\nTest 18\nTest 19\nTest 20\nTest 21\nTest 22\nTest 23\nTest 24\nWeight: 2 \nBias: 1 \nx relu sigmoid\n-2 0 0.119203 -0.964028\n-1 0 0.268941 -0.761594\n0 0 0.5 0\n1 1 0.731059 0.761594\n2 2 0.880797 0.964028\nWeight: 2 \nBias: 1 \nLoss: 0.779 -> 0.000\na b prediction target\n0.000 0.000 0.000 0.000\n0.000 1.000 1.000 1.000\n1.000 0.000 1.000 1.000\n1.000 1.000 0.000 0.000\nSuccess!\n"
+    },
+    {
+      "name": "final-optimized",
+      "flags": [
+        "-O2"
+      ],
+      "output": "Test 1\nTest 2\nTest 3\nTest 4\nTest 5\nTest 6\nTest 7\nTest 8\nTest 9\nTest 10\nTest 11\nTest 12\nTest 13\nTest 14\nTest 15\nTest 16\nTest 17\nTest 18\nTest 19\nTest 20\nTest 21\nTest 22\nTest 23\nTest 24\nWeight: 2 \nBias: 1 \nx relu sigmoid\n-2 0 0.119203 -0.964028\n-1 0 0.268941 -0.761594\n0 0 0.5 0\n1 1 0.731059 0.761594\n2 2 0.880797 0.964028\nWeight: 2 \nBias: 1 \nLoss: 0.779 -> 0.000\na b prediction target\n0.000 0.000 0.000 0.000\n0.000 1.000 1.000 1.000\n1.000 0.000 1.000 1.000\n1.000 1.000 0.000 0.000\nSuccess!\n"
+    },
+    {
+      "name": "module-and-training-checks",
+      "flags": [
+        "-O1",
+        "-g",
+        "-fsanitize=address,undefined"
+      ],
+      "output": "seed 0: loss 1.12043e-29\nseed 1: loss 1.97456e-30\nseed 2: loss 3.20244e-30\nseed 3: loss 6.79468e-30\nseed 4: loss 4.36247e-30\nseed 5: loss 4.35183e-30\nseed 6: loss 5.44464e-30\nseed 7: loss 6.01449e-30\nseed 8: loss 1.94827e-30\nseed 9: loss 2.77334e-30\n17 finite-difference parameter checks: PASS\nlayout, broadcasting, shared handles, updates, invalid sizes: PASS\n"
+    }
+  ]
+}

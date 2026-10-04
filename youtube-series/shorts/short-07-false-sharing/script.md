@@ -45,7 +45,7 @@ animation duration; extend useful action/holds to fit the new narration.
 
 ### 0:00-0:02 | Crowded opening
 
-> Wasting memory made these threads faster.
+> Wasting memory speeds up this code.
 
 Frame zero: Core 0 and Core 1 sit above their own counters a and b inside one
 navy tray labeled `cache line`. Short worker-colored update pulses are already
@@ -53,7 +53,7 @@ active. Gold consistently identifies Core 0/a; cobalt identifies Core 1/b.
 Counters have identical geometry, distinct worker-colored accents, and deep
 recessed labels. Point toward the pair immediately.
 
-Editorial layer only: `Too close?` sits above the trays inside the safe region;
+Editorial layer only: `Waste = speed?` sits above the trays inside the safe region;
 a red bracket/arrow targets their shared boundary. Place the synchronized spoken
 caption near the presenter, without covering the face or gesture. Emphasize
 `Wasting memory` in yellow and `faster` in teal; do not add a second held copy of
@@ -112,15 +112,17 @@ reveals its measured size; do not pretend the winner remains a mystery.
 
 ### 0:22-0:30 | Discussion and continuation
 
-> Why is that handoff so expensive? What if we only shared the final totals? I'm testing that next.
+> Why is that handoff so expensive? And what happens with eight cores fighting over the same cache line instead of two? That's what I'm testing next.
 
 Ask the first question immediately after the result line. The basic cause has
 already been taught; this question concerns the size of the measured overhead,
-not a pretend mystery about why spacing could matter at all. Look toward the
-viewer, then gesture toward the counters' final values on "final totals." Hold the
-timings and the settled scene throughout. Cut on `next`, with no end card,
-return-to-code shot, or silent tail. The next test is proposed, not performed
-or scheduled; confirm that commitment before recording.
+not a pretend mystery about why spacing could matter at all. The second question
+escalates contention rather than changing the layout: more contenders on the
+same shared line, not a structural fix. Look toward the viewer, then gesture
+toward the counters on "eight cores." Hold the timings and the settled scene
+throughout. Cut on `next`, with no end card, return-to-code shot, or silent tail.
+The next test is proposed, not performed or scheduled; confirm that commitment
+before recording.
 
 ## Production and evidence notes
 

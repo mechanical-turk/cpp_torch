@@ -1,0 +1,1636 @@
+1
+00:00:00,080 --> 00:00:05,359
+A deep neural network can still behave
+
+2
+00:00:02,560 --> 00:00:07,279
+like a single linear layer if every
+
+3
+00:00:05,359 --> 00:00:10,160
+layer just multiplies by weights and
+
+4
+00:00:07,279 --> 00:00:12,960
+adds a bias because we can just combine
+
+5
+00:00:10,160 --> 00:00:16,160
+those calculations into just a single
+
+6
+00:00:12,960 --> 00:00:18,880
+linear layer. We need nonlinear
+
+7
+00:00:16,160 --> 00:00:21,359
+activation functions for the extra
+
+8
+00:00:18,880 --> 00:00:23,680
+layers to let us model more complex
+
+9
+00:00:21,359 --> 00:00:27,119
+relationships that cannot be just
+
+10
+00:00:23,680 --> 00:00:29,119
+simulated by a single linear layer. So
+
+11
+00:00:27,119 --> 00:00:33,600
+in today's episode we will build them in
+
+12
+00:00:29,119 --> 00:00:35,920
+C++ starting with rel which is a
+
+13
+00:00:33,600 --> 00:00:38,160
+nonlinear layer that keeps only the
+
+14
+00:00:35,920 --> 00:00:41,440
+positive values and then turns negative
+
+15
+00:00:38,160 --> 00:00:43,600
+values into zero. This rel layer is
+
+16
+00:00:41,440 --> 00:00:45,520
+going to need an operation label. So
+
+17
+00:00:43,600 --> 00:00:48,640
+let's go back to our enum class
+
+18
+00:00:45,520 --> 00:00:50,800
+operation and let's add really here. And
+
+19
+00:00:48,640 --> 00:00:53,680
+then let's go right under our sum
+
+20
+00:00:50,800 --> 00:00:56,960
+function and let's create another
+
+21
+00:00:53,680 --> 00:00:59,920
+function here just for rel. So we will
+
+22
+00:00:56,960 --> 00:01:02,079
+as always begin with no discard.
+
+23
+00:00:59,920 --> 00:01:04,159
+We are going to return a tensor. It's
+
+24
+00:01:02,079 --> 00:01:07,360
+going to be a const function. And let's
+
+25
+00:01:04,159 --> 00:01:10,960
+implement the value function right here.
+
+26
+00:01:07,360 --> 00:01:12,960
+So just like our binary operations, we
+
+27
+00:01:10,960 --> 00:01:14,400
+will begin with a helper function. So
+
+28
+00:01:12,960 --> 00:01:16,400
+let's just call that helper function
+
+29
+00:01:14,400 --> 00:01:18,560
+first and then we can implement it. That
+
+30
+00:01:16,400 --> 00:01:21,360
+helper function is going to be named
+
+31
+00:01:18,560 --> 00:01:25,040
+elementwise unary. Unlike elementwise
+
+32
+00:01:21,360 --> 00:01:28,479
+binary is going to operate on a single
+
+33
+00:01:25,040 --> 00:01:31,040
+tensor. But just like element wise
+
+34
+00:01:28,479 --> 00:01:32,880
+binary it's going to take the name of
+
+35
+00:01:31,040 --> 00:01:35,600
+the operation. In this case it's going
+
+36
+00:01:32,880 --> 00:01:37,680
+to be value and then it's going to take
+
+37
+00:01:35,600 --> 00:01:40,159
+a lambda. But this lambda is going to
+
+38
+00:01:37,680 --> 00:01:41,840
+operate on a single value. And here
+
+39
+00:01:40,159 --> 00:01:44,000
+we're going to implement the core logic
+
+40
+00:01:41,840 --> 00:01:47,680
+which is very simple. We are going to
+
+41
+00:01:44,000 --> 00:01:50,560
+take the maximum of zero or value. So
+
+42
+00:01:47,680 --> 00:01:53,840
+now let's go to our elementwise binary
+
+43
+00:01:50,560 --> 00:01:56,000
+function and then right underneath it
+
+44
+00:01:53,840 --> 00:01:58,960
+let's place our element wise unary
+
+45
+00:01:56,000 --> 00:02:01,759
+function. We will begin with no discard
+
+46
+00:01:58,960 --> 00:02:03,200
+and then we will return a tensor and
+
+47
+00:02:01,759 --> 00:02:06,320
+then this one is going to be called
+
+48
+00:02:03,200 --> 00:02:08,800
+elementwise unary. So this will take in
+
+49
+00:02:06,320 --> 00:02:11,440
+an operation and then it's going to take
+
+50
+00:02:08,800 --> 00:02:14,319
+the actual operation in the form of a
+
+51
+00:02:11,440 --> 00:02:19,040
+reference to a lambda.
+
+52
+00:02:14,319 --> 00:02:21,599
+And here we're going to apply the unary
+
+53
+00:02:19,040 --> 00:02:25,280
+operation to every single element inside
+
+54
+00:02:21,599 --> 00:02:28,959
+the tensor. So let's create our data for
+
+55
+00:02:25,280 --> 00:02:32,879
+output. Let's call this result data. And
+
+56
+00:02:28,959 --> 00:02:36,239
+let's set this size to equal to nl. So
+
+57
+00:02:32,879 --> 00:02:39,599
+it's nl many elements and then we can
+
+58
+00:02:36,239 --> 00:02:43,599
+call standard transform on it to map the
+
+59
+00:02:39,599 --> 00:02:46,480
+existing data onto this new result data
+
+60
+00:02:43,599 --> 00:02:48,080
+using the operation lambda. So the first
+
+61
+00:02:46,480 --> 00:02:50,720
+argument is going to be the begin
+
+62
+00:02:48,080 --> 00:02:53,680
+iterator on data. The next one is going
+
+63
+00:02:50,720 --> 00:02:57,440
+to be end. And then we're going to pass
+
+64
+00:02:53,680 --> 00:03:00,239
+result data begin to show where we want
+
+65
+00:02:57,440 --> 00:03:02,720
+to start putting this onto. And then we
+
+66
+00:03:00,239 --> 00:03:05,360
+will pass the operation.
+
+67
+00:03:02,720 --> 00:03:08,159
+And then we can create our result tensor
+
+68
+00:03:05,360 --> 00:03:10,159
+which will have the shape of our
+
+69
+00:03:08,159 --> 00:03:12,319
+existing node. And then in terms of
+
+70
+00:03:10,159 --> 00:03:15,120
+data, we're just going to standard move
+
+71
+00:03:12,319 --> 00:03:17,680
+the result data. And then we can set
+
+72
+00:03:15,120 --> 00:03:20,159
+result.node.operation
+
+73
+00:03:17,680 --> 00:03:22,560
+to the past kind.
+
+74
+00:03:20,159 --> 00:03:26,400
+And then we can pass the current node as
+
+75
+00:03:22,560 --> 00:03:28,000
+a parent to the parents singleton in
+
+76
+00:03:26,400 --> 00:03:29,760
+this case. And then we return the
+
+77
+00:03:28,000 --> 00:03:33,040
+result. And that covers the forward
+
+78
+00:03:29,760 --> 00:03:35,120
+pass. But now in order to train through
+
+79
+00:03:33,040 --> 00:03:38,080
+relu, we still need to take care of the
+
+80
+00:03:35,120 --> 00:03:41,440
+backward pass. So let's just implement a
+
+81
+00:03:38,080 --> 00:03:44,159
+helper this time called backward unary.
+
+82
+00:03:41,440 --> 00:03:47,120
+And a good place for that is right under
+
+83
+00:03:44,159 --> 00:03:50,480
+backward element wise right here. So now
+
+84
+00:03:47,120 --> 00:03:53,040
+we can go here and I'm going to call
+
+85
+00:03:50,480 --> 00:03:57,439
+this backward element wise actually
+
+86
+00:03:53,040 --> 00:03:59,840
+sorry backward uny. So backward and it
+
+87
+00:03:57,439 --> 00:04:02,640
+is going to take the result of the
+
+88
+00:03:59,840 --> 00:04:05,439
+forward pass. So tensor node output and
+
+89
+00:04:02,640 --> 00:04:08,720
+also the local derivative. So as always
+
+90
+00:04:05,439 --> 00:04:10,560
+we need to get a pointer to the parent.
+
+91
+00:04:08,720 --> 00:04:12,560
+In this case there is a single parent.
+
+92
+00:04:10,560 --> 00:04:14,959
+So we're going to get input and then
+
+93
+00:04:12,560 --> 00:04:18,000
+we're going to get and then we are going
+
+94
+00:04:14,959 --> 00:04:20,400
+to iterate through the data and then
+
+95
+00:04:18,000 --> 00:04:22,800
+propagate the gradient back to the
+
+96
+00:04:20,400 --> 00:04:25,759
+parent one by one. So we're going to say
+
+97
+00:04:22,800 --> 00:04:28,560
+size d index equals zero all the way up
+
+98
+00:04:25,759 --> 00:04:31,040
+to the last data element. And then we
+
+99
+00:04:28,560 --> 00:04:33,520
+will keep incrementing the index. And
+
+100
+00:04:31,040 --> 00:04:35,759
+then here we're going to increment the
+
+101
+00:04:33,520 --> 00:04:38,800
+gradient of the parent specifically on
+
+102
+00:04:35,759 --> 00:04:40,960
+this index by taking the output gradient
+
+103
+00:04:38,800 --> 00:04:43,040
+at this index. And then we're going to
+
+104
+00:04:40,960 --> 00:04:46,560
+use the local derivative function by
+
+105
+00:04:43,040 --> 00:04:51,280
+passing the data at this index as well
+
+106
+00:04:46,560 --> 00:04:53,360
+as the output data at this index. So the
+
+107
+00:04:51,280 --> 00:04:55,199
+derivative function is going to be
+
+108
+00:04:53,360 --> 00:04:56,960
+passed both of these both the input and
+
+109
+00:04:55,199 --> 00:04:58,880
+the output because it will need to
+
+110
+00:04:56,960 --> 00:05:01,520
+decide which one it will use. We just
+
+111
+00:04:58,880 --> 00:05:04,240
+want to maintain that freedom and once
+
+112
+00:05:01,520 --> 00:05:06,160
+we do we apply the regular local
+
+113
+00:05:04,240 --> 00:05:08,960
+derivative multiplication for product
+
+114
+00:05:06,160 --> 00:05:11,440
+rule and then we keep incrementing the
+
+115
+00:05:08,960 --> 00:05:15,120
+parent gradient. Now we can actually
+
+116
+00:05:11,440 --> 00:05:18,320
+implement the particular rule set for
+
+117
+00:05:15,120 --> 00:05:22,240
+relu. We can put it right under sum and
+
+118
+00:05:18,320 --> 00:05:24,320
+we can say operation relu and here we're
+
+119
+00:05:22,240 --> 00:05:26,800
+going to call backward unary. We're
+
+120
+00:05:24,320 --> 00:05:29,039
+going to pass the output directly and
+
+121
+00:05:26,800 --> 00:05:32,080
+then let me actually put this to a new
+
+122
+00:05:29,039 --> 00:05:34,320
+line. Pass output first and then for our
+
+123
+00:05:32,080 --> 00:05:36,240
+custom rule we're going to pass in the
+
+124
+00:05:34,320 --> 00:05:37,759
+local derivative lambda. This time we
+
+125
+00:05:36,240 --> 00:05:39,520
+only need the input. So we can just
+
+126
+00:05:37,759 --> 00:05:42,240
+ignore the output and then here we can
+
+127
+00:05:39,520 --> 00:05:46,000
+say return if the input is greater than
+
+128
+00:05:42,240 --> 00:05:48,720
+zero 1.0 otherwise 0.0 Z and then we
+
+129
+00:05:46,000 --> 00:05:51,199
+break. So what we're saying here is if
+
+130
+00:05:48,720 --> 00:05:54,240
+the parent was greater than zero,
+
+131
+00:05:51,199 --> 00:05:56,880
+propagate the gradient of the output as
+
+132
+00:05:54,240 --> 00:05:59,280
+it was otherwise propagate zero. Why?
+
+133
+00:05:56,880 --> 00:06:03,199
+Because if the parent was less than
+
+134
+00:05:59,280 --> 00:06:06,319
+zero, then the output by relu was
+
+135
+00:06:03,199 --> 00:06:08,400
+compressed down to zero. So its gradient
+
+136
+00:06:06,319 --> 00:06:11,520
+is no longer relevant and we no longer
+
+137
+00:06:08,400 --> 00:06:13,360
+need to propagate it back up. So now we
+
+138
+00:06:11,520 --> 00:06:15,120
+added both directions, both the forward
+
+139
+00:06:13,360 --> 00:06:17,440
+pass and the backward pass. So now we
+
+140
+00:06:15,120 --> 00:06:20,240
+can actually take for a spin. [snorts]
+
+141
+00:06:17,440 --> 00:06:22,639
+So now let's go to our linear forward
+
+142
+00:06:20,240 --> 00:06:26,400
+function. And right under this one, I'm
+
+143
+00:06:22,639 --> 00:06:29,520
+going to add another fun little function
+
+144
+00:06:26,400 --> 00:06:32,720
+just to help us see what's going on. And
+
+145
+00:06:29,520 --> 00:06:36,479
+I'm going to call this show activations.
+
+146
+00:06:32,720 --> 00:06:39,680
+And let's create a sample tensor.
+
+147
+00:06:36,479 --> 00:06:43,199
+Let's say it has five elements. - 2 -
+
+148
+00:06:39,680 --> 00:06:46,560
+one 0 1
+
+149
+00:06:43,199 --> 00:06:50,080
+2 and then let's call on it. So really
+
+150
+00:06:46,560 --> 00:06:52,319
+output equals inputs dot rel. Let's
+
+151
+00:06:50,080 --> 00:06:55,840
+rename this to inputs and then let's see
+
+152
+00:06:52,319 --> 00:06:58,400
+out the value. So let's say x and then
+
+153
+00:06:55,840 --> 00:07:02,000
+let's iterate through this. So for every
+
+154
+00:06:58,400 --> 00:07:04,479
+element we will see out and what the
+
+155
+00:07:02,000 --> 00:07:06,800
+output was. And now we can take this for
+
+156
+00:07:04,479 --> 00:07:08,720
+a spin. Let's just put it right under
+
+157
+00:07:06,800 --> 00:07:11,599
+our train line function and let's say
+
+158
+00:07:08,720 --> 00:07:13,520
+show activations. Now let's compile. I
+
+159
+00:07:11,599 --> 00:07:16,080
+just forgot to add cost here. So I'm
+
+160
+00:07:13,520 --> 00:07:19,039
+just going to do that. Now let's run it
+
+161
+00:07:16,080 --> 00:07:21,039
+again. Great. So minus 2 became zero,
+
+162
+00:07:19,039 --> 00:07:23,280
+minus one became zero. And then
+
+163
+00:07:21,039 --> 00:07:26,319
+everything else was kept as it were.
+
+164
+00:07:23,280 --> 00:07:29,360
+Great. So at this point does exactly
+
+165
+00:07:26,319 --> 00:07:30,880
+what we expected. But sometimes it's not
+
+166
+00:07:29,360 --> 00:07:32,960
+enough. Sometimes we need a little bit
+
+167
+00:07:30,880 --> 00:07:35,440
+more control over the output range. For
+
+168
+00:07:32,960 --> 00:07:37,840
+example, if a model is predicting a
+
+169
+00:07:35,440 --> 00:07:40,800
+probability, then we would need the
+
+170
+00:07:37,840 --> 00:07:43,680
+output to be between zero and one. So
+
+171
+00:07:40,800 --> 00:07:46,160
+for workloads of that nature, sigmoid is
+
+172
+00:07:43,680 --> 00:07:49,360
+a very good candidate because sigmoid
+
+173
+00:07:46,160 --> 00:07:51,440
+lets us take any real valued input and
+
+174
+00:07:49,360 --> 00:07:54,960
+map it into that restricted range
+
+175
+00:07:51,440 --> 00:07:56,560
+between 0 to one. And a very nice
+
+176
+00:07:54,960 --> 00:07:59,840
+property of this function is that it's
+
+177
+00:07:56,560 --> 00:08:02,240
+smooth. So extremely negative values
+
+178
+00:07:59,840 --> 00:08:04,240
+will tend towards zero and then
+
+179
+00:08:02,240 --> 00:08:06,479
+extremely positive values will tend
+
+180
+00:08:04,240 --> 00:08:08,479
+towards one and then everything in
+
+181
+00:08:06,479 --> 00:08:11,919
+between will sit somewhere between zero
+
+182
+00:08:08,479 --> 00:08:15,919
+and one. So let's add a sigmoid method
+
+183
+00:08:11,919 --> 00:08:18,240
+to our tensor and let's reuse the unary
+
+184
+00:08:15,919 --> 00:08:20,879
+helpers that we just created to help us
+
+185
+00:08:18,240 --> 00:08:23,759
+achieve this. So first let's add it to
+
+186
+00:08:20,879 --> 00:08:27,520
+our operations. I'm going to add sigmoid
+
+187
+00:08:23,759 --> 00:08:29,919
+here. And then next let's go to our rel
+
+188
+00:08:27,520 --> 00:08:33,760
+function and then we can just use this
+
+189
+00:08:29,919 --> 00:08:37,039
+space to implement our sigmoid function.
+
+190
+00:08:33,760 --> 00:08:40,080
+So let's begin with no discard and then
+
+191
+00:08:37,039 --> 00:08:43,120
+tensor sigmoid let's mark it as const.
+
+192
+00:08:40,080 --> 00:08:46,240
+And this one is going to return element
+
+193
+00:08:43,120 --> 00:08:49,760
+wise. It's going to mark the operation
+
+194
+00:08:46,240 --> 00:08:51,279
+as sigmoid. And then the lambda is a
+
+195
+00:08:49,760 --> 00:08:54,240
+little bit involved but it's nothing
+
+196
+00:08:51,279 --> 00:08:59,120
+crazy. So it's going to take the value
+
+197
+00:08:54,240 --> 00:09:01,839
+and then it's going to return 1 / 1 + e
+
+198
+00:08:59,120 --> 00:09:03,920
+^ of minus value. And that's it. That's
+
+199
+00:09:01,839 --> 00:09:06,880
+just the sigmoid function. Now let's go
+
+200
+00:09:03,920 --> 00:09:09,360
+back to the backward function. And then
+
+201
+00:09:06,880 --> 00:09:11,839
+here let's make room for our sigmoid
+
+202
+00:09:09,360 --> 00:09:13,360
+function. So for the backward step of
+
+203
+00:09:11,839 --> 00:09:15,519
+sigmoid,
+
+204
+00:09:13,360 --> 00:09:18,080
+we're going to take advantage of a very
+
+205
+00:09:15,519 --> 00:09:20,880
+nice property of the sigmoid function,
+
+206
+00:09:18,080 --> 00:09:22,959
+which is that you can reuse the output
+
+207
+00:09:20,880 --> 00:09:26,399
+while computing the gradient, the local
+
+208
+00:09:22,959 --> 00:09:28,959
+derivative. So we are going to use
+
+209
+00:09:26,399 --> 00:09:31,279
+backward. We will pass the output as the
+
+210
+00:09:28,959 --> 00:09:33,760
+first input and then for the lambda,
+
+211
+00:09:31,279 --> 00:09:36,560
+we're going to ignore the input, but we
+
+212
+00:09:33,760 --> 00:09:39,920
+will use the output or the result. And
+
+213
+00:09:36,560 --> 00:09:42,240
+then we're going to say result times 1
+
+214
+00:09:39,920 --> 00:09:43,519
+minus result. And that's the neat little
+
+215
+00:09:42,240 --> 00:09:45,519
+trick you can do with the sigmoid
+
+216
+00:09:43,519 --> 00:09:48,000
+function. So now let's go back to our
+
+217
+00:09:45,519 --> 00:09:50,880
+show activations function. And then
+
+218
+00:09:48,000 --> 00:09:53,680
+let's add sigmoid to the table headers
+
+219
+00:09:50,880 --> 00:09:56,560
+here. I just realized I have a temp typo
+
+220
+00:09:53,680 --> 00:09:58,800
+here. So I'm going to do really options.
+
+221
+00:09:56,560 --> 00:10:00,800
+And then I'm going to outputs and then
+
+222
+00:09:58,800 --> 00:10:03,120
+I'm going to say sigmoid outputs. And
+
+223
+00:10:00,800 --> 00:10:05,760
+I'm going to say inputs.igmoid.
+
+224
+00:10:03,120 --> 00:10:08,000
+And then here I'm going to place big boy
+
+225
+00:10:05,760 --> 00:10:10,240
+outputs. One more thing, let's just
+
+226
+00:10:08,000 --> 00:10:12,959
+remove this new line from here so that
+
+227
+00:10:10,240 --> 00:10:16,480
+the table renders correctly. So now I'm
+
+228
+00:10:12,959 --> 00:10:19,600
+going to compile and rerun. Great. So
+
+229
+00:10:16,480 --> 00:10:22,240
+here we saw minus2 getting mapped to
+
+230
+00:10:19,600 --> 00:10:24,399
+zero in real. And then in sigmoid it got
+
+231
+00:10:22,240 --> 00:10:26,720
+mapped to 0.1
+
+232
+00:10:24,399 --> 00:10:29,120
+which is quite a bit less than.5 which
+
+233
+00:10:26,720 --> 00:10:32,320
+makes sense because.5 would map to zero
+
+234
+00:10:29,120 --> 00:10:35,040
+and minus one is less negative. So it's
+
+235
+00:10:32,320 --> 00:10:38,959
+going to be a little bit closer to 0.5
+
+236
+00:10:35,040 --> 00:10:42,800
+and then zero got mapped to.5 one got
+
+237
+00:10:38,959 --> 00:10:46,079
+mapped to 7 and then two got mapped to8
+
+238
+00:10:42,800 --> 00:10:48,240
+and as we keep increasing the input this
+
+239
+00:10:46,079 --> 00:10:50,640
+value is going to get closer and closer
+
+240
+00:10:48,240 --> 00:10:53,200
+to one but with that we are done with
+
+241
+00:10:50,640 --> 00:10:55,279
+sigmoid. So in sigmoid all of the
+
+242
+00:10:53,200 --> 00:10:58,079
+outputs are positive which makes sense
+
+243
+00:10:55,279 --> 00:10:59,360
+for probability but sometimes the model
+
+244
+00:10:58,079 --> 00:11:02,800
+would need to do a little bit more than
+
+245
+00:10:59,360 --> 00:11:05,279
+that. For example, if our model was
+
+246
+00:11:02,800 --> 00:11:07,279
+controlling a steering wheel, we would
+
+247
+00:11:05,279 --> 00:11:09,200
+need to represent both directions. We
+
+248
+00:11:07,279 --> 00:11:11,600
+could use negative values for left,
+
+249
+00:11:09,200 --> 00:11:14,480
+positive values for right, and then 04
+
+250
+00:11:11,600 --> 00:11:16,640
+straight ahead. So 10H or the hyperbolic
+
+251
+00:11:14,480 --> 00:11:18,880
+tangent gives us the sweet spot. It
+
+252
+00:11:16,640 --> 00:11:22,160
+gives us a smooth curve centered around
+
+253
+00:11:18,880 --> 00:11:25,519
+zero with outputs that are between -1
+
+254
+00:11:22,160 --> 00:11:28,160
+and positive 1. So let's add 10H
+
+255
+00:11:25,519 --> 00:11:30,560
+alongside sigmoid so we can compare them
+
+256
+00:11:28,160 --> 00:11:33,519
+on the same outputs. So again, let's go
+
+257
+00:11:30,560 --> 00:11:36,399
+back up here. I'm going to add tanh. And
+
+258
+00:11:33,519 --> 00:11:38,880
+then let's go to our sigmoid function.
+
+259
+00:11:36,399 --> 00:11:43,839
+And this is a good place for the 10H
+
+260
+00:11:38,880 --> 00:11:46,320
+function. So no discard tensor 10h
+
+261
+00:11:43,839 --> 00:11:48,640
+const. And then we are just going to
+
+262
+00:11:46,320 --> 00:11:51,440
+fall back to the standard C++ library
+
+263
+00:11:48,640 --> 00:11:54,480
+here for 10h because this is built in.
+
+264
+00:11:51,440 --> 00:11:57,040
+So I'm going to pass double value here.
+
+265
+00:11:54,480 --> 00:12:00,079
+And then I'm just going to say return
+
+266
+00:11:57,040 --> 00:12:03,120
+standard 10h value. And then of course I
+
+267
+00:12:00,079 --> 00:12:06,480
+need to add the 10h operation right
+
+268
+00:12:03,120 --> 00:12:08,320
+here. And then let's go to the backward
+
+269
+00:12:06,480 --> 00:12:11,200
+function and implement the local
+
+270
+00:12:08,320 --> 00:12:13,200
+derivative rule for 10h. So if the
+
+271
+00:12:11,200 --> 00:12:15,920
+operation is tanh then we are going to
+
+272
+00:12:13,200 --> 00:12:19,040
+call backward. we are going to pass the
+
+273
+00:12:15,920 --> 00:12:20,959
+output and then for the lambda again we
+
+274
+00:12:19,040 --> 00:12:23,040
+are going to make use of the result and
+
+275
+00:12:20,959 --> 00:12:26,720
+I'm going to place the local derivative
+
+276
+00:12:23,040 --> 00:12:29,839
+rule for tanh it's going to be 1us
+
+277
+00:12:26,720 --> 00:12:32,399
+result squared so here we know that tanh
+
+278
+00:12:29,839 --> 00:12:35,680
+h is returning something between minus1
+
+279
+00:12:32,399 --> 00:12:39,600
+and 1 so near either end of the curve
+
+280
+00:12:35,680 --> 00:12:42,079
+the output is close to negative 1 or one
+
+281
+00:12:39,600 --> 00:12:44,639
+so it square is going to be close to one
+
+282
+00:12:42,079 --> 00:12:46,320
+and when you subtract it from one then
+
+283
+00:12:44,639 --> 00:12:50,560
+the derivative is going to be very close
+
+284
+00:12:46,320 --> 00:12:52,800
+to zero. So over there moving the input
+
+285
+00:12:50,560 --> 00:12:55,680
+will barely change the output which will
+
+286
+00:12:52,800 --> 00:12:57,519
+match the flat ends that we will see. So
+
+287
+00:12:55,680 --> 00:12:59,120
+now both directions are in place the
+
+288
+00:12:57,519 --> 00:13:00,720
+forward pass and the backward pass. So
+
+289
+00:12:59,120 --> 00:13:03,519
+let's just return to our comparison
+
+290
+00:13:00,720 --> 00:13:04,880
+table and then we can add a 10h column
+
+291
+00:13:03,519 --> 00:13:07,279
+so we can see the difference from
+
+292
+00:13:04,880 --> 00:13:08,880
+sigmoid. So let's go to show
+
+293
+00:13:07,279 --> 00:13:11,839
+activations.
+
+294
+00:13:08,880 --> 00:13:13,920
+I'm going to add a 10h outputs here. And
+
+295
+00:13:11,839 --> 00:13:16,720
+then I'm going to turn this into an
+
+296
+00:13:13,920 --> 00:13:21,279
+empty space. And I'm going to see out
+
+297
+00:13:16,720 --> 00:13:23,680
+the 10H outputs. And let's compile. And
+
+298
+00:13:21,279 --> 00:13:27,040
+so we have forgotten to add a semicolon
+
+299
+00:13:23,680 --> 00:13:30,320
+here. So let's just recompile and then
+
+300
+00:13:27,040 --> 00:13:33,440
+rerun. All right. So at this point,
+
+301
+00:13:30,320 --> 00:13:36,399
+let's take another look. So with minus2,
+
+302
+00:13:33,440 --> 00:13:38,320
+the result was very close to minus one.
+
+303
+00:13:36,399 --> 00:13:40,000
+With minus1 it was a little bit less
+
+304
+00:13:38,320 --> 00:13:42,800
+close to minus1. It's getting closer to
+
+305
+00:13:40,000 --> 00:13:46,000
+zero. And then with zero it was zero.
+
+306
+00:13:42,800 --> 00:13:48,399
+And then with one it was plus.76. So you
+
+307
+00:13:46,000 --> 00:13:52,000
+can see the symmetry here. And then with
+
+308
+00:13:48,399 --> 00:13:53,519
+plus two the output was plus.96.
+
+309
+00:13:52,000 --> 00:13:56,000
+So now the difference between this and
+
+310
+00:13:53,519 --> 00:13:58,240
+sigmoid as you can see is that this will
+
+311
+00:13:56,000 --> 00:14:00,320
+stretch the values and shift them
+
+312
+00:13:58,240 --> 00:14:02,000
+between minus1 and positive one. It's
+
+313
+00:14:00,320 --> 00:14:03,839
+still a smooth curve. It's it's a
+
+314
+00:14:02,000 --> 00:14:06,320
+different curve but this is what it
+
+315
+00:14:03,839 --> 00:14:08,639
+accomplishes. So at this point, we get
+
+316
+00:14:06,320 --> 00:14:11,279
+the signed outputs that we wanted with
+
+317
+00:14:08,639 --> 00:14:12,880
+zero in the middle. But so far, we've
+
+318
+00:14:11,279 --> 00:14:15,680
+been just feeding numbers straight into
+
+319
+00:14:12,880 --> 00:14:17,600
+these nonlinear functions. But I think
+
+320
+00:14:15,680 --> 00:14:21,040
+it's time for us to take this for a
+
+321
+00:14:17,600 --> 00:14:22,959
+spin. So let's just use 10H in a model
+
+322
+00:14:21,040 --> 00:14:25,040
+and then see whether training can fit a
+
+323
+00:14:22,959 --> 00:14:27,360
+curve instead of a straight line. So
+
+324
+00:14:25,040 --> 00:14:29,199
+let's go to our linear forward function.
+
+325
+00:14:27,360 --> 00:14:30,800
+I'm just going to copy this and I'm
+
+326
+00:14:29,199 --> 00:14:32,880
+going to create a nonlinear forward
+
+327
+00:14:30,800 --> 00:14:35,760
+function. These are throwaway functions.
+
+328
+00:14:32,880 --> 00:14:37,760
+So I'm not too worried about code reuse
+
+329
+00:14:35,760 --> 00:14:39,920
+or keeping it dry. So I'm going to keep
+
+330
+00:14:37,760 --> 00:14:43,120
+the linear layer right here. And then
+
+331
+00:14:39,920 --> 00:14:45,920
+I'm going to call 10h on it. So we have
+
+332
+00:14:43,120 --> 00:14:48,560
+our regular linear layer input matt
+
+333
+00:14:45,920 --> 00:14:51,120
+weights plus bias broadcasted. And then
+
+334
+00:14:48,560 --> 00:14:54,720
+on top of that we have our 10h. So now
+
+335
+00:14:51,120 --> 00:14:57,440
+let's go to our train linear regression
+
+336
+00:14:54,720 --> 00:15:00,720
+function. And I'm actually going to copy
+
+337
+00:14:57,440 --> 00:15:04,079
+this as well. And I'm going to create a
+
+338
+00:15:00,720 --> 00:15:07,120
+train nonlinear regression function. So
+
+339
+00:15:04,079 --> 00:15:08,959
+train nonlinear regression. And then in
+
+340
+00:15:07,120 --> 00:15:11,760
+here instead of calling linear forward,
+
+341
+00:15:08,959 --> 00:15:13,120
+we are going to call nonlinear forward.
+
+342
+00:15:11,760 --> 00:15:14,959
+And I'm not going to touch anything else
+
+343
+00:15:13,120 --> 00:15:17,360
+because mean squared error is still
+
+344
+00:15:14,959 --> 00:15:19,519
+totally fine in this setup. But let's do
+
+345
+00:15:17,360 --> 00:15:21,760
+one more thing. So now we have this
+
+346
+00:15:19,519 --> 00:15:23,920
+train line function. And I'm going to
+
+347
+00:15:21,760 --> 00:15:25,440
+copy it again. I'm sorry for not keeping
+
+348
+00:15:23,920 --> 00:15:27,600
+things dry, but this is just for the
+
+349
+00:15:25,440 --> 00:15:30,560
+sake of time. And then let's call this
+
+350
+00:15:27,600 --> 00:15:32,480
+train curve. And for this curve, I have
+
+351
+00:15:30,560 --> 00:15:34,399
+a little bit of a different input. So
+
+352
+00:15:32,480 --> 00:15:36,880
+let me just copy and paste a few things
+
+353
+00:15:34,399 --> 00:15:39,519
+here. For our inputs, we have these
+
+354
+00:15:36,880 --> 00:15:41,920
+guys. For our targets, we have these
+
+355
+00:15:39,519 --> 00:15:45,760
+guys. I'm going to remove this. And then
+
+356
+00:15:41,920 --> 00:15:48,639
+we will train nonlinear regression using
+
+357
+00:15:45,760 --> 00:15:50,880
+inputs. Now before we actually take this
+
+358
+00:15:48,639 --> 00:15:53,040
+for a spin, I'm going to reveal the
+
+359
+00:15:50,880 --> 00:15:56,000
+function that actually let's just put it
+
+360
+00:15:53,040 --> 00:15:59,680
+here that these inputs and targets
+
+361
+00:15:56,000 --> 00:16:02,000
+represent it is 10h of 2x + one. So by
+
+362
+00:15:59,680 --> 00:16:04,160
+the end of this I would like to see two
+
+363
+00:16:02,000 --> 00:16:07,199
+for weight and then one for bias once
+
+364
+00:16:04,160 --> 00:16:10,160
+again. So let's go back down and I'm
+
+365
+00:16:07,199 --> 00:16:14,079
+going to call train curve. I'm going to
+
+366
+00:16:10,160 --> 00:16:16,880
+compile and then rerun. And we got
+
+367
+00:16:14,079 --> 00:16:19,040
+pretty close. This is actually basically
+
+368
+00:16:16,880 --> 00:16:21,759
+what we wanted to see. It is not exactly
+
+369
+00:16:19,040 --> 00:16:24,000
+two and one, but it might as well be.
+
+370
+00:16:21,759 --> 00:16:25,600
+This is good enough for our use case.
+
+371
+00:16:24,000 --> 00:16:29,519
+I'm actually curious what would happen
+
+372
+00:16:25,600 --> 00:16:32,160
+if we ran this for, let's say, 100,000
+
+373
+00:16:29,519 --> 00:16:34,560
+steps instead of 10,000. So, let me
+
+374
+00:16:32,160 --> 00:16:38,000
+compile and then let's rerun. There you
+
+375
+00:16:34,560 --> 00:16:41,279
+go. Now, we got perfection. So at this
+
+376
+00:16:38,000 --> 00:16:43,759
+point our model is actually able to fit
+
+377
+00:16:41,279 --> 00:16:46,320
+to not just linear functions but also
+
+378
+00:16:43,759 --> 00:16:50,639
+nonlinear functions. We again did quite
+
+379
+00:16:46,320 --> 00:16:53,360
+a bit in this episode. We built relu, we
+
+380
+00:16:50,639 --> 00:16:55,839
+built sigmoid, we built 10h and then we
+
+381
+00:16:53,360 --> 00:16:58,720
+built unary helpers for both the forward
+
+382
+00:16:55,839 --> 00:17:02,160
+pass and the backward pass that both or
+
+383
+00:16:58,720 --> 00:17:04,559
+or all three rather reused. And then we
+
+384
+00:17:02,160 --> 00:17:07,039
+used 10h in our regression model and
+
+385
+00:17:04,559 --> 00:17:10,400
+then trained it on a curved set of
+
+386
+00:17:07,039 --> 00:17:13,199
+points. So can we claim that we have
+
+387
+00:17:10,400 --> 00:17:15,600
+achieved deep learning? No, we cannot
+
+388
+00:17:13,199 --> 00:17:17,839
+because we just have a single simple
+
+389
+00:17:15,600 --> 00:17:20,319
+layer here, two layers. We have the
+
+390
+00:17:17,839 --> 00:17:22,319
+matmo layer, we have the bias, you can
+
+391
+00:17:20,319 --> 00:17:25,600
+call that the linear layer and then on
+
+392
+00:17:22,319 --> 00:17:28,400
+top of that we have the 10h layer. But
+
+393
+00:17:25,600 --> 00:17:30,880
+this is not typical deep learning. These
+
+394
+00:17:28,400 --> 00:17:33,600
+are just building blocks and we can only
+
+395
+00:17:30,880 --> 00:17:35,840
+currently fit a very limited family of
+
+396
+00:17:33,600 --> 00:17:39,200
+curves. We need to be able to do a lot
+
+397
+00:17:35,840 --> 00:17:41,919
+more than that. And in order to learn
+
+398
+00:17:39,200 --> 00:17:44,559
+more complex patterns, we will need to
+
+399
+00:17:41,919 --> 00:17:47,440
+combine several of these units into a
+
+400
+00:17:44,559 --> 00:17:48,880
+deeper and larger network. And in the
+
+401
+00:17:47,440 --> 00:17:50,720
+next episode, that's what we're going to
+
+402
+00:17:48,880 --> 00:17:53,440
+be doing. We're going to be building
+
+403
+00:17:50,720 --> 00:17:55,760
+linear and activation modules to make
+
+404
+00:17:53,440 --> 00:17:57,919
+those combinations a lot easier to work
+
+405
+00:17:55,760 --> 00:18:00,640
+with. And then we're going to train our
+
+406
+00:17:57,919 --> 00:18:03,120
+first multi-layer perceptron.
+
+407
+00:18:00,640 --> 00:18:05,120
+But that's enough for today. That brings
+
+408
+00:18:03,120 --> 00:18:08,720
+us to the end of this episode. So thanks
+
+409
+00:18:05,120 --> 00:18:08,720
+for watching and I will see you next
+

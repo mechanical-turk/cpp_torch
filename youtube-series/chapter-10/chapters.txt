@@ -1,0 +1,14 @@
+00:00 Introduction
+00:29 Build ReLU
+01:47 Unary forward helper
+03:28 Unary backward helper
+05:09 ReLU backward rule
+06:17 Compare activation outputs
+07:26 Build sigmoid
+09:02 Sigmoid backward rule
+10:50 Build tanh
+12:03 Tanh backward rule
+12:59 Compare tanh and sigmoid
+14:09 Nonlinear regression
+15:17 Fit a tanh curve
+16:46 Recap

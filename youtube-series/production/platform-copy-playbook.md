@@ -64,6 +64,8 @@ No platform copy is final when this record is missing.
   slogan-like fragments.
 - Avoid canned structures such as `it is not X, it is Y` and abrupt
   `X. This is Y.` transitions.
+- Avoid repeated sentences built around vague demonstratives such as `That X
+  does Y`. Name the actual subject and action instead.
 - Do not force lowercase to manufacture informality.
 - Do not manufacture informality with stage directions such as `say`, `imagine`,
   or `picture this`. State the situation directly.

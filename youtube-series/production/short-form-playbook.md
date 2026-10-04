@@ -6,9 +6,12 @@ authoritative short-script checklist. Long-form has its own playbook.
 
 ## Required script-writing workflow
 
-Every new or rewritten short-form script must show these sections in order.
-This applies without a separate request to run critique. Put the descriptive
-proposed MP4 filename above them.
+Every new or rewritten short-form script must go through these steps in order,
+without a separate request to run critique. Save the checklist plan, audit,
+critique, score and editorial rationale in `script-review.md`. Keep `script.md`
+limited to the descriptive MP4 filename, title, narration and recording/editing
+directions. Keep keyword research in `keyword-research.md`. Perform the whole
+workflow without placing its supporting review inside the recording script.
 
 1. **Checklist plan:** before the script, explain how this specific draft will
    attempt every item S01-S20. Use one concise row per ID: intended wording,
@@ -32,6 +35,31 @@ fragment, explain dependencies on the rest, and mark unavailable checks
 UNVERIFIED. Do not invent the rest of the script to claim full compliance.
 If the draft changes after scoring, rerun the affected checks and recalculate
 the score. The score must always describe the draft actually handed over.
+
+## Mandatory narrative order
+
+Every Short must use this sequence:
+
+1. **Hook:** sell the idea immediately without revealing the solution.
+2. **Escalate with the result:** state the measured speedup, slowdown, or other
+   striking result before showing what caused it. This result raises the stakes
+   and opens the curiosity gap. Never invent a number; use a clear placeholder
+   until production supplies the measurement.
+3. **Explain the problem:** show just enough of the original code, layout, or
+   behavior for a cold viewer to understand what may be going wrong.
+4. **Ask why the problem occurs:** invite the viewer to diagnose the problem
+   before the solution appears. Use natural, topic-specific wording rather than
+   mechanically repeating “Why is this a problem?”
+5. **Reveal the solution:** show the change clearly and connect it to the
+   result promised near the opening.
+6. **Ask why the solution works:** immediately invite the viewer to explain the
+   mechanism. Keep this distinct from the earlier problem-diagnosis question.
+7. **Name the next test and cut:** close with “Next, we're testing [specific
+   experiment],” or an equally direct version, then cut immediately.
+
+Do not reveal or name the solution before the measured result. The first
+question opens the diagnosis; the second opens discussion of the solution.
+Both questions must give the audience something specific to reason about.
 
 ## Script checklist
 
@@ -74,10 +102,11 @@ Weights are editorial priorities, not measured contributions to reach.
 
 - [ ] **S05 | Immediate progress and clear causality | 4 points.**
   Does the sentence after the hook begin delivering rather than repeat or
-  reintroduce it? Show the relevant action as it is named. Connect before,
-  change, and consequence in one uninterrupted sequence. Remove repeated
-  definitions, duplicate walkthroughs, ornamental transitions, and empty
-  waiting for the reveal.
+  reintroduce it? Escalate with the measured result before naming or showing
+  the solution, then move directly into the problem. Show the relevant action
+  as it is named. Connect result, problem, change, and consequence in one
+  uninterrupted sequence. Remove repeated definitions, duplicate walkthroughs,
+  ornamental transitions, and empty waiting for the reveal.
 
 - [ ] **S06 | Correct claim and deliberate omissions | 10 points.**
   Is the explanation technically sound, and does the wording stay within the
@@ -101,30 +130,30 @@ Weights are editorial priorities, not measured contributions to reach.
   are pending. Still reject a misleading comparison or fabricated result.
 
 - [ ] **S08 | Complete, honest payoff | 5 points.**
-  Does the Short resolve its original promise with visible evidence before
-  moving to the next experiment? Stage the reveal without unnecessarily
-  delaying it. Do not pretend a winner remains hidden once both timings
-  appear, and do not leave the promised answer to a sequel.
+  Does the Short state the measured result before it reveals the solution,
+  then resolve its original promise with visible evidence before moving to the
+  next experiment? The problem and its diagnosis question must come between
+  the early result and the solution. Do not pretend a winner remains hidden
+  once both timings appear, and do not leave the promised answer to a sequel.
   Assess the reveal's completeness and wording, not whether the benchmark owner
   has populated its timing placeholders. Verification belongs to production.
 
-- [ ] **S09 | Ask why immediately after the reveal | 5 points.**
-  Is the very next spoken beat after the performance gain, benchmark result,
-  mystery resolution, or other main payoff a direct question asking why the
-  audience thinks it happened? For example: “Why do you think that's
-  happening?” or “Why did the same work finish faster?” Use natural wording
-  for the result. No intervening explanation, recap, caveat, transition, or
-  follow request. A question about the next experiment alone does not satisfy
-  this check. Give the viewer something real to interpret and discuss.
+- [ ] **S09 | Two distinct audience questions | 5 points.**
+  Before the solution appears, does the script directly ask why the problem
+  occurs? Immediately after the solution appears, does it ask why that solution
+  works? Use short, natural wording tied to the code or mechanism on screen.
+  The questions must invite two different kinds of reasoning: diagnosis first,
+  explanation second. Do not insert a recap, caveat, transition, or follow
+  request between the solution and the second question. A question about the
+  next experiment alone does not satisfy this check.
 
 - [ ] **S10 | Specific continuation and immediate cut | 5 points.**
-  After the why-question, does a genuine adjacent technical question lead to
-  a concrete next test, then an immediate cut? Combine the adjacent question
-  and continuation tightly, for example: “Need the histories too? That's
-  what I'm testing next.” Do not invent a measured answer or scheduled
-  release. Preserve discussion while creating a reason to return. No generic
-  requests to follow, like, comment, or visit a profile; no end card, dead
-  tail, or manufactured cliffhanger.
+  After the solution question, does the script say “Next, we're testing
+  [specific experiment],” or an equally direct version, then cut immediately?
+  The next test must be real, adjacent, and concrete. Do not invent a measured
+  answer or scheduled release. Preserve discussion while creating a reason to
+  return. No generic requests to follow, like, comment, or visit a profile; no
+  end card, dead tail, or manufactured cliffhanger.
 
 ### Visual delivery and pacing
 
@@ -235,14 +264,16 @@ audio file alone cannot prove which CapCut settings were used; keep unconfirmed
 settings UNVERIFIED. These are creator-directed editing defaults, not measured
 causes of reach or a substitute for final-audio review.
 
-## Mandatory ending sequence
+## Required sequence summary
 
-`complete payoff -> why do you think that happened? -> adjacent question and next test -> cut`
+`hook -> measured result -> problem -> why is this a problem? -> solution -> why does this solution work? -> next test -> cut`
 
-The why-question concerns the result just shown. The adjacent question concerns
-what comes next. Do not silently substitute one for the other. Keep both
-compact, preserve the completed lesson, and cut earlier repetition to fit them.
-The questions invite useful participation; they are not a generic comment CTA.
+This is the required order for the whole Short, not only its ending. The first
+question asks the audience to diagnose the problem before the answer appears.
+The second asks them to explain the revealed solution. Do not silently merge or
+substitute them. Keep both compact, preserve the completed lesson, and cut
+earlier repetition to fit them. They invite useful participation; they are not
+generic comment calls to action.
 
 ## Scoring and decision
 
@@ -269,9 +300,10 @@ script writer or script score. Missing measurements must stay clearly marked,
 but are not a script failure or hold. Script approval does not verify results
 or authorize publishing placeholders as facts.
 
-S01, S02, S03, S06, S07, S08, S09, S10, and S14 are mandatory for advancement.
-A weak hook, misleading proof, missing immediate why-question, or overlong draft
-cannot be averaged away by good formatting.
+S01, S02, S03, S05, S06, S07, S08, S09, S10, and S14 are mandatory for
+advancement. A weak hook, misleading proof, early solution reveal, missing
+audience question, broken narrative order, or overlong draft cannot be averaged
+away by good formatting.
 
 - **Advance:** all mandatory items pass, and no other FAIL or UNVERIFIED item
   remains within the script task. List any partial items and final-media work.

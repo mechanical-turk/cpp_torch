@@ -1,0 +1,26 @@
+{
+  "baseRef": "7021cfe0eb1704a31e9f429c9684d5ff66af78bd",
+  "edits": 10,
+  "checkpoints": 4,
+  "results": [
+    {
+      "name": "baseline",
+      "output": "Test 1\nTest 2\nTest 3\nTest 4\nTest 5\nTest 6\nTest 7\nTest 8\nTest 9\nTest 10\nTest 11\nTest 12\nTest 13\nTest 14\nTest 15\nTest 16\nTest 17\nTest 18\nTest 19\nTest 20\nTest 21\nTest 22\nTest 23\nTest 24\nSuccess!\n"
+    },
+    {
+      "name": "trained-model",
+      "output": "weight: 2\nbias: 1\nTest 1\nTest 2\nTest 3\nTest 4\nTest 5\nTest 6\nTest 7\nTest 8\nTest 9\nTest 10\nTest 11\nTest 12\nTest 13\nTest 14\nTest 15\nTest 16\nTest 17\nTest 18\nTest 19\nTest 20\nTest 21\nTest 22\nTest 23\nTest 24\nSuccess!\n"
+    },
+    {
+      "name": "gradient-regressions",
+      "output": "Finite-difference comparisons: 195\nShared paths, leaf accumulation, explicit zero-grad, lifetime, empty reductions, zero-inner matmul, validation and 100 training steps: PASS\nweight: 2\nbias: 1\nTest 1\nTest 2\nTest 3\nTest 4\nTest 5\nTest 6\nTest 7\nTest 8\nTest 9\nTest 10\nTest 11\nTest 12\nTest 13\nTest 14\nTest 15\nTest 16\nTest 17\nTest 18\nTest 19\nTest 20\nTest 21\nTest 22\nTest 23\nTest 24\nSuccess!\n"
+    },
+    {
+      "name": "generalization-regressions",
+      "output": "Batch model generalization with 1, 3 and 5 features: PASS\nweight: 2\nbias: 1\nTest 1\nTest 2\nTest 3\nTest 4\nTest 5\nTest 6\nTest 7\nTest 8\nTest 9\nTest 10\nTest 11\nTest 12\nTest 13\nTest 14\nTest 15\nTest 16\nTest 17\nTest 18\nTest 19\nTest 20\nTest 21\nTest 22\nTest 23\nTest 24\nSuccess!\n"
+    }
+  ],
+  "workingSourceSha256": "78f8c4f893e68d923145fcfe7447890aa73099e7e34e38767cd5955c0d2cb2a8",
+  "scriptSha256": "1dc7ce9d53bde6a3ab25cadb0e50cf8fea02d317ffb95833ddcd4a52c190f21d",
+  "replaySha256": "91df6cb31938f2f7ebbad414e09ef2ecac514753308fa8eba91bcbcdb46a0f83"
+}

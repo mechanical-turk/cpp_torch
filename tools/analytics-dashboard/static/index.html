@@ -90,6 +90,17 @@
       <p id="chart-readout" aria-live="polite"></p>
       <label class="chart-scrubber">Inspect snapshot <input id="chart-point" type="range" min="0" value="0" step="1"></label>
       <p class="chart-note">Saved snapshots only. Times are local; ranges end at the latest snapshot. Lines connect observations, not measured activity between them.</p>
+      <section class="projection-section" aria-labelledby="projection-title">
+        <div class="projection-heading">
+          <div>
+            <p class="eyebrow">Linear scenarios</p>
+            <h3 id="projection-title">Growth projections</h3>
+          </div>
+        </div>
+        <div id="projection-plot"></div>
+        <div id="chart-projections"></div>
+        <p class="chart-note" id="projection-note"></p>
+      </section>
       <details><summary>Exact snapshot values</summary>
         <div class="snapshot-table"><table><thead><tr><th>Captured</th><th>Count</th></tr></thead><tbody id="chart-values"></tbody></table></div>
       </details>

@@ -508,3 +508,47 @@ than rewriting the original entry.
 - Explicit async policy and actual execution-event evidence are required.
   No benchmark, animation, publication, new analytics or final-media review ran.
   The script requests observed overlap, not an invented numeric speedup.
+
+### 2026-09-11: Alternative Episode 9 long-form draft for writer comparison
+
+- Creator requested an alternative to the existing Episode 9 script to compare
+  script-writing performance with the parallel draft. Produced
+  [script-alt-2026-09-11.md](../../youtube-series/chapter-09/script-alt-2026-09-11.md).
+- Different editorial structure, same scope and checkpoint: failure-first cold
+  open on real data (the batch loss computes, then backward demonstrably stops
+  on the missing sum/matmul rules), one dataset and one training loop instead
+  of a scalar toy stage, matmul backward written as one complete helper. Nine
+  literal edits instead of twelve; projected 11.5-13.5 minutes.
+- All nine edits were replayed mechanically against checkpoint 7021cfe in
+  temporary files: the cold-open stage stops with the expected uncaught
+  logic_error (exit 134), and the complete draft reproduces every measured
+  real-data line from verification-run.json, clean under ASan/UBSan. Recording
+  main.cpp and the chapter verifier were not modified.
+- Sequential self-review scores 97.5/100, advance to recording rehearsal, with
+  L11 partial until rehearsal. Not an independent review; the failure-first
+  opening is a retention transfer hypothesis to measure at 0:15-2:00 after
+  publication, not an established gain. No content selected for recording, no
+  publishing work, no analytics pull.
+
+### 2026-09-11: Episode 9 removes hidden implementation and arithmetic narration
+
+- Creator rejected the canonical script's disjointed narration, operand-by-operand
+  explanation and prepared data-loading/reporting helpers. This is creator
+  feedback, not new audience-retention evidence.
+- Revised [script.md](../../youtube-series/chapter-09/script.md): keep the
+  scalar-first training sequence, then live-code a three-column reader,
+  deterministic holdout, fixed feature scales and explicit test-error loop.
+  Only raw selected data is supplied. No custom helper is included.
+- Removed the batch-gradient print detour and temporary one-sided matmul rule.
+  Retained one numerical gradient check and the complete held-out result.
+- Twelve literal edits replay through eight milestones plus baseline and two
+  regression runs. 195 derivative checks pass; actual loading and fitting are
+  checked against source rows and independent least squares. Recording main.cpp
+  and the alternative draft are unchanged. Respected the move under scratch/.
+- Narration is 1,047 words; estimated 12-15 minutes includes all new code.
+  Natural delivery and runtime still need creator rehearsal. Written self-review
+  is 97.5/100 with L11 partial, not evidence that the creator will like the voice
+  or that retention will improve.
+- Long-form playbook now explicitly requires visible new implementation,
+  including data plumbing, and distinguishes it from supplementary tests.
+  Explain decisions and consequences instead of reciting readable arithmetic.

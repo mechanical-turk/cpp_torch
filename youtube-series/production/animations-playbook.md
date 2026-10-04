@@ -148,7 +148,8 @@ presenter region or an oversized asset that is immediately downscaled.
 | Placement in master | **(0, 0)**, full width, no scaling |
 | Recording region below | Remaining 2160 × 1540 |
 | Frame rate | 24 fps |
-| Viewing preview | 1080 × 1150 |
+| First motion preview | **216 × 230 (10% of each native dimension)** |
+| Larger viewing copy after approval | 1080 × 1150 when useful |
 | Background | Fully opaque, continuous gradient |
 
 The requests for 106% height, then +6%, then 95% of that sample were iterative
@@ -188,13 +189,17 @@ in the [history snapshot](animations-playbook-history-2026-09-09.md).
 ## Content, typography and minimal results
 
 The Blender render is a visual aid. Omit titles, captions, banners, narration,
-explanatory paragraphs and nonessential benchmark detail. Keep necessary code,
-field labels, values and relationships. Recompose the usable canvas after
+explanatory paragraphs and nonessential benchmark detail. Reserve words for code
+and benchmark results; retain essential data numerals. Do not add floating method
+or object names such as “flat hash table,” “unordered set,” or “sort + unique,”
+including beneath benchmark figures. Let narration and visual relationships
+identify them. Recompose the usable canvas after
 removing overlays rather than leaving empty heading slots. Presenter narration
 and editorial captions are separate from these silent scene assets.
 
-Every needed physical field must be labeled: `score` and `history` in Short 06,
-`a` and `b` in Short 07. Equivalent objects get equivalent emphasis. The earlier
+Explicitly requested field labels remain episode-specific exceptions: `score`
+and `history` in Short 06, `a` and `b` in Short 07. Do not infer permission to add
+descriptive names to a new episode. Equivalent objects get equivalent emphasis. The earlier
 left/right-only score highlighting with an untouched center was rejected.
 Object counts, order and values must match the current subject, including while
 moving. Never reuse another episode's numbers as new evidence.
@@ -298,11 +303,26 @@ factory; replace their episode-specific constants deliberately.
 - Preserve actual members and counts through motion. For Short 06 the historical
   invariants are scores 7/2/9, three labels per field, fifteen history cards per
   player and forty-five total. Those are not contents of every future animation.
+- Two clay boxes must never occupy the same physical space. Before another box
+  enters a position, its occupant must move clear or visibly squash away and
+  disappear. A handoff cannot briefly render two coincident shells. Keep duplicate
+  comparisons beside the stored key, and audit every visible value-shell pair
+  across every authored pose, not only the sorting crossings.
 - Lift far enough to clear intermediate geometry, including the thicker new rims.
   Check the crossing, not just opening/landing. A larger clear lift arc fixed the
   earlier score/history intersections.
 
 ## Motion: causality, weight and continuous activity
+
+When iterating over input values, outline the active object clearly in white
+(or an equally unambiguous high-contrast selection color). Keep the highlight
+attached to the actual object silhouette while it is being processed. Use a
+thin contour that hugs the clay, not a padded square, rectangular selection
+frame or bounding box. Highlight only the active source; do not highlight the
+destination bucket or stored key. A subtle bounce alone is not a readable
+selection cue. Remove unexplained edges and dividers from the
+completed state. Hash-set diagrams must make bucket selection and duplicate
+acceptance/rejection legible; the Short 08 rope/attachment metaphor was rejected.
 
 Animate the explanation, not arbitrary decoration. Relate each script line to
 one observable action. Show the request before its consequence and preserve
@@ -398,12 +418,23 @@ Revision 9 reference scene map (24 fps, 864 total frames):
 | `05-benchmark-result.mp4` | 577–672 | 4 s |
 | `06-discussion-hold.mp4` | 673–864 | 8 s |
 
-Deliver matching smaller previews. Produce a concatenated viewing copy only
+Use the 10%-dimension previews for iteration; larger viewing copies accompany
+full-resolution delivery only when useful. Produce a concatenated viewing copy only
 when requested. Do not force new scripts into six scenes or these durations.
 For Resolve/mobile assembly, retain a 2160 × 3840 timeline and place this source
 at (0, 0) with no resampling. The obsolete `short-07-4k-vertical.fcpxml` described
 an older layout and was deleted; it is not a dependency of the clips. An exchange
 file is not proof that a Resolve project has been assembled successfully.
+
+### Static storyboard and slideshow requests
+
+When the creator requests a slideshow, build complete static diagrams instead
+of freezing intermediate animation poses. Put before and after in the same
+image when a transformation must be understood without motion. Give sorting
+and unique separate images. Align rows using actual projected geometry, not
+only floor coordinates. Keep speech-to-image mapping beside the package and
+preserve the spoken script. Deliver numbered PNGs; do not launch video renders.
+Retain the 10%-dimension first-preview rule and existing text/style restrictions.
 
 ### Build, preview and render
 
@@ -411,8 +442,14 @@ file is not proof that a Resolve project has been assembled successfully.
 2. Reuse approved native assets. For a new material, lighting or shape direction,
    test stills first and establish a faithful native Blender still before video.
    Generated images are appearance targets, not production geometry or evidence.
-3. Render inexpensive previews of opening, transfer, code change, crossing,
-   landing and result; review native detail and actual phone-size legibility.
+3. Render motion previews at **10% of each final dimension** first: 216 × 230
+   for the current 2160 × 2300 asset, only 1% of its pixel count. Keep the final
+   aspect ratio, composition, 24 fps and on-twos motion. Render directly at this
+   size; do not spend a native render merely to downscale it. Deliver numbered
+   tiny scene clips for motion/concept feedback. Expand resolution only after
+   the creator accepts that direction. Tiny previews do not establish final
+   glyph sharpness or texture quality; those checks belong to the approved
+   larger-resolution stage.
 4. Audit every authored pose, duplicates, intermediate clearance, ownership
    colors, bubble lifetimes, arrow reveal and actual template placement.
 5. Verify the production sample level and any layered/cached rendering against
@@ -435,7 +472,12 @@ An animated FONT tessellation bug dropped glyph fragments in consecutive CPU
 and GPU renders. Convert native FONT outlines to meshes once **inside the render
 session**, preserving transform animation. Keep native text editable and fonts
 packed in the saved scene. Clay uses Metal; transparent typography uses CPU.
-Persistent render data is off. Fixed seed 0, animated seed off, denoising on,
+Persistent render data stays off for the local Metal/CPU reference. The Omarchy
+OptiX worker may retain unchanged geometry between poses after a native equality
+check: Short 08's tested cache differed by 0.000051/255 mean channel value and
+reduced warm render time from about 34 to 9.4 seconds. Keep CPU typography
+separate and recheck animated visibility/transforms; this is not a blanket change
+to the Metal workaround. Fixed seed 0, animated seed off, denoising on,
 reconstruction filter .8, depth of field off and motion blur off preserve stable
 surface detail and sharp glyphs.
 
