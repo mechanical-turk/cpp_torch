@@ -223,9 +223,13 @@ that exact timeline; do not render from the earlier automatic XML.
    XML. Extract from the verified original isolated speech stream, rather than
    blindly trusting XML source-track numbering.
 2. Assemble mono 48 kHz PCM with exact sample alignment as in section 4. Keep an
-   unprocessed WAV. The final mix excludes the duplicate combined stream and
-   isolated keyboard stream. Removing keyboard A3 cannot remove keyboard leakage
-   already recorded in the speech microphone.
+   unprocessed WAV. Exclude a duplicate combined stream only when authorized.
+   **Preserve the isolated keyboard track in the timeline and final mix unless
+   the creator explicitly asks to remove or mute it.** Dialogue-only processing
+   and speech detection do not authorize a dialogue-only final mix. Apply the
+   same cuts and speed to keyboard audio, keep it separately adjustable, and
+   verify its routing and audible signal. Keyboard leakage in the speech
+   microphone is not a substitute for the isolated keyboard recording.
 3. Check representative audio, original peaks, and loudness. Use conservative
    processing; do not add heavy denoising or a noise gate by default.
 4. Episode 13 used this filter chain before normalization:
@@ -378,7 +382,10 @@ Review code readability in the actual output.
 - [ ] Fresh assembly uses confirmed filesystem date order and starts at zero.
 - [ ] Speech cuts use conservative VAD and preserve synchronization.
 - [ ] Creator's final manual cuts are represented in the export snapshot.
-- [ ] Duplicate combined speech and keyboard streams excluded from dialogue mix.
+- [ ] Duplicate combined stream handled as authorized; isolated keyboard preserved
+      in the timeline and final mix unless explicitly requested otherwise.
+- [ ] Voice and keyboard stream identities verified from this episode’s files;
+      no assumption that recording-channel labels equal FFmpeg stream indices.
 - [ ] Audio processing logged; final AAC loudness/peaks measured.
 - [ ] 1.07× applied exactly once to picture and audio; pitch preserved.
 - [ ] Export finishes successfully; actual 4K/rate/duration/sync verified.
@@ -386,3 +393,16 @@ Review code readability in the actual output.
 
 Mark irrelevant earlier assembly steps as not applicable when exporting an
 already-finished timeline. Do not rerun them merely to complete this checklist.
+
+## Episode 14 correction — preserve keyboard audio (2026-10-21)
+
+The first Episode 14 review mistakenly omitted the isolated keyboard stream
+while replacing the voice with a processed dialogue master. The creator wants
+keyboard sounds retained. Never repeat this omission: speech-only detection
+controls cut timing, not which audio sources survive. Preserve all wanted audio
+tracks through cuts, retiming, imports, and export, and check each track’s signal.
+For Episode 14, source `0:a:0` is voice and `0:a:1` is the separate keyboard/other
+stream; the old mixed stream was already removed during recording. Verify this
+mapping anew for future episodes. A silent sample does not establish that the
+entire track is silent. Keep keyboard unprocessed by the dialogue compressor
+unless a separate mix change is requested.
