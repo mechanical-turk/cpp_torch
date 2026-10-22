@@ -2,6 +2,7 @@
 
 Recording script: [script.md](script.md). Research: [keyword-research.md](keyword-research.md).
 Verifier: [verify-script.mjs](verify-script.mjs), report: [verification-run.json](verification-run.json).
+Publishing package: [publishing.md](publishing.md). Release state: [distribution.md](distribution.md).
 
 ## History of this script
 
@@ -308,3 +309,11 @@ as not yet replayed. The verifier was edited to match the new text and then re-r
 2026-10-22: 26 edits replayed, the six-row aside table, the first-epoch probe and
 the ASan/UBSan run passed. The new causal claims in the evidence table above are
 still not asserted by the verifier.
+
+## Recording divergence (October 22, 2026)
+
+The recorded export ends at a starting rate of 0.08, decay 0.95 and 20 epochs
+(92.85%, 1857/2000, visible at 49:05), where this script ends at 0.1, 10 epochs
+and 91.05%. The export is 52:24 long. The verifier replays the script, not the
+video, so its results do not describe the published media. The publishing
+package follows the video; see [publishing.md](publishing.md).

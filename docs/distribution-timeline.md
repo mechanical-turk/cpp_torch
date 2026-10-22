@@ -763,3 +763,15 @@ Rotate among:
   no remote change. The committed example (tanh, 20 epochs, rate 0.08, decay
   0.95) reached 92.85% (1857/2000) in one run, which differs from the script's
   rate 0.1, 10 epochs, 91.05%.
+
+## October 22, 2026: Chapter 14 publishing package and distribution record drafted
+
+- Created [publishing.md](../youtube-series/chapter-14/publishing.md) and
+  [distribution.md](../youtube-series/chapter-14/distribution.md), linked to each
+  other. Package score 74/100, hold for public release. Draft only: no upload,
+  schedule, announcement or comment.
+- Probed the final export (52:23.967, 3840x2160, 30 fps) and sampled frames. It
+  ends at 92.85% (1857/2000) with rate 0.08, decay 0.95 and 20 epochs, matching
+  the local demo commit 47db7ed, which is not pushed. The file ends in
+  continuous speech, so it has no clean tail for the end screen.
+- No thumbnail, captions or chapters yet. Upload status is unknown.
