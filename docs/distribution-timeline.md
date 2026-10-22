@@ -710,3 +710,56 @@ Rotate among:
 - Supersedes ASoqjGVOUKc. No deletion or public release performed. Updated
   publishing.md to use the replacement file and URL; no GitHub changes needed
   for this replacement-upload task.
+
+## October 4, 2026: Replacement Chapter 13 timestamps updated
+
+- Downloaded English automatic captions for
+  [the replacement video](https://www.youtube.com/watch?v=yonurmbDkbM).
+  Compared the recorded sequence with the draft; the recorded ReLU,
+  epoch-count and depth-versus-parameter experiments determine these chapters.
+- Added 20 chapters, from 00:00 Introduction to 28:29 Recap. Labels meet
+  28-character/five-word limits; each section lasts at least ten seconds
+  and none exceeds five minutes. Saved captions and chapters beside the package.
+- Inspected the dry run and verified the exact live chapter block after the
+  description-only update. API reports the video is public, with no schedule;
+  this action did not modify visibility or publish it.
+- Native playback, comment UI and end-screen checks remain unverified in this
+  targeted timestamp task. ASR includes MNIST/tanh recognition errors; chapter
+  labels use the correct technical names.
+
+## October 5, 2026: GitHub direction synchronized with Chapter 13
+
+- Read Chapter 13's script and checked it against the recorded code and public
+  replacement video. Updated the README's current capabilities, Chapter 13
+  summary/video link, and direction toward optimizers and residual connections.
+  Library organization, CMake and a testing framework remain deferred work.
+- Pushed [d9e1b16](https://github.com/mechanical-turk/deep-learning-all-the-way-down/commit/d9e1b1601e6079d90cd1c244cb62c7653b0d373b)
+  to main and verified the remote hash. The latest recorded source already
+  matched the published dc29a21 checkpoint; no new code commit was necessary.
+- Both public entry points compiled and passed. MNIST again reached 91.95%
+  (1839/2000), with loss 0.120646 after ten epochs.
+- Synchronized the recording workspace README with the pushed version without
+  changing its branch history, source edits, or unrelated local editor commit.
+
+## October 5, 2026: Recording checkout and GitHub main reconciled
+
+- On creator request, merged origin/main into local main and pushed normally:
+  [35a64d9](https://github.com/mechanical-turk/deep-learning-all-the-way-down/commit/35a64d9caa6710aa0cf74af625b0eff9c707a7c3).
+- Local main and remote main now match, with a clean working tree. Preserved
+  the local editor/settings commit and all published episode commits.
+- Verified main.cpp, README.md, .gitignore and editor settings are byte-for-byte
+  unchanged from the pre-merge working state. Restored the tracked activation
+  plots through the merge. No source changes or force push.
+- Kept backup/main-before-sync-20261005 and the named safety stash as recovery
+  copies. Do not reapply the stash: its code and README are already in main.
+
+## October 22, 2026: Chapter 14 script verified; demo code committed locally
+
+- Chapter 14 script, review, keyword research and verifier committed in this
+  repository. The verifier replays 26 edits against the frozen Chapter 13 source
+  and passed on the final script. Recording and publication status: unknown.
+- Demo repository committed locally as 47db7ed (layer names, tracing, Residual
+  layer, README row and section for Episode 14 as work in progress). Not pushed;
+  no remote change. The committed example (tanh, 20 epochs, rate 0.08, decay
+  0.95) reached 92.85% (1857/2000) in one run, which differs from the script's
+  rate 0.1, 10 epochs, 91.05%.
