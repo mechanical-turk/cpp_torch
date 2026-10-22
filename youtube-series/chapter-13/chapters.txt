@@ -1,0 +1,20 @@
+00:00 Introduction
+00:25 Define the Layer interface
+02:12 Virtual destructors
+03:18 Adapt Linear and Tanh
+04:24 Build the Sequence container
+06:49 Forward pass and ownership
+08:09 Collect layer parameters
+08:50 Rebuild the MNIST model
+10:09 Add a hidden layer
+11:06 Add a ReLU layer
+12:12 Tanh and ReLU gradients
+14:19 Train a deeper network
+16:03 Train for more epochs
+17:10 Depth versus parameter count
+19:16 Vanishing gradients
+21:23 Increase the learning rate
+22:58 Learning rate overshoot
+24:04 Add learning rate decay
+25:47 Review loss and accuracy
+28:29 Recap

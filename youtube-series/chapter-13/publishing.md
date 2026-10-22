@@ -56,8 +56,15 @@ playlist. YouTube processing remains in progress.
 Superseded upload: https://www.youtube.com/watch?v=ASoqjGVOUKc
 Do not distribute that URL. No deletion was performed by the agent.
 No thumbnail was found in
-the chapter directory or final-export directory. Chapters, 2160p playback,
+the chapter directory or final-export directory. 2160p playback,
 end screens, comment settings and full audio review remain pending.
+
+October 4 update: downloaded the replacement's English automatic captions to
+`captions.en.srt`, derived 20 chapters in `chapters.txt`, and verified the exact
+chapter block in the live description. The video is now public according to
+API read-back. This operation updated only the description, not visibility.
+Automatic captions still contain recognition errors such as MNIST rendered
+as "Amnest" and tanh as "10H"; chapter labels use correct terminology.
 
 ## Research and scope
 
@@ -130,6 +137,28 @@ https://www.youtube.com/playlist?list=PLZSg76FHvdTw
 
 Source code:
 https://github.com/mechanical-turk/deep-learning-all-the-way-down
+
+Chapters:
+00:00 Introduction
+00:25 Define the Layer interface
+02:12 Virtual destructors
+03:18 Adapt Linear and Tanh
+04:24 Build the Sequence container
+06:49 Forward pass and ownership
+08:09 Collect layer parameters
+08:50 Rebuild the MNIST model
+10:09 Add a hidden layer
+11:06 Add a ReLU layer
+12:12 Tanh and ReLU gradients
+14:19 Train a deeper network
+16:03 Train for more epochs
+17:10 Depth versus parameter count
+19:16 Vanishing gradients
+21:23 Increase the learning rate
+22:58 Learning rate overshoot
+24:04 Add learning rate decay
+25:47 Review loss and accuracy
+28:29 Recap
 ```
 
 ## Suggested tags
@@ -146,6 +175,66 @@ Prepared, not posted. Check existing author comments before any future posting.
 When comparing network depth, keep the training budget in mind. A deeper model may need different learning rates or more epochs before the comparison is useful. Here we experiment with the learning rate instead of assuming more layers will improve accuracy. Which would you test next: initialization, residual connections, or momentum?
 ```
 
+## X announcement
+
+Drafted October 7; saved October 13, 2026. Publication status is unverified.
+This section preserves the copy supplied in chat; it does not record a post.
+
+```text
+Adding more layers made our C++ neural network worse at recognizing digits.
+
+In Episode 13 of Deep Learning, All the Way Down, we build reusable layers, experiment with deeper networks on MNIST, and add learning rate decay.
+
+https://www.youtube.com/watch?v=yonurmbDkbM
+```
+
+## LinkedIn announcement
+
+```text
+Adding more layers made our C++ neural network worse at recognizing handwritten digits from MNIST, so we started testing what was holding it back.
+
+In Episode 13 of Deep Learning, All the Way Down, we build a shared Layer interface and a Sequence container so we can change the network’s depth and activation functions without rewriting the training loop.
+
+We compare tanh with ReLU, try wider and deeper networks, and give the deeper model more epochs. Then we experiment with the learning rate: larger steps help it learn, but pushing too far sends the loss back up.
+
+We finish by adding learning rate decay and reach 91.95% accuracy on our 2,000-image test subset.
+
+https://www.youtube.com/watch?v=yonurmbDkbM
+```
+
+## X navigation reply / LinkedIn comment
+
+Keep these links in the reply/comment, not the main announcement, so the
+main post has only the YouTube URL. Inspect the preview before posting and
+check for an existing author reply/comment before adding one.
+
+```text
+Source code:
+https://github.com/mechanical-turk/deep-learning-all-the-way-down
+
+Complete series:
+https://www.youtube.com/playlist?list=PLZSg76FHvdTw
+```
+
+### Announcement research notes
+
+October 7 research, recorded October 13. Primary wording on both platforms:
+C++ neural network. Supporting terms: MNIST, deeper networks, learning rate
+decay; LinkedIn additionally names ReLU, tanh and training loss. These refer
+to the recorded lesson and existing code, not the superseded script results.
+
+- X: compared the Chapter 12 announcement's technical opening and series-name
+  structure. The platform-specific web search returned no useful X matches;
+  no fresh owned tweet metrics or search-demand evidence was collected.
+- LinkedIn: compared Chapter 11/12 announcement drafts and inspected indexed
+  examples using neural network and learning rate decay, including
+  [this learning-rate post](https://www.linkedin.com/posts/meruagoodluck_techjourney-90daysgrowthchallenge-consistency-activity-7458264924004335617-7Lv2).
+  This supports terminology only, not ranking or performance predictions.
+- No hashtags selected for either platform: keep the technical terms in
+  readable prose, matching the earlier announcement drafts. No hashtag
+  effectiveness claim is made.
+- Live composer previews and actual posting status remain unverified.
+
 ## Private preparation and release handoff
 
 Use private visibility with no schedule, category Education, English audio
@@ -155,13 +244,19 @@ Social copy, timing and any separate Short require the later public-release
 decision. No public announcement should point to a private video.
 
 Before release: supply the approved thumbnail, verify 2160p playback and
-code legibility, download serving captions and derive chapters, inspect
+code legibility, correct automatic caption terminology, inspect
 comments and Subscribe/playlist end screens. Chapters must start with
 Introduction and end with Recap; use actual transitions, not draft timings.
 After public release, run the post-publication procedure, update README's
 video link, inspect any authorized comment for duplicates, and log URLs.
 
 ## Checklist audit
+
+The score below retains the earlier YouTube preparation scope. October 13 is
+a limited persistence correction: the previously delivered X/LinkedIn drafts
+and navigation copy are now saved above. It is not a fresh full-release audit.
+For those drafts, P02 remains PARTIAL (limited X research), P07 remains PARTIAL
+(composer previews unchecked), and P18 posting status remains unverified.
 
 | Check | Status | Points | Evidence / remaining work |
 | --- | --- | ---: | --- |
@@ -177,7 +272,7 @@ video link, inspect any authorized comment for duplicates, and log URLs.
 | P10 | UNVERIFIED | 0/4 | Approved thumbnail and Studio preview absent. |
 | P11 | PARTIAL | 3/6 | Measured 4K master; playback/audio review incomplete. |
 | P12 | PARTIAL | 1.5/3 | Replacement private/unscheduled metadata verified and playlist insertion succeeded; processing and Studio checks pending. |
-| P13 | UNVERIFIED | 0/4 | Captions and recording-derived chapters pending. |
+| P13 | PARTIAL | 2/4 | Replacement captions downloaded; 20 recorded chapters verified live. ASR terminology corrections remain. |
 | P14 | PASS | 3/3 | Private-only scope; all social release work explicitly deferred. |
 | P15 | PASS | 2/2 | Both entry points passed; source, plots and README pushed and remote hash verified. |
 | P16 | PASS | 2/2 | Parser-compatible fields; private unscheduled dry run inspected, 21 tags. |
@@ -188,11 +283,11 @@ video link, inspect any authorized comment for duplicates, and log URLs.
 
 The old keyword draft describes a different lesson. This package avoids its
 momentum and accuracy claims. The final runtime is long; record that risk
-without pretending a private upload solves pacing. Thumbnail, captions and
-native playback checks remain necessary before public release.
+without pretending an upload solves pacing. Thumbnail and native playback
+checks remain unverified here; automatic caption terminology needs correction.
 
 ## Final score
 
-Score: 87.5/100 (87.5/100 earned). Decision: hold public release.
-The user explicitly authorized private preparation; this score does not
-authorize scheduling or publication.
+Score: 89.5/100 (89.5/100 earned). Decision: full release verification incomplete.
+The video is now public; the October 4 timestamp update did not change its
+visibility. This score does not establish that native playback checks passed.
