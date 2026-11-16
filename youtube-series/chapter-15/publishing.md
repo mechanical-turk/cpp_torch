@@ -2,7 +2,7 @@
 
 ## Checklist plan
 
-YouTube long-form only, reviewed November 14, 2026. Stage: final export verified and uploaded privately, unscheduled. No public release or other-platform announcement is scheduled.
+YouTube long-form, X and LinkedIn announcements, reviewed November 14 and 16, 2026. Stage: final export uploaded privately, unscheduled; X and LinkedIn copy drafted and not posted. Reddit and Shorts are deferred. No public date is set.
 
 | Item | Planned evidence or action |
 |---|---|
@@ -19,8 +19,8 @@ YouTube long-form only, reviewed November 14, 2026. Stage: final export verified
 | P11 | Verify native 3840×2160, 30 fps, 61,469 frames, stereo voice plus keyboard; final-file playback pending. |
 | P12 | Private, unscheduled, English, Education, not made for kids. Processing, playlist membership and end screen pending. |
 | P13 | Derive chapters from final captions after upload; never reuse pre-cut timestamps. |
-| P14 | YouTube private upload only. Defer X, LinkedIn, Reddit and Shorts; no release-time recommendation. |
-| P15 | Public Episode 15 code checkpoint remains unverified; do not claim code availability. |
+| P14 | YouTube private upload plus X and LinkedIn announcement drafts. Reddit and Shorts deferred; release timing is in distribution.md as a plan only. |
+| P15 | Code checkpoint `1d2a49a` pushed November 16 and verified by compiling and running it; the README links it. |
 | P16 | Use supported parser headings and plain-text fields; inspect upload dry run. |
 | P17 | Score the private-upload preparation stage, keeping public-release gaps visible. |
 | P18 | Record the returned video URL and verified privacy in the ledger; public release requires resolution, captions and navigation checks. |
@@ -157,39 +157,69 @@ Complete series:
 https://www.youtube.com/playlist?list=PLZSg76FHvdTw
 ```
 
+## X and LinkedIn research records
+
+```text
+Platform: X
+Research date: November 16, 2026
+Sources checked: the Episode 14 announcement copy and its structure in this repository; the platform copy playbook X rules; the recorded run output and captions for every number.
+Owned-account evidence: unavailable. No X post analytics or search-term data were read for this package.
+Candidate search phrases: momentum and Adam optimizers in C++; Adam optimizer from scratch; momentum SGD MNIST.
+Primary phrase: momentum and Adam from scratch in C++
+Supporting terms: velocity, learning rate, MNIST
+Hashtags retained: none
+Hashtags rejected: all. No evidence that hashtags help an episode post in this account's niche, and the previous episodes used none.
+Reasoning and evidence: the opening states the contrast (forgetting versus remembering) and the measured result, then names the episode and series.
+Unavailable evidence: live X search and autocomplete, owned-account analytics.
+
+Platform: LinkedIn
+Research date: November 16, 2026
+Sources checked: Episode 14 LinkedIn copy; the playbook LinkedIn rules; recorded run output.
+Owned-account evidence: unavailable.
+Candidate search phrases: optimizer from scratch; Adam optimizer bias correction; momentum optimizer C++.
+Primary phrase: momentum and Adam optimizers
+Supporting terms: bias correction, learning rate, neural network from scratch in C++
+Hashtags retained: none
+Hashtags rejected: all, for the same reason as X.
+Reasoning and evidence: leads with the technical idea (an optimizer is bookkeeping of what each weight remembers), as the playbook requires.
+Unavailable evidence: LinkedIn search data, owned-account analytics.
+```
+
+Claim check for both posts. Every number comes from the verified run of the same code and seed (`verification/dump.txt`, `verification/last-run.txt`): 0.162 and 91.3% (plain gradient descent, rate 1.0), 0.50 and 82.1% (momentum, rate 1.0), 0.077 and 93.75% (momentum, 0.316), 0.134 and 91.15% (Adam without the step count), 0.051 and 93.65% (Adam with it). The three-times-too-large first step is the verified factor 1/(1 - 0.9) over sqrt(1/(1 - 0.999)), about 3.16. The recording speaks 0.162, 0.077, 0.05, 93.65% and 93.75%; the other figures were not read from the recorded frames. The final code checkpoint reproduces 0.0510026 and 93.65%.
+
 ## Settings and follow-through
 
-Private, unscheduled; English audio and metadata; Education (27); not made for kids; embedding enabled. The complete-series playlist ID was verified from the owned account, and Episode 15 membership is verified. Comment moderation, end screen and 2160p playback are unverified. Custom thumbnail remains pending. On November 16, downloaded the serving English captions and added 22 transcript-derived chapters. Boundary evidence, technical-term corrections in labels and script deviations are recorded in chapters-review.md. The raw automatic caption track itself was not edited. Verify public source checkpoint separately; no repository push is authorized here.
+Private, unscheduled; English audio and metadata; Education (27); not made for kids; embedding enabled. The complete-series playlist ID was verified from the owned account, and Episode 15 membership is verified. Comment moderation, end screen and 2160p playback are unverified. Custom thumbnail remains pending. On November 16, downloaded the serving English captions and added 22 transcript-derived chapters. Boundary evidence, technical-term corrections in labels and script deviations are recorded in chapters-review.md. The raw automatic caption track itself was not edited. The public source checkpoint is `1d2a49a` in the demo repository (pushed November 16; compile and run verified).
 
-No public date, X or LinkedIn announcement, Reddit post or separate Short is planned in this YouTube-only scope. After upload, record the direct URL and actual privacy/processing status. Publication requires a separate release decision and the automatic post-publication check. A private upload does not establish public readiness.
+No public date is set. X and LinkedIn announcements are drafted above and not posted; Reddit and Shorts are deferred. After upload, record the direct URL and actual privacy/processing status. Publication requires a separate release decision and the automatic post-publication check. A private upload does not establish public readiness.
 
 ## Checklist audit
 
 | Item | Status | Points | Evidence or remaining repair |
 |---|---|---:|---|
-| P01 | PARTIAL | 5/10 | Timeline and recorded optimizer experiments inspected; captions reviewed for chapter boundaries; full subjective final playback pending. No numerical performance claims. |
-| P02 | PASS | 15/15 | Dated YouTube searches, linked results and explicit unavailable evidence above. |
+| P01 | PARTIAL | 5/10 | Social numbers checked against the verified run and the captions (see claim check). Full subjective final playback pending; Adam's 0.134 and SGD's 91.3% were not read from recorded frames. |
+| P02 | PARTIAL | 7.5/15 | YouTube research complete. X and LinkedIn records exist but have no owned-account or live-search evidence. Repair: read account analytics and live search before posting. |
 | P03 | PASS | 10/10 | Accurate subject in title and opening; supporting terms in description. |
-| P04 | PASS | 8/8 | Relevant backend tags; reasoned omission of visible hashtags. |
-| P05 | PASS | 10/10 | All copy and candidate comment use plain, specific English. |
-| P06 | PASS | 5/5 | One separator, correct identity, title under 100 characters. |
-| P07 | PASS | 5/5 | Complete-series destination returned by owned playlists.list. |
-| P08 | PASS | 5/5 | Specific comparison limitation candidate prepared; posting explicitly pending. |
+| P04 | PASS | 8/8 | Relevant backend tags; reasoned omission of visible hashtags on YouTube, X and LinkedIn. |
+| P05 | PASS | 10/10 | All copy, both announcements and the candidate comment use plain, specific English with no em dashes. |
+| P06 | PASS | 5/5 | One separator, correct identity, title under 100 characters. X and LinkedIn name Episode 15 and the series after the technical opening. |
+| P07 | PARTIAL | 3/5 | November 16 checks: playlist resolves to the series playlist; GitHub repository and checkpoint `1d2a49a` return 200; each announcement has one YouTube URL and the navigation reply holds GitHub and playlist. The video URL is private and will not open logged out; composer previews not inspected. |
+| P08 | PASS | 5/5 | First-comment candidate and the X/LinkedIn navigation reply prepared; none posted. |
 | P09 | PASS | 4/4 | Completed file, exact path, size and SHA-256 recorded above. |
 | P10 | UNVERIFIED | 0/4 | Thumbnail and destination preview pending. |
 | P11 | PARTIAL | 3/6 | Approved timeline known; final-file technical checks passed; full subjective playback remains pending. |
 | P12 | PARTIAL | 1.5/3 | Concrete upload settings; processing, navigation and Studio-only checks pending. |
 | P13 | PASS | 4/4 | Serving captions cached; 22 recorded-transition chapters validated and read back exactly from YouTube. See chapters-review.md. Caption text itself was not edited. |
-| P14 | PASS | 3/3 | YouTube-only private scope; other destinations explicitly deferred. |
-| P15 | UNVERIFIED | 0/2 | Episode code checkpoint/public state not established. |
+| P14 | PASS | 3/3 | YouTube, X and LinkedIn covered; Reddit and Shorts explicitly deferred. |
+| P15 | PASS | 2/2 | `1d2a49a` compiled and ran to epoch 5 loss 0.0510026 and 93.65% (1873/2000), matching the recording; pushed, README links it. |
 | P16 | PASS | 2/2 | Separate supported fields; inspect dry run before applying upload. |
 | P17 | PASS | 2/2 | All IDs covered with pending evidence distinguished. |
 | P18 | PASS | 2/2 | Concrete upload ledger and public-release follow-through above. |
 
 ## Critique
 
-This is a conservative private-upload package. The strongest remaining gaps are final-file playback, a verified thumbnail and the public code checkpoint. These limit public readiness; they do not justify inventing chapter timestamps or benchmark conclusions. Technical export checks passed before the private upload. Public release still requires the pending checks above.
+The strongest remaining gaps are release gates, not copy. The thumbnail does not exist, the final file has not been played in full, 2160p playback and the end screen are unchecked, and the video is private, so the announcement link will not open for anyone until release. The X and LinkedIn research records lack account analytics and live search evidence, so the copy choices are reasoned from the series' own previous posts only. Two figures in the posts (SGD 91.3% and Adam without the step count at 0.134 and 91.15%) come from the verified run of the same code rather than from the recorded frames; the video says "91% or something" for SGD, and the ASR garbles the Adam loss. Repair: read those two values from the recording during the playback review. The posts carry their own limit (single runs, one seed), which matches the evidence: the later batch-size experiments show comparisons flip with epoch budget, so no winner is claimed.
 
 ## Final score
 
-84.5/100 (84.5 / 100 x 100), limited chapter update reviewed November 16; other audit items retain their prior evidence. The creator-authorized upload completed; API read-back verified private and unscheduled. The local export passed technical verification; YouTube API processing has succeeded; 2160p playback is still unverified. Public release is not scheduled; the outstanding media, thumbnail and end-screen checks remain open.
+77/100 for the private upload plus X and LinkedIn drafts, reviewed November 16, 2026. Decision: hold public release. Blockers: thumbnail, full playback, 2160p and end-screen checks, composer previews, X and LinkedIn account evidence. The code checkpoint is no longer a blocker.

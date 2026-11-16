@@ -7,15 +7,25 @@ log completed events there). Standing schedule:
 
 ## Current instruction
 
-November 16, 2026: the private YouTube upload (November 14) is the only external
-publication recorded. No public release, scheduling, announcement, comment,
-Reddit post or Short has been authorized yet; each needs the creator's explicit
-approval. This file records plans and facts, and no completed external event.
+November 16, 2026: the private YouTube upload (November 14) and the GitHub pushes
+are the only external events recorded. No public release, scheduling,
+announcement, comment, Reddit post or Short has been authorized yet; each needs
+the creator's explicit approval. This file records plans and facts.
 
-Canonical title, description, tags, chapters, first-comment candidate:
-[publishing.md](publishing.md), including the X announcement, LinkedIn
-announcement and navigation reply (drafted November 16, not posted). Do not
-maintain duplicate copy here.
+Canonical title, description, tags, chapters, first-comment candidate, X
+announcement, LinkedIn announcement and navigation reply:
+[publishing.md](publishing.md) (drafted November 16, none posted). Do not
+maintain duplicate copy here. Package score: 77/100, hold for public release.
+
+## Links (checked November 16, 2026)
+
+| Link | Used in | Result |
+| --- | --- | --- |
+| https://www.youtube.com/watch?v=wBB9lQnpUNU | X and LinkedIn announcements | Resolves, but the video is private: it will not open logged out and has no public oEmbed. Open it logged out after release, before posting. |
+| https://github.com/mechanical-turk/deep-learning-all-the-way-down | Navigation reply, README | 200 |
+| https://github.com/mechanical-turk/deep-learning-all-the-way-down/commit/1d2a49a | README Episode 15 row | 200 |
+| https://www.youtube.com/playlist?list=PLZSg76FHvdTw | Navigation reply, video description | Resolves to "Deep Learning, All the Way Down \| From First Principles in C++" |
+| https://www.youtube.com/watch?v=YZnfcbwwOdI | README Episode 14 row | Public (oEmbed returns the Episode 14 title) |
 
 ## Upload record
 
@@ -32,6 +42,19 @@ maintain duplicate copy here.
   preview frame at 15:00. Not reviewed: full subjective playback, YouTube 2160p
   playback, YouTube-encoded code legibility.
 
+## Public source (done)
+
+- Episode 15 code checkpoint: `1d2a49a` ("Episode 15 code checkpoint: momentum
+  and Adam optimizers"). Compiled with `clang++ -std=c++23 -O2` and run; epoch 5
+  loss 0.0510026 and test accuracy 93.65% (1873 of 2000), the final run of the
+  video.
+- README commit `e3ec684` links the checkpoint in the Episode 15 row and summary.
+  The Watch column for Episode 15 is empty until the video is public.
+- `origin/main` of the demo repository is at `e3ec684`, pushed November 16.
+- At release: add the public YouTube URL to the Episode 15 README row, push, and
+  confirm `origin/main` matches. Add a work-in-progress row for Episode 16 only
+  when its topic is settled.
+
 ## Before public release
 
 - Thumbnail: none confirmed. Follow the visual asset and thumbnail research
@@ -41,28 +64,16 @@ maintain duplicate copy here.
   end screen or place it over speech by creator decision.
 - Captions: the YouTube automatic English track was used for chapters only.
   Review it for ASR errors (Adam, MNIST, ReLU, `std::sqrt`) before release.
-- Chapters: the recording has no batch-size comparison, so the chapter list and
-  description must not mention one.
-- Claims: the description says only what was recorded. The script's batch-64
-  section was not recorded; the later experiments show batch-64 momentum versus
-  SGD flips with epoch budget (2 epochs worse, 3 or more tied). Do not make a
-  batch-size claim in any social copy.
+- Recording check: during the playback review, read SGD's accuracy and Adam's
+  loss without the step count from the recording. The posts quote 91.3% and
+  0.134 / 91.15% from the verified run of the same code.
+- Chapters and claims: the recording has no batch-size comparison, so no
+  chapter, description or post mentions one. Batch-64 comparisons flip with the
+  epoch budget; make no batch-size claim in any copy.
 - Inspect 2160p playback and audio in the YouTube encode.
-
-## Public source
-
-- The demo repository `origin/main` is at `ffba324` ("Add momentum and Adam
-  optimizers for Episode 15 (work in progress); link Episode 14 in README"),
-  pushed November 16. It is a work-in-progress commit, not a checkpoint of the
-  recorded final state: its `main.cpp` runs momentum at rate 0.1, batch 64, five
-  epochs (94.25%, 1885 of 2000 in one run), which is not a run shown in the video.
-- README marks Episode 15 as work in progress with no code link and links the
-  Episode 14 checkpoint `47db7ed`.
-- At release: decide which commit is the Episode 15 checkpoint (the recorded
-  final source is in `verification/episode-15-final.cpp`), commit it, push, add
-  its hash and the public YouTube URL to the Episode 15 README row and summary,
-  add a work-in-progress row for Episode 16, confirm `origin/main` matches, and
-  compile and run the entry point.
+- Before posting: inspect the X and LinkedIn composer previews, read owned-account
+  analytics and live search for the research records, and check both accounts
+  for an existing Episode 15 post.
 
 ## Proposed sequence (a plan, not events)
 
@@ -74,9 +85,9 @@ proposal makes no claim that timing causes a result.
 | Step | Proposed window (ET) | Depends on |
 | --- | --- | --- |
 | Thumbnail, end screen, caption review, 2160p and settings checks | Before release | Creator decisions above |
-| Episode 15 code checkpoint and README | Immediately before release | Approval; verified URL |
+| README Watch link | Immediately after release | Public URL |
 | Public release | Earliest Wednesday, November 18, 11:00 AM; otherwise Saturday, November 21, 11:00 AM | Every item above, creator approval |
-| X announcement and navigation reply | Release day, about 12:00 PM | Public URL; composer preview |
+| X announcement and navigation reply | Release day, about 12:00 PM | Public URL opens logged out; composer preview |
 | LinkedIn announcement and author comment | Next weekday, 9:00 to 10:30 AM | Public URL; at least a day after X |
 | Post-publication check, comment duplicate inspection | After release | Authorization |
 

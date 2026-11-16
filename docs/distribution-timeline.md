@@ -858,3 +858,16 @@ outstanding.
   (main, `47db7ed..ffba324`). This is not the Episode 15 code checkpoint.
 - Episode 15 remains private and unscheduled. No public release, announcement or
   comment was made. Plan and open items: chapter-15/distribution.md.
+
+## November 16, 2026: Episode 15 code checkpoint pushed
+
+- Demo repository: committed `1d2a49a` (Episode 15 code checkpoint, Adam at rate
+  0.01, batch 250, five epochs; compiled and run to epoch 5 loss 0.0510026 and
+  93.65%, 1873/2000) and README commit `e3ec684`. Pushed to
+  https://github.com/mechanical-turk/deep-learning-all-the-way-down
+  (main, `ffba324..e3ec684`). Checkpoint:
+  https://github.com/mechanical-turk/deep-learning-all-the-way-down/commit/1d2a49a
+- README links the checkpoint; the Watch link stays empty until the video is
+  public. Episode 15 remains private and unscheduled.
+- Drafted X and LinkedIn announcements and the navigation reply in
+  chapter-15/publishing.md. None was posted.
