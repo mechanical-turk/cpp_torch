@@ -35,7 +35,7 @@ Source: the creator's finished Resolve timeline, saved as `ep15-final-2026-11-14
 
 Studio: https://studio.youtube.com/video/wBB9lQnpUNU/edit
 
-API read-back verified private, unscheduled, not made for kids and the exact title. Processing is in progress; 2160p playback is unverified. Complete-series playlist membership was also verified.
+API read-back verified private, unscheduled, not made for kids and the exact title. As of November 16, API processing has succeeded; 2160p playback is unverified. Complete-series playlist membership was also verified.
 
 File identity: 3,475,946,106 bytes; SHA-256 `a345b5822f265103115a64d95a3e62a95cf8f89bbbc8c36ec81fdc2e1f18d544`.
 
@@ -56,6 +56,30 @@ Episode 15 of Deep Learning, All the Way Down.
 
 Watch the series from the beginning:
 https://www.youtube.com/playlist?list=PLZSg76FHvdTw
+
+Chapters:
+00:00 Introduction
+00:22 Smaller MNIST network
+01:01 Training configuration
+02:59 How momentum works
+03:58 Implementing momentum
+06:44 Momentum in training
+08:26 Tracing SGD gradients
+10:11 First momentum run
+11:21 Signals and gradients
+12:40 Lowering the learning rate
+13:58 Why velocity builds up
+14:58 Learning-rate search
+18:01 How Adam works
+20:19 Adam's second moment
+21:45 Scaling the update
+22:41 Avoiding division by zero
+23:25 First Adam run
+25:14 Zero-initialization bias
+27:15 Why bias correction works
+28:20 Coding bias correction
+29:57 Comparing Adam and momentum
+31:03 Recap
 ```
 
 ## Suggested tags
@@ -82,7 +106,7 @@ Owned channel identity and recent uploads were checked through the API; no exist
 
 ## Settings and follow-through
 
-Private, unscheduled; English audio and metadata; Education (27); not made for kids; embedding enabled. The complete-series playlist ID was verified from the owned account, and Episode 15 membership is verified. Comment moderation, end screen and 2160p playback are unverified. Custom thumbnail remains pending. Download serving captions, check technical terms and derive chapters from actual transitions before public release. Verify public source checkpoint separately; no repository push is authorized here.
+Private, unscheduled; English audio and metadata; Education (27); not made for kids; embedding enabled. The complete-series playlist ID was verified from the owned account, and Episode 15 membership is verified. Comment moderation, end screen and 2160p playback are unverified. Custom thumbnail remains pending. On November 16, downloaded the serving English captions and added 22 transcript-derived chapters. Boundary evidence, technical-term corrections in labels and script deviations are recorded in chapters-review.md. The raw automatic caption track itself was not edited. Verify public source checkpoint separately; no repository push is authorized here.
 
 No public date, X or LinkedIn announcement, Reddit post or separate Short is planned in this YouTube-only scope. After upload, record the direct URL and actual privacy/processing status. Publication requires a separate release decision and the automatic post-publication check. A private upload does not establish public readiness.
 
@@ -90,7 +114,7 @@ No public date, X or LinkedIn announcement, Reddit post or separate Short is pla
 
 | Item | Status | Points | Evidence or remaining repair |
 |---|---|---:|---|
-| P01 | PARTIAL | 5/10 | Timeline and recorded optimizer experiments inspected; full final playback/captions pending. No numerical performance claims. |
+| P01 | PARTIAL | 5/10 | Timeline and recorded optimizer experiments inspected; captions reviewed for chapter boundaries; full subjective final playback pending. No numerical performance claims. |
 | P02 | PASS | 15/15 | Dated YouTube searches, linked results and explicit unavailable evidence above. |
 | P03 | PASS | 10/10 | Accurate subject in title and opening; supporting terms in description. |
 | P04 | PASS | 8/8 | Relevant backend tags; reasoned omission of visible hashtags. |
@@ -102,7 +126,7 @@ No public date, X or LinkedIn announcement, Reddit post or separate Short is pla
 | P10 | UNVERIFIED | 0/4 | Thumbnail and destination preview pending. |
 | P11 | PARTIAL | 3/6 | Approved timeline known; final-file technical checks passed; full subjective playback remains pending. |
 | P12 | PARTIAL | 1.5/3 | Concrete upload settings; processing, navigation and Studio-only checks pending. |
-| P13 | UNVERIFIED | 0/4 | Await final captions and derive chapters. |
+| P13 | PASS | 4/4 | Serving captions cached; 22 recorded-transition chapters validated and read back exactly from YouTube. See chapters-review.md. Caption text itself was not edited. |
 | P14 | PASS | 3/3 | YouTube-only private scope; other destinations explicitly deferred. |
 | P15 | UNVERIFIED | 0/2 | Episode code checkpoint/public state not established. |
 | P16 | PASS | 2/2 | Separate supported fields; inspect dry run before applying upload. |
@@ -111,8 +135,8 @@ No public date, X or LinkedIn announcement, Reddit post or separate Short is pla
 
 ## Critique
 
-This is a conservative private-upload package. The strongest remaining gaps are final-file playback, caption-derived navigation, a verified thumbnail and the public code checkpoint. These limit public readiness; they do not justify inventing chapter timestamps or benchmark conclusions. Technical export checks passed before the private upload. Public release still requires the pending checks above.
+This is a conservative private-upload package. The strongest remaining gaps are final-file playback, a verified thumbnail and the public code checkpoint. These limit public readiness; they do not justify inventing chapter timestamps or benchmark conclusions. Technical export checks passed before the private upload. Public release still requires the pending checks above.
 
 ## Final score
 
-80.5/100 for YouTube private-upload preparation. The creator-authorized upload completed; API read-back verified private and unscheduled. The local export passed technical verification; YouTube processing is still in progress. Public release is not scheduled; the outstanding media, caption, thumbnail and navigation checks remain open.
+84.5/100 (84.5 / 100 x 100), limited chapter update reviewed November 16; other audit items retain their prior evidence. The creator-authorized upload completed; API read-back verified private and unscheduled. The local export passed technical verification; YouTube API processing has succeeded; 2160p playback is still unverified. Public release is not scheduled; the outstanding media, thumbnail and end-screen checks remain open.

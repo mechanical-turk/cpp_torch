@@ -41,4 +41,4 @@ ASR renders Adam as “atom”, MNIST as “emnest” or “amnest”, ReLU as �
 
 ## Validation
 
-22 chapters; first is `00:00 Introduction`, last is `31:03 Recap`. All timestamps increase, all chapters are at least ten seconds, and every title is at most 28 characters and five words. No chapter exceeds five minutes; the longest interval is 3:03. Final recap lasts about 3:06. Existing description, title, tags and visibility are preserved. Dry-run inspection and live read-back are required before marking application complete.
+22 chapters; first is `00:00 Introduction`, last is `31:03 Recap`. All timestamps increase, all chapters are at least ten seconds, and every title is at most 28 characters and five words. No chapter exceeds five minutes; the longest interval is 3:03. Final recap lasts about 3:06. Existing description, title, tags and visibility are preserved. The dry-run diff was inspected, the chapter-only change was applied, and a fresh API read-back matched all 22 entries exactly. Title, tags, category, language and visibility matched the saved before-state. Video remains private and unscheduled; processing succeeded, without proving 2160p playback.

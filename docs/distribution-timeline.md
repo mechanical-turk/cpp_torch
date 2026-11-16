@@ -835,3 +835,26 @@ outstanding.
 - API read-back verified private visibility with no scheduled publish time. Processing is still in progress; this does not establish 2160p playback availability.
 - Added Episode 15 to the complete-series playlist and verified membership through playlistItems.list: https://www.youtube.com/playlist?list=PLZSg76FHvdTw
 - No public release, comment, pin or announcement was made. Thumbnail, caption-derived chapters, end screen, public code checkpoint and required playback checks remain pending for publication.
+
+## November 16, 2026, 06:34 AM Eastern: Episode 15 transcript-derived chapters applied
+
+- Downloaded the serving English automatic caption track to chapter-15/youtube-generated.en.srt and derived 22 chapters from the finished 34:09 recording.
+- Added the Chapters block to https://www.youtube.com/watch?v=wBB9lQnpUNU after inspecting the dry-run diff; API read-back verified the exact block.
+- Preserved the pre-existing description, title, tags, category, language and private, unscheduled status. Processing now reports succeeded; 2160p playback was not inspected.
+- Saved chapters.txt, chapters-review.md and the canonical description in publishing.md. Used recorded learning-rate and bias-correction transitions, excluding the unrecorded scripted batch-size comparison.
+- Captions were not edited or uploaded. No comment, announcement or publication was performed.
+
+## November 16, 2026: Content HQ and demo repository pushed to GitHub
+
+- Creator asked for both repositories to be committed and pushed.
+- Content HQ: pushed `e5a821c` (Episode 15 script, review, verifier, publishing
+  package, chapters, experiments, Episode 14 chapter files) to
+  https://github.com/mechanical-turk/cpp_torch (main, `02de2c9..e5a821c`). Raw
+  experiment runs, build output, binaries and the private analytics snapshot were
+  left out through .gitignore.
+- Demo repository: pushed `ffba324` (momentum and Adam work in progress; README
+  links the Episode 14 checkpoint `47db7ed` and video, adds an Episode 15 work in
+  progress row) to https://github.com/mechanical-turk/deep-learning-all-the-way-down
+  (main, `47db7ed..ffba324`). This is not the Episode 15 code checkpoint.
+- Episode 15 remains private and unscheduled. No public release, announcement or
+  comment was made. Plan and open items: chapter-15/distribution.md.
