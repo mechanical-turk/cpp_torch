@@ -104,6 +104,59 @@ Primary phrase: momentum and Adam optimizers in C++. Supporting terms: from scra
 
 Owned channel identity and recent uploads were checked through the API; no existing Episode 15 upload was present in the recent history. Owned search-query analytics and autocomplete evidence were unavailable. No quantitative demand claim is made.
 
+## X announcement
+
+Draft, November 16, 2026. Not posted. Post only after the video is public and the
+link opens while logged out. Inspect the account for an existing Episode 15 post
+first. This is a long post (about 1,100 characters); check the composer's limit
+and preview before posting. Numbers are the recorded single runs (one network,
+one random seed, five epochs, batch 250), taken from the verified run output.
+
+```text
+Plain gradient descent forgets each step as soon as it takes it. Momentum remembers. In a C++ neural network on MNIST, giving every weight a velocity cut the training loss from 0.162 to 0.077 after five epochs, and test accuracy went from 91.3% to 93.75%. The learning rate had to drop from 1.0 to 0.316 first, because velocity makes each step up to ten times longer.
+
+Adam also tracks the average squared gradient, so each weight's step is scaled by that weight's own recent gradient size. Its averages start at zero, which made the first steps about three times too large, and our Adam finished behind momentum. Dividing by one minus beta to the power of the step count fixed it: loss 0.051, accuracy 93.65%.
+
+These are single runs on one network, so they show how the optimizers work, not which one wins.
+
+Episode 15 of Deep Learning, All the Way Down builds momentum and Adam from scratch in C++.
+
+https://www.youtube.com/watch?v=wBB9lQnpUNU
+```
+
+## LinkedIn announcement
+
+Draft, November 16, 2026. Not posted. Post the next weekday after the X
+announcement, with the URL below. Inspect the account for an existing Episode 15
+post first, and inspect the composer preview.
+
+```text
+A faster optimizer is mostly bookkeeping: what each weight remembers from earlier steps. Episode 15 of Deep Learning, All the Way Down adds that memory to a C++ neural network trained on MNIST.
+
+- Plain gradient descent chooses every step from the current gradient and forgets it. Momentum keeps a velocity per weight: multiply the old velocity by 0.9, add the new gradient. A steady gradient makes the velocity approach ten times the gradient, so the same learning rate moves much further.
+- That is why the rate had to change. Reading the loss and gradient traces showed momentum at rate 1.0 taking steps too large (loss 0.50, accuracy 82.1%). A search over rates spaced four per decade picked 0.316: loss 0.077 and 93.75%, against 0.162 and 91.3% for plain gradient descent at its own rate of 1.0.
+- Adam keeps two running averages per weight: the gradient (first moment) and the squared gradient (second moment). Dividing the first by the square root of the second makes every step close to the learning rate in size, whatever the raw gradient looks like.
+- Both averages start at zero, so early on they are far too small and the first steps come out about three times too large. We ran it that way first: loss 0.134 and 91.15%, worse than momentum. Dividing each average by one minus beta to the power of the step count removes the bias.
+- With the correction, Adam reached a loss of 0.051 and 93.65%. Momentum's best was 93.75%. A lower loss with slightly lower accuracy points toward overfitting the 10,000 training images, which the next episode takes on with more data.
+
+These are single runs of one network with one random seed, not a ranking of optimizers.
+
+https://www.youtube.com/watch?v=wBB9lQnpUNU
+```
+
+## X navigation reply / LinkedIn comment
+
+Keep these links out of the main announcements. Inspect the preview and check for
+an existing author reply or comment first.
+
+```text
+Source code:
+https://github.com/mechanical-turk/deep-learning-all-the-way-down
+
+Complete series:
+https://www.youtube.com/playlist?list=PLZSg76FHvdTw
+```
+
 ## Settings and follow-through
 
 Private, unscheduled; English audio and metadata; Education (27); not made for kids; embedding enabled. The complete-series playlist ID was verified from the owned account, and Episode 15 membership is verified. Comment moderation, end screen and 2160p playback are unverified. Custom thumbnail remains pending. On November 16, downloaded the serving English captions and added 22 transcript-derived chapters. Boundary evidence, technical-term corrections in labels and script deviations are recorded in chapters-review.md. The raw automatic caption track itself was not edited. Verify public source checkpoint separately; no repository push is authorized here.

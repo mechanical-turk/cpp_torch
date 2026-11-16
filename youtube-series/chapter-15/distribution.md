@@ -7,14 +7,15 @@ log completed events there). Standing schedule:
 
 ## Current instruction
 
-November 16, 2026: the creator authorized a private YouTube upload only. No
-public release, scheduling, announcement, comment, Reddit post or Short has been
-authorized. This file records plans and facts, and no completed external event.
+November 16, 2026: the private YouTube upload (November 14) is the only external
+publication recorded. No public release, scheduling, announcement, comment,
+Reddit post or Short has been authorized yet; each needs the creator's explicit
+approval. This file records plans and facts, and no completed external event.
 
 Canonical title, description, tags, chapters, first-comment candidate:
-[publishing.md](publishing.md). Do not maintain duplicate copy here. X and
-LinkedIn copy for Episode 15 does not exist yet; draft it only after a release
-decision, following the cross-platform rules in the distribution operations.
+[publishing.md](publishing.md), including the X announcement, LinkedIn
+announcement and navigation reply (drafted November 16, not posted). Do not
+maintain duplicate copy here.
 
 ## Upload record
 
