@@ -1,0 +1,10 @@
+--opt sgd --momentum 0.0 --lr 0.06 --decay 0.95 --seed 3
+--opt sgd --momentum 0.0 --lr 0.06 --decay 0.95 --seed 4
+--opt sgd --momentum 0.0 --lr 0.06 --decay 0.95 --seed 5
+--opt sgd --momentum 0.0 --lr 0.06 --decay 0.95 --seed 6
+--opt sgd --momentum 0.0 --lr 0.06 --decay 0.95 --seed 7
+--opt sgd --momentum 0.9 --lr 0.015 --decay 0.95 --seed 3
+--opt sgd --momentum 0.9 --lr 0.015 --decay 0.95 --seed 4
+--opt sgd --momentum 0.9 --lr 0.015 --decay 0.95 --seed 5
+--opt sgd --momentum 0.9 --lr 0.015 --decay 0.95 --seed 6
+--opt sgd --momentum 0.9 --lr 0.015 --decay 0.95 --seed 7

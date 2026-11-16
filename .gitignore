@@ -52,3 +52,17 @@ __pycache__/
 
 # Local opencode agent config
 /opencode.json
+
+# Local machine credentials (keep outside the repo; see ~/.config/content-hq/)
+/omarchy.env
+
+# Chapter experiments: keep scripts and summary JSON, not raw runs or build output
+/youtube-series/experiments/*/runs/
+/youtube-series/experiments/*/build/
+/youtube-series/experiments/*/data/
+
+# Raw private analytics snapshots
+/youtube-series/analytics-private/
+/youtube-series/experiments/ch15-cpp/harness
+/youtube-series/experiments/ch15-cpp/harness2
+/youtube-series/experiments/ch15-cpp/data

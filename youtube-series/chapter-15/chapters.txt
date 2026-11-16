@@ -1,0 +1,22 @@
+00:00 Introduction
+00:22 Smaller MNIST network
+01:01 Training configuration
+02:59 How momentum works
+03:58 Implementing momentum
+06:44 Momentum in training
+08:26 Tracing SGD gradients
+10:11 First momentum run
+11:21 Signals and gradients
+12:40 Lowering the learning rate
+13:58 Why velocity builds up
+14:58 Learning-rate search
+18:01 How Adam works
+20:19 Adam's second moment
+21:45 Scaling the update
+22:41 Avoiding division by zero
+23:25 First Adam run
+25:14 Zero-initialization bias
+27:15 Why bias correction works
+28:20 Coding bias correction
+29:57 Comparing Adam and momentum
+31:03 Recap

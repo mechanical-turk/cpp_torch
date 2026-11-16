@@ -106,19 +106,24 @@ authorized by this package. Reddit and Shorts are deferred (see Distribution).
 
 ### X research
 
-- Date: October 22, 2026. Sources: the Chapter 13 announcement structure and the
-  YouTube search language above. A platform-specific X search was not run.
-- Primary phrase: C++ neural network. Supporting: residual connections, MNIST,
-  learning rate. Hashtags: none retained or tested.
+- Date: October 23, 2026. Sources: a web search restricted to x.com and
+  twitter.com, which returned no relevant posts; the Chapter 13 announcement
+  structure; the YouTube search language above; the episode captions.
+- Primary phrase: C++ neural network. Supporting: vanishing gradient, residual
+  connections, cross-entropy loss, learning rate, MNIST, tanh. Each is spoken in
+  the video. Hashtags: none retained or tested.
 - Unavailable: X search results, fresh owned tweet metrics, composer preview.
 
 ### LinkedIn research
 
-- Date: October 22, 2026. Sources: a web search for LinkedIn posts on residual
-  connections and vanishing gradients, which returned tutorials and papers but no
-  LinkedIn posts; the Chapter 13 announcement structure.
-- Primary phrase: neural network from scratch in C++. Supporting: residual
-  connections, vanishing gradient, MNIST, cross-entropy loss. Hashtags: none.
+- Date: October 23, 2026. Sources: web searches for LinkedIn posts on residual
+  connections and vanishing gradients, which returned tutorials and papers plus
+  two LinkedIn Advice pages on debugging and fixing vanishing gradients (language
+  evidence only, not post performance); the Chapter 13 announcement structure;
+  the episode captions.
+- Primary phrase: neural network from scratch in C++. Supporting: vanishing
+  gradient, residual connections, debugging gradients, cross-entropy loss,
+  learning rate, MNIST. Hashtags: none.
 - Unavailable: LinkedIn post examples, owned analytics, composer preview.
 
 ## Final title
@@ -129,8 +134,8 @@ Residual Connections and Debugging Gradients in C++ | Deep Learning, All the Way
 
 ## YouTube description
 
-The chapter block is added after captions exist, so this field is not complete
-until then.
+Chapters derived from the uploaded video's English captions on October 23,
+2026. See `chapters.txt` and `chapters-review.md`.
 
 ```text
 Build residual connections in C++ and debug vanishing gradients layer by layer in a sixteen-layer neural network trained on MNIST handwritten digits.
@@ -153,6 +158,32 @@ https://www.youtube.com/playlist?list=PLZSg76FHvdTw
 
 Source code:
 https://github.com/mechanical-turk/deep-learning-all-the-way-down
+
+Chapters:
+00:00 Introduction
+00:33 Simplify layer construction
+02:05 Build reusable hidden layers
+04:10 Stack sixteen hidden layers
+05:15 When deeper networks stall
+07:34 Name layers for debugging
+09:39 Trace the forward pass
+11:22 Print the layer report
+14:04 Measure signal with RMS
+17:33 Trace gradients in training
+19:32 Spot vanishing gradients
+20:55 Residual connections
+22:58 Implement the Residual layer
+25:30 Wrap the hidden layers
+26:25 Compare residual gradients
+28:35 Cross-entropy loss
+31:55 Map probabilities to loss
+34:48 Why loss can exceed 2.30
+38:40 Tanh saturation and collapse
+41:02 Learning rate decay recovery
+42:07 Loss versus accuracy
+45:12 Lower the learning rate
+48:50 Train for twenty epochs
+49:45 Recap
 ```
 
 ## Suggested tags
@@ -172,28 +203,48 @@ At a starting learning rate of 0.5, the sixteen-layer residual network ended at 
 
 ## X announcement
 
-Draft. Not ready: the YouTube URL does not exist yet.
+Rewritten October 23, 2026 to cover the whole episode. Final copy. Not posted. Post
+only after the video is public (scheduled October 23, 2026, 11:00 AM ET) and the
+link opens while logged out. Inspect the account for an existing Episode 14 post
+first. This is a long post (about 1,000 characters), which needs X's longer post
+limit; the account's limit is unverified. Check the composer before posting.
 
 ```text
-We stacked sixteen layers in a C++ neural network and printed the size of the gradient at every one. With residual connections it trained to 58.85% on MNIST, and a lower learning rate took it to 92.85%.
+We stacked sixteen layers in a C++ neural network and it stopped learning. The loss sat at 2.30, which is what guessing among ten MNIST digits costs, and test accuracy was 11.7%.
 
-Episode 14 of Deep Learning, All the Way Down builds the report, the Residual layer and the loss explanation behind those numbers.
+To find out why, we wrote a debugging report that prints the signal and gradient size of every layer. The gradient at the first layer was about 15,000 times smaller than at the output. That is the vanishing gradient problem.
 
-[YouTube URL after upload]
+A residual connection adds a layer's input to its output, so the gradient gets a path that never shrinks. Accuracy rose to 58.85%, but the first epoch's loss was 52, far worse than guessing. Cross-entropy loss has no upper limit, and the network was confidently wrong: large updates saturated tanh and it predicted one digit for every image.
+
+A lower learning rate and 20 epochs reached 92.85% on 2,000 test images.
+
+Episode 14 of Deep Learning, All the Way Down covers residual connections, gradient debugging, cross-entropy loss and learning rate in C++.
+
+https://www.youtube.com/watch?v=YZnfcbwwOdI
 ```
 
 ## LinkedIn announcement
 
-Draft. Not ready: the YouTube URL does not exist yet.
+Rewritten October 23, 2026 to cover the whole episode. Final copy. Not posted.
+Post the next weekday after the X announcement, with the URL below. Inspect the
+account for an existing Episode 14 post first, and inspect the composer preview.
 
 ```text
-In a deep neural network, the gradient can shrink as it travels back to the first layers. In a sixteen-layer network written from scratch in C++, we print the size of every layer's output and gradient to watch it happen.
+A deeper neural network is not automatically a better one. A sixteen-layer network written from scratch in C++ trained to a loss of 2.30 and stayed there, which is what random guessing among ten MNIST digits costs. Test accuracy was 11.7%.
 
-In Episode 14 of Deep Learning, All the Way Down, we build that report, add a Residual layer that adds its input to the output of the layer it wraps, and train both networks on MNIST. We also look at what cross-entropy loss measures, and why a loss of 52 means the correct digit was given a probability near 2e-23.
+Episode 14 of Deep Learning, All the Way Down finds out why and fixes it:
 
-With residual connections the first run reaches 58.85% accuracy on our 2,000-image test subset. Lowering the learning rate and training for 20 epochs reaches 92.85%.
+- Layers get names, and a Sequence becomes a Layer itself, so a hidden layer is one Linear and one tanh built by a single helper.
+- A traced forward pass keeps every layer's output, and a report prints the signal and gradient size of each layer. Size is measured with root mean square, because an ordinary average lets positive and negative values cancel.
+- The report shows the signal halving at every layer. The gradient at the first layer is about 15,000 times smaller than at the output, which is the vanishing gradient problem, now measured instead of assumed.
+- A Residual layer adds its input to the output of the layer it wraps. Addition sends the gradient down both sides at full size, so the gradient no longer vanishes. The first layer stays unwrapped because 784 inputs and 32 outputs cannot be added.
+- Accuracy rises to 58.85%, but the first epoch's loss is 52, much worse than guessing. Cross-entropy loss is the negative log of the probability given to the correct digit and has no upper limit. The network was confidently wrong: a large learning rate saturated tanh, and it predicted one digit for nearly every image.
+- A loss near 2.44 alongside 58.85% accuracy shows that loss and accuracy measure different things.
+- Starting the learning rate at 0.08 instead of 0.5, with slower decay, and training for 20 epochs reaches 92.85% on a 2,000-image test subset, with diminishing returns after that.
 
-[YouTube URL after upload]
+Next: more training data and momentum, and hopefully the Adam optimizer.
+
+https://www.youtube.com/watch?v=YZnfcbwwOdI
 ```
 
 ## X navigation reply / LinkedIn comment
@@ -257,8 +308,8 @@ N/A. This is a 16:9 long-form release.
 
 | ID | Platform outcomes / overall status | Actual field or evidence | Points | Required fix |
 | --- | --- | --- | ---: | --- |
-| P01 | PASS | Every number in the copy (58.85%, 92.85%, 2.30, 52, 2e-23, 20 epochs, 0.08, 0.95, 2,000 images) is visible in sampled frames; the first run's constants come from reproduction. | 10/10 | Verify spoken terms against captions. |
-| P02 | PARTIAL | YouTube: Oct 4 file plus Oct 22 searches; X and LinkedIn: terminology only. No owned or autocomplete data. | 7.5/15 | Pull owned search terms; run platform-specific X and LinkedIn checks. |
+| P01 | PASS | Every number in the copy (11.7%, 2.30, 3.2e-07 versus 4.7e-03 giving about 15,000x, 52, 58.85%, 0.08, 0.95, 20 epochs, 92.85%, 2,000 images) is visible in frames (October 23 checks at 6:50, 20:40 and 48:50 added) or spoken in the captions (loss 2.44, 0.5 start, confidently wrong, tanh saturation, one digit predicted, diminishing returns). The first run's constants come from reproduction. | 10/10 | None. |
+| P02 | PARTIAL | YouTube: Oct 4 file plus Oct 22 searches. X and LinkedIn: Oct 23 platform-restricted searches found no relevant posts, only LinkedIn Advice pages as language evidence. No owned or autocomplete data. | 7.5/15 | Pull owned search terms; check X and LinkedIn in the live composers. |
 | P03 | PASS | Title and first line lead with residual connections in C++; MNIST, vanishing gradients and cross-entropy appear in the first paragraphs and topic list. | 10/10 | None. |
 | P04 | PASS | 22 backend tags with stated reasons; no visible hashtags, no evidence for any. | 8/8 | None. |
 | P05 | PASS | Lint below found no em dashes or banned cadence. | 10/10 | None. |
@@ -272,7 +323,7 @@ N/A. This is a 16:9 long-form release.
 | P13 | UNVERIFIED | No captions or chapters. | 0/4 | Download captions after upload; derive chapters. |
 | P14 | PASS | Dated windows, dependencies, deferrals, Reddit and Shorts decisions in distribution.md. | 3/3 | None. |
 | P15 | PARTIAL | Output matches local commit `47db7ed`; not pushed; README has no hash or video link. | 1/2 | Push; add hash and link at release. |
-| P16 | PARTIAL | YouTube fields parse; description lacks chapters; X and LinkedIn carry a URL placeholder. | 1/2 | Add chapters; replace placeholders. |
+| P16 | PARTIAL | YouTube fields parse and the description has the chapter block; X and LinkedIn now carry the real URL, no placeholder. X copy is about 1,000 characters and needs a longer post limit that is unverified. | 1/2 | Confirm the account's X post limit in the composer. |
 | P17 | PASS | Unknowns named; arithmetic shown. | 2/2 | None. |
 | P18 | PASS | Follow-up plan with owner. | 2/2 | None. |
 

@@ -406,3 +406,40 @@ stream; the old mixed stream was already removed during recording. Verify this
 mapping anew for future episodes. A silent sample does not establish that the
 entire track is silent. Keep keyboard unprocessed by the dialogue compressor
 unless a separate mix change is requested.
+
+## Reusable local workflow tool (2026-11-12)
+
+**Creator-approved update, 2026-11-14:** new preparations default to the
+speech-detected `review-speech-buffer-005.xml`, retaining a strict minimum of
+0.05 seconds per side of each new middle cut (inward frame rounding). The
+conservative review and original timelines remain available. This supersedes
+the old padding choice for the final default review, not the requirement to
+preserve quiet words through listening review. Existing manual edits remain
+authoritative and are not regenerated.
+
+`resolve-export --timeline FINAL.xml --output FINAL.mp4 --straight-cuts` now
+provides a direct FFmpeg path for supported straight-cut final FCP7 XML snapshots.
+See its README for exact limits: XML cannot expose all Resolve grades, Fusion or
+Fairlight bus processing, so this path cannot promise those effects. It rejects
+unsupported represented effects, preserves the final XML ranges and separate
+voice/keyboard sources, and applies no second audio retime. Native Resolve export
+remains necessary for edits outside that supported subset.
+
+The `episode-edit` command implements preparation, a durable manual-review
+checkpoint, and an explicitly approved native Resolve export. Its source and
+full operating instructions are in
+[`resolve-edit/README.md`](/Users/keremkazan/Documents/Codex/2026-10-03/does/resolve-edit/README.md).
+Run `episode-edit inspect` from the raw footage directory first, audition the
+audio stream samples, then use `prepare` with explicit voice/keyboard indices.
+Do not infer indices from recording-channel labels. It preserves uncut originals,
+provides a separate removed-footage review timeline, and applies 107% once during
+preparation. Cleanup is auditioned in that review; export uses the latest native
+Resolve timeline and never regenerates the automatic edit.
+
+The tool currently targets native UHD/30 fps/48 kHz recordings. Preparation is
+independent of Resolve. Live Resolve import/render still needs validation on this
+installation: external API discovery returned no connection. The README includes
+an in-Resolve Python Console route and manual XML/Deliver fallback. Stereo main
+bus routing and keyboard audibility require explicit listening checks; the API
+cannot establish them. An exported file must pass both the tool's technical
+checks and this playbook's actual playback review before publication.

@@ -1,0 +1,19 @@
+WARNING: checked-in main.cpp differs from verification/episode-14-baseline.cpp
+Narration words: 1981
+sgd-baseline: PASS  ((constants set by the edits above))
+momentum-same-rate: PASS  ((constants set by the edits above))
+momentum-tenth: PASS  ((constants set by the edits above))
+momentum-batch-250: PASS  ((constants set by the edits above))
+adam-no-correction: PASS  ((constants set by the edits above))
+adam-batch-250: PASS  ((constants set by the edits above))
+sgd-batch-64: PASS  ((constants set by the edits above))
+momentum-batch-64: PASS  ((constants set by the edits above))
+24 edits replayed; 28 displayed output lines matched real output.
+Learning-rate table: 21 cells match real runs.
+momentum/SGD loss ratios (batch 250): 0.65 0.48 0.55 0.54 0.48
+Adam/momentum loss ratios (batch 250): 0.57 0.67 0.63 0.61 0.71
+momentum/SGD loss ratios (batch 64): 0.91 0.97 0.96 0.94 0.96
+batch 64 correct (momentum, SGD) for seeds 1-5 and the shown run: [[1751,1832],[1760,1837],[1734,1817],[1745,1837],[1773,1826],[1785,1833]]
+Step-number claims verified (factors at steps 1, 10, 100: 3.16, 6.53, 3.24).
+All narration claims verified.
+exit 0

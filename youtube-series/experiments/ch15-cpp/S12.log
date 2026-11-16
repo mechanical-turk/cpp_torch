@@ -1,0 +1,20 @@
+libc++abi: terminating due to uncaught exception of type std::domain_error: log requires a positive finite value
+sgd: line 1: 97301 Abort trap: 6           ./harness2 $0 $1 $2 $3 $4 $5 >> runs/S12.txt
+libc++abi: terminating due to uncaught exception of type std::domain_error: log requires a positive finite value
+sgd: line 1: 97295 Abort trap: 6           ./harness2 $0 $1 $2 $3 $4 $5 >> runs/S12.txt
+libc++abi: terminating due to uncaught exception of type std::domain_error: log requires a positive finite value
+momentum: line 1: 98089 Abort trap: 6           ./harness2 $0 $1 $2 $3 $4 $5 >> runs/S12.txt
+libc++abi: terminating due to uncaught exception of type std::domain_error: log requires a positive finite value
+sgd: line 1: 99308 Abort trap: 6           ./harness2 $0 $1 $2 $3 $4 $5 >> runs/S12.txt
+libc++abi: terminating due to uncaught exception of type std::domain_error: log requires a positive finite value
+sgd: line 1:   523 Abort trap: 6           ./harness2 $0 $1 $2 $3 $4 $5 >> runs/S12.txt
+libc++abi: terminating due to uncaught exception of type std::domain_error: log requires a positive finite value
+sgd: line 1:   819 Abort trap: 6           ./harness2 $0 $1 $2 $3 $4 $5 >> runs/S12.txt
+libc++abi: terminating due to uncaught exception of type std::domain_error: log requires a positive finite value
+sgd: line 1:   920 Abort trap: 6           ./harness2 $0 $1 $2 $3 $4 $5 >> runs/S12.txt
+libc++abi: terminating due to uncaught exception of type std::domain_error: log requires a positive finite value
+momentum: line 1:  1669 Abort trap: 6           ./harness2 $0 $1 $2 $3 $4 $5 >> runs/S12.txt
+libc++abi: terminating due to uncaught exception of type std::domain_error: log requires a positive finite value
+momentum: line 1:  1641 Abort trap: 6           ./harness2 $0 $1 $2 $3 $4 $5 >> runs/S12.txt
+libc++abi: terminating due to uncaught exception of type std::domain_error: log requires a positive finite value
+adam: line 1:  1965 Abort trap: 6           ./harness2 $0 $1 $2 $3 $4 $5 >> runs/S12.txt

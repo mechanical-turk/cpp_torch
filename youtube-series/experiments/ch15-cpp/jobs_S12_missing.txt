@@ -1,0 +1,14 @@
+sgd 1.778279 250 5 none 42
+sgd 3.162278 250 5 none 42
+sgd 5.623413 250 5 none 42
+momentum 1.000001 250 5 none 42
+momentum 1.778281 250 5 none 42
+sgd 1.778279 64 2 none 42
+sgd 3.162278 64 2 none 42
+sgd 5.623413 64 2 none 42
+sgd 1.778279 250 5 pixel 42
+sgd 3.162278 250 5 pixel 42
+sgd 5.623413 250 5 pixel 42
+momentum 0.562342 250 5 pixel 42
+momentum 1.0 250 5 pixel 42
+adam 0.03162 250 5 pixel 42

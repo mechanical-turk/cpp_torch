@@ -775,3 +775,63 @@ Rotate among:
   the local demo commit 47db7ed, which is not pushed. The file ends in
   continuous speech, so it has no clean tail for the end screen.
 - No thumbnail, captions or chapters yet. Upload status is unknown.
+
+
+## October 22, 2026: Episode 14 upload started and release scheduled
+
+- Creator explicitly authorized Chrome upload and public release on October 23,
+  2026 at 11:00 AM Eastern (UTC-04:00), superseding the earlier proposed dates
+  and private-only plan.
+- Video: https://www.youtube.com/watch?v=YZnfcbwwOdI
+- Studio: https://studio.youtube.com/video/YZnfcbwwOdI/edit
+- Uploaded the canonical `cpp-residual-connections-gradient-debugging.mp4`.
+  Applied the publishing package title, description and tags, selected the
+  complete-series playlist and English. Education, not made for kids, comments
+  on with Basic moderation, and subscriber notifications were retained.
+- Studio confirmed: the video will become public October 23 at 11:00 AM once
+  uploading and processing finish. Transfer was still in progress; completion,
+  processing, copyright checks and 2160p playback are not yet verified.
+- No custom thumbnail, caption-derived chapters or end screen was added.
+  No social announcement, comment or demo repository push was performed.
+
+
+### October 22 follow-up: transfer completed
+
+Studio now confirms **Upload complete** for
+https://www.youtube.com/watch?v=YZnfcbwwOdI and states that it will become public
+October 23, 2026 at 11:00 AM after SD processing finishes. The scheduling UI's
+local timezone was GMT-0400 (Eastern Daylight Time). Processing and checks are
+still pending; 2160p playback is not yet verified. This supersedes the earlier
+in-progress transfer status. Thumbnail and caption-derived chapters remain
+outstanding.
+
+## October 23, 2026: Chapter 14 caption-derived timestamps applied
+
+- Downloaded the serving English automatic caption track for
+  https://www.youtube.com/watch?v=YZnfcbwwOdI to chapter-14/youtube-generated.en.srt.
+- Derived 24 chapters from actual recorded transitions, including the extended
+  cross-entropy, saturation and learning-rate discussion. Saved chapters.txt,
+  chapters-review.md and the chapter block in publishing.md.
+- Reviewed the API dry-run diff, added only the Chapters block to the live
+  description, and fetched the video again to verify all 24 entries exactly.
+- Preserved the existing description, title and other metadata. Visibility
+  remains private, scheduled for October 23 at 11:00 AM Eastern. API reports
+  upload processed; this does not verify 2160p playback or end-screen setup.
+- No captions were edited or uploaded; no comment or announcement was posted.
+
+## November 14, 2026, 04:03 PM Eastern: Episode 15 final 4K export verified
+
+- Exported the creator-approved final XML timeline to `/Users/keremkazan/Movies/CapCut/ep15/cpp-momentum-adam-optimizers-from-scratch.mp4` without Resolve UI automation.
+- Verified 3840×2160 H.264 at 30 fps, 61,469 frames (34:08.967), matching AAC stereo 48 kHz duration, full-file decoding and no clipping. Voice and keyboard remain in the mix; existing 107% speed was preserved.
+- Integrated loudness −16.10 LUFS; true peak −0.63 dBTP. File size 3,475,946,106 bytes; SHA-256 `a345b5822f265103115a64d95a3e62a95cf8f89bbbc8c36ec81fdc2e1f18d544`.
+- Four source-tail clips required a bounded final-picture hold of at most two frames; audio and timeline length were unchanged.
+- YouTube private, unscheduled upload has started. No video ID has been returned yet. Full subjective final-file playback, thumbnail, chapters, end screen and 2160p playback remain pending for public release.
+
+## November 14, 2026, 04:08 PM Eastern: Episode 15 uploaded privately to YouTube
+
+- Uploaded the verified 4K final: https://www.youtube.com/watch?v=wBB9lQnpUNU
+- Studio: https://studio.youtube.com/video/wBB9lQnpUNU/edit
+- Title: Momentum and Adam Optimizers in C++ | Deep Learning, All the Way Down #15. Applied the description and ten backend tags from chapter-15/publishing.md; English, Education, not made for kids.
+- API read-back verified private visibility with no scheduled publish time. Processing is still in progress; this does not establish 2160p playback availability.
+- Added Episode 15 to the complete-series playlist and verified membership through playlistItems.list: https://www.youtube.com/playlist?list=PLZSg76FHvdTw
+- No public release, comment, pin or announcement was made. Thumbnail, caption-derived chapters, end screen, public code checkpoint and required playback checks remain pending for publication.

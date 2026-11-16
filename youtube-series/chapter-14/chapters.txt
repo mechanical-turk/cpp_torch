@@ -1,0 +1,24 @@
+00:00 Introduction
+00:33 Simplify layer construction
+02:05 Build reusable hidden layers
+04:10 Stack sixteen hidden layers
+05:15 When deeper networks stall
+07:34 Name layers for debugging
+09:39 Trace the forward pass
+11:22 Print the layer report
+14:04 Measure signal with RMS
+17:33 Trace gradients in training
+19:32 Spot vanishing gradients
+20:55 Residual connections
+22:58 Implement the Residual layer
+25:30 Wrap the hidden layers
+26:25 Compare residual gradients
+28:35 Cross-entropy loss
+31:55 Map probabilities to loss
+34:48 Why loss can exceed 2.30
+38:40 Tanh saturation and collapse
+41:02 Learning rate decay recovery
+42:07 Loss versus accuracy
+45:12 Lower the learning rate
+48:50 Train for twenty epochs
+49:45 Recap

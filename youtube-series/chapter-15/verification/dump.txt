@@ -1,0 +1,96 @@
+WARNING: checked-in main.cpp differs from verification/episode-14-baseline.cpp
+Narration words: 1350
+sgd-baseline: PASS  ((constants set by the edits above))
+layer  1  Sequence[Linear, ReLU]            signal 1.3e-01  gradient 1.4e-04
+layer  2  Linear                            signal 7.3e-02  gradient 1.2e-03
+Epoch 1 loss: 1.14792
+Epoch 2 loss: 0.415568
+Epoch 3 loss: 0.2429
+Epoch 4 loss: 0.191479
+layer  1  Sequence[Linear, ReLU]            signal 4.8e-01  gradient 1.4e-04
+layer  2  Linear                            signal 3.8e+00  gradient 3.0e-04
+Epoch 5 loss: 0.162037
+Test accuracy: 91.3% (1826/2000)
+momentum-same-rate: PASS  ((constants set by the edits above))
+layer  1  Sequence[Linear, ReLU]            signal 1.3e-01  gradient 1.4e-04
+layer  2  Linear                            signal 7.3e-02  gradient 1.2e-03
+Epoch 1 loss: 1.82511
+Epoch 2 loss: 0.911641
+Epoch 3 loss: 0.72076
+Epoch 4 loss: 0.689889
+layer  1  Sequence[Linear, ReLU]            signal 7.5e-01  gradient 2.4e-03
+layer  2  Linear                            signal 1.1e+01  gradient 4.5e-04
+Epoch 5 loss: 0.499629
+Test accuracy: 82.1% (1642/2000)
+momentum-tenth: PASS  ((constants set by the edits above))
+layer  1  Sequence[Linear, ReLU]            signal 1.3e-01  gradient 1.4e-04
+layer  2  Linear                            signal 7.3e-02  gradient 1.2e-03
+Epoch 1 loss: 0.986176
+Epoch 2 loss: 0.352658
+Epoch 3 loss: 0.274481
+Epoch 4 loss: 0.213038
+layer  1  Sequence[Linear, ReLU]            signal 5.9e-01  gradient 1.4e-04
+layer  2  Linear                            signal 4.8e+00  gradient 3.3e-04
+Epoch 5 loss: 0.171738
+Test accuracy: 91.6% (1832/2000)
+momentum-batch-250: PASS  ((constants set by the edits above))
+layer  1  Sequence[Linear, ReLU]            signal 1.3e-01  gradient 1.4e-04
+layer  2  Linear                            signal 7.3e-02  gradient 1.2e-03
+Epoch 1 loss: 0.821689
+Epoch 2 loss: 0.245702
+Epoch 3 loss: 0.177511
+Epoch 4 loss: 0.124838
+layer  1  Sequence[Linear, ReLU]            signal 6.4e-01  gradient 1.5e-04
+layer  2  Linear                            signal 6.8e+00  gradient 2.1e-04
+Epoch 5 loss: 0.0768752
+Test accuracy: 93.75% (1875/2000)
+adam-batch-250: PASS  ((constants set by the edits above))
+layer  1  Sequence[Linear, ReLU]            signal 1.3e-01  gradient 1.4e-04
+layer  2  Linear                            signal 7.3e-02  gradient 1.2e-03
+Epoch 1 loss: 0.550623
+Epoch 2 loss: 0.212823
+Epoch 3 loss: 0.135194
+Epoch 4 loss: 0.0812985
+layer  1  Sequence[Linear, ReLU]            signal 1.4e+00  gradient 8.4e-05
+layer  2  Linear                            signal 8.1e+00  gradient 2.2e-04
+Epoch 5 loss: 0.0510026
+Test accuracy: 93.65% (1873/2000)
+sgd-batch-64: PASS  ((constants set by the edits above))
+layer  1  Sequence[Linear, ReLU]            signal 1.4e-01  gradient 5.3e-04
+layer  2  Linear                            signal 7.2e-02  gradient 4.7e-03
+Epoch 1 loss: 0.56749
+layer  1  Sequence[Linear, ReLU]            signal 5.2e-01  gradient 5.1e-04
+layer  2  Linear                            signal 4.1e+00  gradient 1.2e-03
+Epoch 2 loss: 0.218582
+Test accuracy: 91.65% (1833/2000)
+momentum-batch-64: PASS  ((constants set by the edits above))
+layer  1  Sequence[Linear, ReLU]            signal 1.4e-01  gradient 5.3e-04
+layer  2  Linear                            signal 7.2e-02  gradient 4.7e-03
+Epoch 1 loss: 0.553563
+layer  1  Sequence[Linear, ReLU]            signal 5.9e-01  gradient 2.9e-03
+layer  2  Linear                            signal 5.4e+00  gradient 5.3e-03
+Epoch 2 loss: 0.208776
+Test accuracy: 89.25% (1785/2000)
+sgd-standardised: PASS  ((constants set by the edits above))
+layer  1  Sequence[Linear, ReLU]            signal 2.4e-01  gradient 1.4e-04
+layer  2  Linear                            signal 1.3e-01  gradient 1.2e-03
+Epoch 1 loss: 0.509589
+Epoch 2 loss: 0.182091
+Epoch 3 loss: 0.115454
+Epoch 4 loss: 0.0768631
+layer  1  Sequence[Linear, ReLU]            signal 8.3e-01  gradient 6.9e-05
+layer  2  Linear                            signal 5.1e+00  gradient 1.7e-04
+Epoch 5 loss: 0.0518548
+Test accuracy: 93.6% (1872/2000)
+momentum-standardised: PASS  ((constants set by the edits above))
+layer  1  Sequence[Linear, ReLU]            signal 2.4e-01  gradient 1.4e-04
+layer  2  Linear                            signal 1.3e-01  gradient 1.2e-03
+Epoch 1 loss: 0.675651
+Epoch 2 loss: 0.242666
+Epoch 3 loss: 0.0971406
+Epoch 4 loss: 0.0502169
+layer  1  Sequence[Linear, ReLU]            signal 1.1e+00  gradient 6.3e-05
+layer  2  Linear                            signal 7.9e+00  gradient 1.2e-04
+Epoch 5 loss: 0.0306788
+Test accuracy: 93.3% (1866/2000)
+25 edits replayed; 0 displayed output lines matched real output.

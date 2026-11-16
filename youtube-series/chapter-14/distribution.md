@@ -88,3 +88,44 @@ proposal makes no claim that timing causes a result.
 ## Completed events
 
 None recorded for Chapter 14.
+
+
+## October 22, 2026: Episode 14 upload started and release scheduled
+
+- Creator explicitly authorized Chrome upload and public release on October 23,
+  2026 at 11:00 AM Eastern (UTC-04:00), superseding the earlier proposed dates
+  and private-only plan.
+- Video: https://www.youtube.com/watch?v=YZnfcbwwOdI
+- Studio: https://studio.youtube.com/video/YZnfcbwwOdI/edit
+- Uploaded the canonical `cpp-residual-connections-gradient-debugging.mp4`.
+  Applied the publishing package title, description and tags, selected the
+  complete-series playlist and English. Education, not made for kids, comments
+  on with Basic moderation, and subscriber notifications were retained.
+- Studio confirmed: the video will become public October 23 at 11:00 AM once
+  uploading and processing finish. Transfer was still in progress; completion,
+  processing, copyright checks and 2160p playback are not yet verified.
+- No custom thumbnail, caption-derived chapters or end screen was added.
+  No social announcement, comment or demo repository push was performed.
+
+
+### October 22 follow-up: transfer completed
+
+Studio now confirms **Upload complete** for
+https://www.youtube.com/watch?v=YZnfcbwwOdI and states that it will become public
+October 23, 2026 at 11:00 AM after SD processing finishes. The scheduling UI's
+local timezone was GMT-0400 (Eastern Daylight Time). Processing and checks are
+still pending; 2160p playback is not yet verified. This supersedes the earlier
+in-progress transfer status. Thumbnail and caption-derived chapters remain
+outstanding.
+
+## October 23, 2026: Chapters completed
+
+Downloaded YouTube's English automatic captions and added 24 transcript-derived
+chapters to https://www.youtube.com/watch?v=YZnfcbwwOdI through the API. Verified
+the saved chapter block by fetching the video again. Local evidence:
+`youtube-generated.en.srt`, `chapters.txt`, `chapters-review.md`, and the updated
+description in `publishing.md`.
+
+The video remains private and scheduled for October 23 at 11:00 AM Eastern.
+API upload status is processed and hasCustomThumbnail is true. No end-screen
+or 2160p playback verification was performed in this timestamp-only task.
