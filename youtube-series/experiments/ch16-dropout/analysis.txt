@@ -1,0 +1,10 @@
+
+=== train N=10000 ===  (mean over 3 seeds; lr chosen per p by mean best validation accuracy)
+p=0.0 lr=0.003: best-val epoch val 97.06 test 96.21 | final train acc 100.00 val acc 96.93 val loss 0.165 test 96.27 | gap(train-val) 3.07 | min val loss 0.128 | best epoch [13, 12, 26]
+p=0.2 lr=0.003: best-val epoch val 97.07 test 95.99 | final train acc 99.80 val acc 96.41 val loss 0.224 test 95.70 | gap(train-val) 3.40 | min val loss 0.122 | best epoch [14, 12, 25]
+p=0.5 lr=0.003: best-val epoch val 97.17 test 96.18 | final train acc 99.86 val acc 96.73 val loss 0.167 test 96.03 | gap(train-val) 3.13 | min val loss 0.120 | best epoch [25, 26, 19]
+
+=== train N=55000 ===  (mean over 3 seeds; lr chosen per p by mean best validation accuracy)
+p=0.0 lr=0.001: best-val epoch val 98.41 test 98.07 | final train acc 99.84 val acc 98.28 val loss 0.084 test 98.01 | gap(train-val) 1.56 | min val loss 0.067 | best epoch [14, 15, 12]
+p=0.2 lr=0.001: best-val epoch val 98.40 test 97.98 | final train acc 99.80 val acc 98.33 val loss 0.073 test 98.09 | gap(train-val) 1.47 | min val loss 0.063 | best epoch [12, 12, 13]
+p=0.5 lr=0.001: best-val epoch val 98.39 test 98.00 | final train acc 99.44 val acc 98.28 val loss 0.067 test 98.12 | gap(train-val) 1.16 | min val loss 0.064 | best epoch [12, 10, 12]
